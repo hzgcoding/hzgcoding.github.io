@@ -4,17 +4,24 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>Archives: 2015 | Genge&#39;s Blog</title>
+  <title>封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e) | Genge&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Genge's Blog">
-<meta property="og:url" content="http://genge.cc/archives/2015/index.html">
+  <meta name="description" content="版权声明：本文为博主原创文章，未经博主允许不得转载。
+
+123456789function count(x)&amp;#123;     var fn = function(y)&amp;#123;          return count(x*y);     &amp;#125;     fn.toString = function()&amp;#123;          return x;     &amp;#125;;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)">
+<meta property="og:url" content="http://genge.cc/2015/12/28/count/index.html">
 <meta property="og:site_name" content="Genge's Blog">
-<meta property="og:description">
+<meta property="og:description" content="版权声明：本文为博主原创文章，未经博主允许不得转载。
+
+123456789function count(x)&amp;#123;     var fn = function(y)&amp;#123;          return count(x*y);     &amp;#125;     fn.toString = function()&amp;#123;          return x;     &amp;#125;;">
+<meta property="og:updated_time" content="2015-12-27T16:14:57.357Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Genge's Blog">
-<meta name="twitter:description">
+<meta name="twitter:title" content="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)">
+<meta name="twitter:description" content="版权声明：本文为博主原创文章，未经博主允许不得转载。
+
+123456789function count(x)&amp;#123;     var fn = function(y)&amp;#123;          return count(x*y);     &amp;#125;     fn.toString = function()&amp;#123;          return x;     &amp;#125;;">
   
     <link rel="alternative" href="/atom.xml" title="Genge&#39;s Blog" type="application/atom+xml">
   
@@ -198,107 +205,111 @@
 	</div>
 </nav>
 
-      <div class="body-wrap">
+      <div class="body-wrap"><article id="post-count" class="article article-type-post" itemscope itemprop="blogPost">
   
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2015" class="archive-year">2015</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2015/12/28/count/" class="archive-article-date">
-  	<time datetime="2015-12-27T16:04:20.000Z" itemprop="datePublished">Dec 28</time>
+    <div class="article-meta">
+      <a href="/2015/12/28/count/" class="article-date">
+  	<time datetime="2015-12-27T16:04:20.000Z" itemprop="datePublished">2015-12-28</time>
 </a>
-        </div>
-    	 
+    </div>
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/12/28/count/">封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)</a>
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+      </header>
+      
+      <div class="article-info article-info-post">
+        
 	<div class="article-tag tagcloud">
 		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/count/">count</a></li></ul>
 	</div>
 
-          
+        
 
-        </div>
         <div class="clearfix"></div>
-    </header>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+</blockquote>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">count</span><span class="params">(x)</span></span>&#123;</span><br><span class="line">     <span class="keyword">var</span> fn = <span class="function"><span class="keyword">function</span><span class="params">(y)</span></span>&#123;</span><br><span class="line">          <span class="keyword">return</span> count(x*y);</span><br><span class="line">     &#125;</span><br><span class="line">     fn.toString = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">          <span class="keyword">return</span> x;</span><br><span class="line">     &#125;;</span><br><span class="line">     <span class="keyword">return</span> fn;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/12/27/第一篇Github博客/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">第一篇Github博客</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2015/12/27/第一篇Github博客/" class="archive-article-date">
-  	<time datetime="2015-12-27T12:31:42.000Z" itemprop="datePublished">Dec 27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/12/27/第一篇Github博客/">第一篇Github博客</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2015/12/27/hello-world/" class="archive-article-date">
-  	<time datetime="2015-12-27T12:13:54.385Z" itemprop="datePublished">Dec 27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/12/27/hello-world/">Hello World</a>
-    </h1>
-  
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
 
-    
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="count" data-title="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)" data-url="http://genge.cc/2015/12/28/count/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
 
 </div>
       <footer id="footer">
@@ -324,8 +335,8 @@
 		mathjax: true,
 		animate: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false

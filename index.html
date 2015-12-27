@@ -120,7 +120,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						
+						<a href="/tags/count/" style="font-size: 10px;">count</a>
 					</div>
 				</section>
 				
@@ -199,6 +199,65 @@
 </nav>
 
       <div class="body-wrap">
+  
+    <article id="post-count" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/12/28/count/" class="article-date">
+  	<time datetime="2015-12-27T16:04:20.000Z" itemprop="datePublished">2015-12-28</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/12/28/count/">封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+</blockquote>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">count</span><span class="params">(x)</span></span>&#123;</span><br><span class="line">     <span class="keyword">var</span> fn = <span class="function"><span class="keyword">function</span><span class="params">(y)</span></span>&#123;</span><br><span class="line">          <span class="keyword">return</span> count(x*y);</span><br><span class="line">     &#125;</span><br><span class="line">     fn.toString = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">          <span class="keyword">return</span> x;</span><br><span class="line">     &#125;;</span><br><span class="line">     <span class="keyword">return</span> fn;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/count/">count</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-第一篇Github博客" class="article article-type-post" itemscope itemprop="blogPost">
   
