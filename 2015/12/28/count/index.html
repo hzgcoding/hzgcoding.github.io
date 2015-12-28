@@ -16,7 +16,7 @@
 <meta property="og:description" content="版权声明：本文为博主原创文章，未经博主允许不得转载。
 
 123456789function count(x)&amp;#123;     var fn = function(y)&amp;#123;          return count(x*y);     &amp;#125;     fn.toString = function()&amp;#123;          return x;     &amp;#125;;">
-<meta property="og:updated_time" content="2015-12-28T13:31:47.898Z">
+<meta property="og:updated_time" content="2015-12-28T13:37:53.135Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)">
 <meta name="twitter:description" content="版权声明：本文为博主原创文章，未经博主允许不得转载。
@@ -101,7 +101,9 @@
 				        
 							<li><a href="/archives">所有文章</a></li>
 				        
-							<li><a href="/about">关于</a></li>
+							<li><a href="/categories">文章分类</a></li>
+				        
+							<li><a href="/about">关于我</a></li>
 				        
 						</ul>
 					</nav>
@@ -179,7 +181,9 @@
 		        
 					<li><a href="/archives">所有文章</a></li>
 		        
-					<li><a href="/about">关于</a></li>
+					<li><a href="/categories">文章分类</a></li>
+		        
+					<li><a href="/about">关于我</a></li>
 		        
 		        <div class="clearfix"></div>
 				</ul>
@@ -249,7 +253,7 @@
         <blockquote>
 <p>版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
 </blockquote>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">count</span><span class="params">(x)</span></span>&#123;</span><br><span class="line">     <span class="keyword">var</span> fn = <span class="function"><span class="keyword">function</span><span class="params">(y)</span></span>&#123;</span><br><span class="line">          <span class="keyword">return</span> count(x*y);</span><br><span class="line">     &#125;</span><br><span class="line">     fn.toString = <span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">          <span class="keyword">return</span> x;</span><br><span class="line">     &#125;;</span><br><span class="line">     <span class="keyword">return</span> fn;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">count</span>(<span class="params">x</span>)</span>&#123;</span><br><span class="line">     <span class="keyword">var</span> fn = <span class="function"><span class="keyword">function</span>(<span class="params">y</span>)</span>&#123;</span><br><span class="line">          <span class="keyword">return</span> count(x*y);</span><br><span class="line">     &#125;</span><br><span class="line">     fn.toString = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">          <span class="keyword">return</span> x;</span><br><span class="line">     &#125;;</span><br><span class="line">     <span class="keyword">return</span> fn;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -258,11 +262,15 @@
     
 <nav id="article-nav">
   
-  
-    <a href="/2015/12/27/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello World</div>
-      <strong class="article-nav-caption">></strong>
+    <a href="/2015/12/28/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          Hello World
+        
+      </div>
     </a>
+  
   
 </nav>
 
