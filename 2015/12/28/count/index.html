@@ -4,21 +4,21 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e) | Genge&#39;s Blog</title>
+  <title>封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e) 连乘效果 | Genge&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="版权声明：本文为博主原创文章，未经博主允许不得转载。
 
 123456789function count(x)&amp;#123;     var fn = function(y)&amp;#123;          return count(x*y);     &amp;#125;     fn.toString = function()&amp;#123;          return x;     &amp;#125;;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)">
+<meta property="og:title" content="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e) 连乘效果">
 <meta property="og:url" content="http://genge.cc/2015/12/28/count/index.html">
 <meta property="og:site_name" content="Genge's Blog">
 <meta property="og:description" content="版权声明：本文为博主原创文章，未经博主允许不得转载。
 
 123456789function count(x)&amp;#123;     var fn = function(y)&amp;#123;          return count(x*y);     &amp;#125;     fn.toString = function()&amp;#123;          return x;     &amp;#125;;">
-<meta property="og:updated_time" content="2015-12-28T13:52:52.627Z">
+<meta property="og:updated_time" content="2015-12-28T14:01:37.544Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)">
+<meta name="twitter:title" content="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e) 连乘效果">
 <meta name="twitter:description" content="版权声明：本文为博主原创文章，未经博主允许不得转载。
 
 123456789function count(x)&amp;#123;     var fn = function(y)&amp;#123;          return count(x*y);     &amp;#125;     fn.toString = function()&amp;#123;          return x;     &amp;#125;;">
@@ -101,9 +101,9 @@
 				        
 							<li><a href="/archives">所有文章</a></li>
 				        
-							<li><a href="/categories">文章分类</a></li>
-				        
 							<li><a href="/about">关于我</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
 				        
 						</ul>
 					</nav>
@@ -129,7 +129,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/count/" style="font-size: 10px;">count</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a>
+						<a href="/tags/count/" style="font-size: 10px;">count</a> <a href="/tags/hello-world/" style="font-size: 10px;">hello world</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a>
 					</div>
 				</section>
 				
@@ -181,9 +181,9 @@
 		        
 					<li><a href="/archives">所有文章</a></li>
 		        
-					<li><a href="/categories">文章分类</a></li>
-		        
 					<li><a href="/about">关于我</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
 		        
 		        <div class="clearfix"></div>
 				</ul>
@@ -213,7 +213,7 @@
   
     <div class="article-meta">
       <a href="/2015/12/28/count/" class="article-date">
-  	<time datetime="2015-12-27T16:04:20.000Z" itemprop="datePublished">2015-12-28</time>
+  	<time datetime="2015-12-28T14:04:20.000Z" itemprop="datePublished">2015-12-28</time>
 </a>
     </div>
   
@@ -226,7 +226,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)
+      封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e) 连乘效果
     </h1>
   
 
@@ -254,6 +254,7 @@
 <p>版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
 </blockquote>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">count</span>(<span class="params">x</span>)</span>&#123;</span><br><span class="line">     <span class="keyword">var</span> fn = <span class="function"><span class="keyword">function</span>(<span class="params">y</span>)</span>&#123;</span><br><span class="line">          <span class="keyword">return</span> count(x*y);</span><br><span class="line">     &#125;</span><br><span class="line">     fn.toString = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">          <span class="keyword">return</span> x;</span><br><span class="line">     &#125;;</span><br><span class="line">     <span class="keyword">return</span> fn;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
       
     </div>
     
@@ -262,15 +263,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2015/12/28/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          Hello World
-        
-      </div>
-    </a>
   
+    <a href="/2015/12/27/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hello World</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
   
 </nav>
 
@@ -303,7 +300,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="count" data-title="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e)" data-url="http://genge.cc/2015/12/28/count/"></div>
+	<div class="ds-thread" data-thread-key="count" data-title="封装一个count函数，能实现如此调用：count(a)(b)(c)(d)(e) 连乘效果" data-url="http://genge.cc/2015/12/28/count/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
