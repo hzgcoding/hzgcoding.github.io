@@ -175,8 +175,7 @@
 <li>支持随机访问容器：vector、deque、array、stringlist双向访问，forward_list单向顺序访问，除了 array外 其他容器都支持增加和删除操作！</li>
 </ol>
 <h2 id="关联容器"><a href="#关联容器" class="headerlink" title="关联容器"></a>关联容器</h2><ol>
-<li><p>联容器的迭代器都是双向的</p>
-</li>
+<li>联容器的迭代器都是双向的</li>
 <li><p>map、set等都可以用列表初始化</p>
  <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span>&lt;<span class="built_in">string</span>&gt; exclude = &#123;<span class="string">"the"</span>,<span class="string">"but"</span>,<span class="string">"huzhigen"</span>,<span class="string">"and"</span>,<span class="string">"You"</span>&#125;</div><div class="line"><span class="built_in">map</span>&lt;<span class="built_in">string</span>,<span class="built_in">string</span>&gt; authors = &#123;</div><div class="line">    &#123;<span class="string">"123"</span>,<span class="string">"456"</span>&#125;,</div><div class="line">    &#123;<span class="string">"hzg"</span>,<span class="string">"world"</span>&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
@@ -192,20 +191,19 @@
 </li>
 </ol>
 <pre><code>而对于其他定义类型则使用默认构造器初始化
+
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">string</span> *p1 = <span class="keyword">new</span> <span class="built_in">string</span>;   <span class="comment">// 默认初始化，指向的对象是空string</span></div><div class="line"><span class="built_in">string</span> *p2 = <span class="keyword">new</span> <span class="built_in">string</span>();   <span class="comment">//值初始化为空string</span></div></pre></td></tr></table></figure>
 </code></pre><ol>
-<li>由于编译器也好用初始化器的类型来推断要分配的类型，只有初始化括号仅有一个参数的时候才可以使用auto。 <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> p1 = <span class="keyword">new</span> <span class="keyword">auto</span>(obj);   <span class="comment">// p指向一个与obj类型相同的对象，而且该对象使用obj进行初始化</span></div><div class="line"><span class="keyword">auto</span> p2 = <span class="keyword">new</span>  <span class="keyword">auto</span>&#123;a,b,c&#125;;   <span class="comment">//错误</span></div></pre></td></tr></table></figure>
+<li><p>由于编译器也好用初始化器的类型来推断要分配的类型，只有初始化括号仅有一个参数的时候才可以使用auto。</p>
+ <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> p1 = <span class="keyword">new</span> <span class="keyword">auto</span>(obj);   <span class="comment">// p指向一个与obj类型相同的对象，而且该对象使用obj进行初始化</span></div><div class="line"><span class="keyword">auto</span> p2 = <span class="keyword">new</span>  <span class="keyword">auto</span>&#123;a,b,c&#125;;   <span class="comment">//错误</span></div></pre></td></tr></table></figure>
 </li>
-</ol>
-<ol>
-<li>传递给delete的指针必须指向动态分配的内存，或者是一个空指针。释放一块并非new分配的内存，或者将相同的指针值释放多次，其行为是未定义的。new出来的对象一定是等到delete后才会释放内存，因此调用者必须记得显式释放内存，并且将指针置为空。不然会导致内存泄漏问题。 <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">delete</span> p;</div><div class="line">p = <span class="literal">nullptr</span>;</div></pre></td></tr></table></figure>
+<li><p>传递给delete的指针必须指向动态分配的内存，或者是一个空指针。释放一块并非new分配的内存，或者将相同的指针值释放多次，其行为是未定义的。new出来的对象一定是等到delete后才会释放内存，因此调用者必须记得显式释放内存，并且将指针置为空。不然会导致内存泄漏问题。</p>
+<pre><code class="c++"><span class="keyword">delete</span> p;
+p = <span class="literal">nullptr</span>;
+</code></pre>
 </li>
-</ol>
-<ol>
-<li><p>使用内置指针访问智能指针所负责的对象是很危险的，因为无法知道对象何时会被销毁。永远不要用get初始化另一个智能指针或者为另一个智能指针赋值。</p>
-</li>
-<li><p>智能指针应该注意的地方：</p>
-<ul>
+<li>使用内置指针访问智能指针所负责的对象是很危险的，因为无法知道对象何时会被销毁。永远不要用get初始化另一个智能指针或者为另一个智能指针赋值。</li>
+<li>智能指针应该注意的地方：<ul>
 <li>不使用相同的内置指针初始化多个智能指针</li>
 <li>不delete  get（）返回的指针</li>
 <li>不使用get（）初始化或者reset另一个智能指针</li>
