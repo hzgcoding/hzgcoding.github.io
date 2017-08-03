@@ -151,6 +151,102 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-C-类型转换" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/03/C-类型转换/">C++类型转换</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/03/C-类型转换/" class="archive-article-date">
+  	<time datetime="2017-08-03T02:47:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><ul>
+<li><strong>一个类型转换函数必须是类的成员函数，他不能声明返回类型，形参列表也必须为空，类类型转换函数通常应该是const</strong></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SmallInt</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line"><span class="keyword">public</span>:</div><div class="line">	SmallInt(<span class="keyword">int</span> i = <span class="number">0</span>) :val(i) </div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (i &lt; <span class="number">0</span> || i&gt;<span class="number">255</span>) &#123;</div><div class="line">			<span class="keyword">throw</span> <span class="built_in">std</span>::out_of_range(<span class="string">"Bad SmallInt value"</span>);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">operator</span> <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123; <span class="keyword">return</span> val; &#125;</div><div class="line"><span class="keyword">private</span>:</div><div class="line">	<span class="built_in">std</span>::<span class="keyword">size_t</span> val;</div><div class="line">&#125;;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argv, <span class="keyword">char</span> * argc[])</span> </span>&#123;</div><div class="line">	SmallInt si;</div><div class="line">	si = <span class="number">4</span>;  <span class="comment">//首先将4隐式转换成SmallInt对象，然后调用SmallInt ：：operator=</span></div><div class="line">	si + <span class="number">3</span>;  <span class="comment">//首先将si隐式转换成int，然后执行整数加法</span></div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>如果在类型转换函数前用explicit关键字来修饰，那么类型转换变为显式转换。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">si+<span class="number">3</span>; <span class="comment">//这句错误</span></div><div class="line"><span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(si)+<span class="number">3</span>; <span class="comment">//正确：显式的请求类型转换</span></div></pre></td></tr></table></figure>
+<ul>
+<li><p>如果表达式被用作条件，则编译器会见显式的类型转换自动应用于他，即显式转换见被隐式转换的执行：</p>
+<ol>
+<li>if、while及do语句部分</li>
+<li>for语句头的条件表达式</li>
+<li>逻辑非运算符（！）、逻辑或运算符（||）、逻辑与运算符（&amp;&amp;）的运算发对象</li>
+<li>条件运算符（？：）的条件表达式</li>
+</ol>
+</li>
+<li><p>不要令两个类执行相同的类型转换：如果A类有一个接受B类对象的构造函数，则不要在B中再定义转换目标是A类的类型转换运算符</p>
+</li>
+<li><p>如果对同一类既提供了转换目标是算数类型的类型转换，也提供了重载的运算符，则将会遇到重载运算符与内置运算符的二义性问题</p>
+</li>
+<li>在定义类型转换函数时，切记注意调用转换时不要存在<strong>二义性</strong></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">c++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/03/C-类型转换/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-C-拷贝构造函数和赋值运算符" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -536,11 +632,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">c++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">c++</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
             
             <div class="clearfix"></div>
