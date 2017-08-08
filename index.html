@@ -149,6 +149,78 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-strtok、strtok-s、strtok-r字符串分割" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/08/strtok、strtok-s、strtok-r字符串分割/">strtok、strtok_s、strtok_r字符串分割</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/08/strtok、strtok-s、strtok-r字符串分割/" class="archive-article-date">
+  	<time datetime="2017-08-08T10:20:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="strtok"><a href="#strtok" class="headerlink" title="strtok"></a>strtok</h2><p> 原型：<code>char *strtok(char *s, char *delim);</code></p>
+<h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>分解字符串为一组标记串。s为要分解的字符串，delim为分隔符字符串。<br>说明：<strong>首次调用时，s必须指向要分解的字符串，随后调用要把s设成NULL。</strong> strtok在s中查找包含在delim中的字符并用NULL(‘\0’)来替换，直到找遍整个字符串。 返回指向下一个标记串。当没有标记串时则返回空字符NULL。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">#include &lt;iostream&gt;  </div><div class="line">using namespace std;  </div><div class="line">  </div><div class="line">int main(int argc, char * argv[])  </div><div class="line">&#123;  </div><div class="line">    //时间格式 2010/08/11 10:38:22  </div><div class="line">    char strEventTime[] = &quot;2010/08/11 10:38:22&quot;;  </div><div class="line">    char *token = NULL;  </div><div class="line">      </div><div class="line">    token = strtok(strEventTime, &quot;/&quot;);  </div><div class="line">    char *year = token;  </div><div class="line">    if (token != NULL)  </div><div class="line">    &#123;  </div><div class="line">        token = strtok(NULL, &quot;/&quot;);  </div><div class="line">    &#125;  </div><div class="line">    char *month = token;  </div><div class="line">    if (token != NULL)  </div><div class="line">    &#123;  </div><div class="line">        token = strtok(NULL, &quot; &quot;);  </div><div class="line">    &#125;  </div><div class="line">    char *day = token;  </div><div class="line">    if (token != NULL)  </div><div class="line">    &#123;  </div><div class="line">        token = strtok(NULL, &quot;:&quot;);  </div><div class="line">    &#125;  </div><div class="line">    char *hour = token;  </div><div class="line">    if (token != NULL)  </div><div class="line">    &#123;  </div><div class="line">        token = strtok(NULL, &quot;:&quot;);  </div><div class="line">    &#125;  </div><div class="line">    char *minute = token;  </div><div class="line">  </div><div class="line">    if (token != NULL)  </div><div class="line">    &#123;  </div><div class="line">        token = strtok(NULL, &quot;:&quot;);  </div><div class="line">    &#125;  </div><div class="line">    char *second = token;  </div><div class="line">  </div><div class="line">    printf(&quot;%s %s %s %s %s %s %s\n&quot;, year, month, day, hour, minute, second);  </div><div class="line">    return 0;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面这段程序在VS2015下编译会出现错误提醒，大概意思就是说strtok不安全。</p>
+<h2 id="strtok-s函数"><a href="#strtok-s函数" class="headerlink" title="strtok_s函数"></a>strtok_s函数</h2><p>strtok_s是windows下的一个分割字符串安全函数，其函数原型如下：</p>
+<p><code>char *strtok_s( char *strToken, const char *strDelimit, char **buf);</code></p>
+<p>这个函数将<strong>剩余的字符串存储在buf变量中，而不是静态变量中，从而保证了安全性</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">#include &lt;iostream&gt;  </div><div class="line">using namespace std;</div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;</div><div class="line">	//时间格式 2010/08/11 10:38:22  </div><div class="line">	char strEventTime[] = &quot;2010/08/11 10:38:22&quot;;</div><div class="line">	char *token = NULL;</div><div class="line">	char *next_token = NULL;</div><div class="line">	token = strtok_s(strEventTime, &quot;/&quot;, &amp;next_token);</div><div class="line">	char *year = token;</div><div class="line">	if (token != NULL)</div><div class="line">	&#123;</div><div class="line">		token = strtok_s(NULL, &quot;/&quot;,&amp;next_token);</div><div class="line">	&#125;</div><div class="line">	char *month = token;</div><div class="line">	if (token != NULL)</div><div class="line">	&#123;</div><div class="line">		token = strtok_s(NULL, &quot; &quot;, &amp;next_token);</div><div class="line">	&#125;</div><div class="line">	char *day = token;</div><div class="line">	if (token != NULL)</div><div class="line">	&#123;</div><div class="line">		token = strtok_s(NULL, &quot;:&quot;, &amp;next_token);</div><div class="line">	&#125;</div><div class="line">	char *hour = token;</div><div class="line">	if (token != NULL)</div><div class="line">	&#123;</div><div class="line">		token = strtok_s(NULL, &quot;:&quot;, &amp;next_token);</div><div class="line">	&#125;</div><div class="line">	char *minute = token;</div><div class="line"></div><div class="line">	if (token != NULL)</div><div class="line">	&#123;</div><div class="line">		token = strtok_s(NULL, &quot;:&quot;, &amp;next_token);</div><div class="line">	&#125;</div><div class="line">	char *second = token;</div><div class="line"></div><div class="line">	printf(&quot;%s %s %s %s %s %s \n&quot;, year, month, day, hour, minute, second);</div><div class="line">	system(&quot;pause&quot;);</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="strtok-r函数"><a href="#strtok-r函数" class="headerlink" title="strtok_r函数"></a>strtok_r函数</h2><p>strtok_s函数是<strong>linux</strong>下分割字符串的安全函数，函数声明如下：</p>
+<p><code>char *strtok_r(char *str, const char *delim, char **saveptr);</code></p>
+<p>该函数也会破坏带分解字符串的完整性，但是其将<strong>剩余的字符串保存在saveptr变量中，保证了安全性。</strong></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/08/strtok、strtok-s、strtok-r字符串分割/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-C-模板与泛型编程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
