@@ -149,6 +149,99 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-C-递归-引用或者参数传递" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/10/C-递归-引用或者参数传递/">C++ 递归 引用或者参数传递</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/10/C-递归-引用或者参数传递/" class="archive-article-date">
+  	<time datetime="2017-08-10T10:29:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>递归很容易，且用且小心！</p>
+</blockquote>
+<p>当递归参数传递为引用或者指针时：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">A</span> </span></div><div class="line"><span class="class">&#123;</span></div><div class="line">    <span class="keyword">int</span> value;</div><div class="line">&#125;;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(A &amp;a)</span></span>&#123;</div><div class="line">    <span class="comment">//todo something</span></div><div class="line">    <span class="comment">// change a.value</span></div><div class="line">    func(A &amp;a);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//开始调用</span></div><div class="line">A a;</div><div class="line">func(a);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>可以发现value还是默认初始化的值为0,并没有在递归中change而change，这是因为当出栈的时候局部变量已经销毁，对a的修改并没返回。<br>不管使用值传递还是引用传递（或者指针）效果都是一样的。</p>
+</blockquote>
+<p>那怎么样解决这样的问题呢？</p>
+<ul>
+<li>第一种办法就是使用返回值的方式记录出栈前的数据,最后使用返回值就行了</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function">A <span class="title">func</span><span class="params">(A &amp;a)</span></span>&#123;</div><div class="line">    <span class="comment">//todo something</span></div><div class="line">    <span class="comment">// change a.value</span></div><div class="line">    <span class="keyword">return</span> func(A &amp;a);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>第二种办法就是使用数组将出栈前数据保存起来，这样就不会被销毁掉</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">vector</span>&lt;A&gt; &amp; vec_as</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(A &amp;a,<span class="built_in">vector</span>&lt;A&gt; &amp; vec_as)</span></span>&#123;</div><div class="line">    <span class="comment">//todo something</span></div><div class="line">    <span class="comment">// change a.value and vec_as.add a</span></div><div class="line">    func(A &amp;a);</div><div class="line">&#125;</div><div class="line"><span class="comment">// 最后直接取数组vec_as中的数据就行了</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>递归很容易，且用且小心！</p>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">c++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/10/C-递归-引用或者参数传递/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-strtok、strtok-s、strtok-r字符串分割" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
