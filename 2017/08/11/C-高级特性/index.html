@@ -6,21 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://genge.cc">
-  <title>C++ OOP | Genge</title>
+  <title>C++ 高级特性 | Genge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="基类派生类定义规则 基类通常都应该定义一个虚析构函数，即使该函数不执行任何实际操作也是如此。 关键字virtual只能出现在类内部的声明语句之前而不能用于类外部的函数定义。 如果基类函数时virtual，那么该函数在派生类中隐式也是虚函数。 首先初始化基类的部分，然后按照声明的顺序依次初始化派生类的成员。并且通过调用基类的构造函数来初始化那些从基类中继承而来的成员。 静态成员会被继承，但是对于静态">
+  <meta name="description" content="元组tuple包含标准库1#include &amp;lt;tuple&amp;gt; tuple(元组)在定义的时候需要制定每个字段的类型，字段个数定义过后不能再次改变，和pair类似，算是其加强版。两个tuple就可以进行&amp;lt; 和 == 运算，但是前提是字段个数相同，而且字段类型也需要一致。 123456789101112131415161718#include &amp;lt;iostream&amp;gt;#incl">
 <meta name="keywords" content="c++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++ OOP">
-<meta property="og:url" content="http://genge.cc/2017/08/03/C-OOP/index.html">
+<meta property="og:title" content="C++ 高级特性">
+<meta property="og:url" content="http://genge.cc/2017/08/11/C-高级特性/index.html">
 <meta property="og:site_name" content="Genge">
-<meta property="og:description" content="基类派生类定义规则 基类通常都应该定义一个虚析构函数，即使该函数不执行任何实际操作也是如此。 关键字virtual只能出现在类内部的声明语句之前而不能用于类外部的函数定义。 如果基类函数时virtual，那么该函数在派生类中隐式也是虚函数。 首先初始化基类的部分，然后按照声明的顺序依次初始化派生类的成员。并且通过调用基类的构造函数来初始化那些从基类中继承而来的成员。 静态成员会被继承，但是对于静态">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/6B3C93642A6D46FDA954FA196F01557C/4007">
-<meta property="og:updated_time" content="2017-08-03T13:01:11.869Z">
+<meta property="og:description" content="元组tuple包含标准库1#include &amp;lt;tuple&amp;gt; tuple(元组)在定义的时候需要制定每个字段的类型，字段个数定义过后不能再次改变，和pair类似，算是其加强版。两个tuple就可以进行&amp;lt; 和 == 运算，但是前提是字段个数相同，而且字段类型也需要一致。 123456789101112131415161718#include &amp;lt;iostream&amp;gt;#incl">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/4A68ADE99018414EB7B6F81FE9609E27/4364">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/0069327153F6444F92E38D5262D47B7D/4467">
+<meta property="og:updated_time" content="2017-08-11T09:51:54.246Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++ OOP">
-<meta name="twitter:description" content="基类派生类定义规则 基类通常都应该定义一个虚析构函数，即使该函数不执行任何实际操作也是如此。 关键字virtual只能出现在类内部的声明语句之前而不能用于类外部的函数定义。 如果基类函数时virtual，那么该函数在派生类中隐式也是虚函数。 首先初始化基类的部分，然后按照声明的顺序依次初始化派生类的成员。并且通过调用基类的构造函数来初始化那些从基类中继承而来的成员。 静态成员会被继承，但是对于静态">
-<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/6B3C93642A6D46FDA954FA196F01557C/4007">
+<meta name="twitter:title" content="C++ 高级特性">
+<meta name="twitter:description" content="元组tuple包含标准库1#include &amp;lt;tuple&amp;gt; tuple(元组)在定义的时候需要制定每个字段的类型，字段个数定义过后不能再次改变，和pair类似，算是其加强版。两个tuple就可以进行&amp;lt; 和 == 运算，但是前提是字段个数相同，而且字段类型也需要一致。 123456789101112131415161718#include &amp;lt;iostream&amp;gt;#incl">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/4A68ADE99018414EB7B6F81FE9609E27/4364">
   
     <link rel="alternative" href="/atom.xml" title="Genge" type="application/atom+xml">
   
@@ -154,61 +155,63 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-C-OOP" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-C-高级特性" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      C++ OOP
+      C++ 高级特性
     </h1>
   
 
         
-        <a href="/2017/08/03/C-OOP/" class="archive-article-date">
-  	<time datetime="2017-08-03T13:00:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-03</time>
+        <a href="/2017/08/11/C-高级特性/" class="archive-article-date">
+  	<time datetime="2017-08-11T06:28:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-11</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="基类派生类定义规则"><a href="#基类派生类定义规则" class="headerlink" title="基类派生类定义规则"></a>基类派生类定义规则</h2><ul>
-<li>基类通常都应该定义一个虚析构函数，即使该函数不执行任何实际操作也是如此。</li>
-<li>关键字virtual只能出现在类内部的声明语句之前而不能用于类外部的函数定义。</li>
-<li>如果基类函数时virtual，那么该函数在派生类中隐式也是虚函数。</li>
-<li>首先初始化基类的部分，然后按照声明的顺序依次初始化派生类的成员。并且通过调用基类的构造函数来初始化那些从基类中继承而来的成员。</li>
-<li><p>静态成员会被继承，但是对于静态成员来说都只存在唯一的实例。</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">#include &lt;iostream&gt;</div><div class="line">using namespace std;</div><div class="line">class Base &#123;</div><div class="line">public:</div><div class="line">	static void statment();</div><div class="line"></div><div class="line">&#125;;</div><div class="line">class Derived :public Base &#123;</div><div class="line">	void fun(const Derived&amp;);</div><div class="line"></div><div class="line">&#125;;</div><div class="line">void Base::statment() &#123;</div><div class="line">	cout &lt;&lt; &quot;this is static function of Base&quot; &lt;&lt; endl;</div><div class="line">&#125;</div><div class="line">void Derived::fun(const Derived&amp; derived) &#123;</div><div class="line">	Base::statment();</div><div class="line">	Derived::statment();</div><div class="line">	derived.statment();</div><div class="line">	statment();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <h2 id="元组tuple"><a href="#元组tuple" class="headerlink" title="元组tuple"></a>元组tuple</h2><p>包含标准库<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tuple&gt;</span></span></div></pre></td></tr></table></figure></p>
+<p>tuple(元组)在定义的时候需要制定每个字段的类型，字段个数定义过后不能再次改变，和pair类似，算是其加强版。两个tuple就可以进行&lt; 和 == 运算，但是前提是字段个数相同，而且字段类型也需要一致。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tuple&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * args[])</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	tuple&lt;<span class="keyword">int</span>, <span class="built_in">string</span>&gt; tup1 = make_tuple(<span class="number">1</span>, <span class="string">"huzhgien"</span>);</div><div class="line">	<span class="function"><span class="keyword">typedef</span> <span class="title">decltype</span><span class="params">(tup1)</span> my_tuple</span>;</div><div class="line">	</div><div class="line">	<span class="comment">//tuple&lt;int, string&gt; tup1(1, "huzhgien");</span></div><div class="line">	<span class="comment">// 等价  explicit构造函数不能使用=赋值方式初始化</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; get&lt;<span class="number">1</span>&gt;(tup1).c_str()&lt;&lt;<span class="built_in">endl</span>;     <span class="comment">//得到tuple的第二个字段值</span></div><div class="line">	<span class="comment">//tuple_element&lt;1, my_tuple&gt;::type cnt = get&lt;1&gt;(tup1);</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; tuple_size&lt;my_tuple&gt;::value &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">//得到tuple的字段个数</span></div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong><em>这个数据结构常常用在函数需要返回多个值且不需要新建一个struct或者class时使用</em></strong></p>
+<h2 id="位图bitset"><a href="#位图bitset" class="headerlink" title="位图bitset"></a>位图bitset</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// bitvec1 比初始值小：初始值中的高位被丢弃，只保留13位</span></div><div class="line"><span class="built_in">bitset</span>&lt;13&gt; bitvec1(<span class="number">0xbeef</span>);  <span class="comment">// 二进制位序列为1111011101111</span></div><div class="line"></div><div class="line"><span class="comment">// bitvec1 比初始值大：他的高位置为0</span></div><div class="line"><span class="built_in">bitset</span>&lt;20&gt; bitvec2(<span class="number">0xbeef</span>);  <span class="comment">// 二进制位序列为0001011111011101111</span></div><div class="line"></div><div class="line"><span class="comment">// 在64位机器中,long long 0ULL是64个0比特，因此~0ULL是64个1</span></div><div class="line"><span class="built_in">bitset</span>&lt;128&gt; bitvec3(~<span class="number">0U</span>LL);  <span class="comment">// 0~63位为1；63~127位为0</span></div></pre></td></tr></table></figure>
+<p>还可以使用字符串来初始化bitset<br>字符串中下标最小的字符对应高位，反之亦然；如果string包含字符数比bitset少，那么biset的高位被置为0;</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">bitset</span>&lt;32&gt; bitvec4(<span class="string">"1100"</span>); <span class="comment">//2、3 两位为1，剩余两位为0；其他为都是0</span></div><div class="line"><span class="function"><span class="built_in">string</span> <span class="title">str</span><span class="params">(<span class="string">"1111111111111111000000"</span>)</span></span>;</div><div class="line"><span class="built_in">bitset</span>&lt;32&gt; bitvec6(str,<span class="number">5</span>,<span class="number">4</span>);  <span class="comment">// 使用字符串的其中几位来初始化bitset</span></div></pre></td></tr></table></figure>
+<p>关于bitset一些操作：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/4A68ADE99018414EB7B6F81FE9609E27/4364" alt="image"></p>
+<h2 id="随机数"><a href="#随机数" class="headerlink" title="随机数"></a>随机数</h2><blockquote>
+<p>在老版本的c和c++语言中都依赖于一个简单的C库函数rand来生成随机数，这个函数生成均匀分布的伪随机数（随机种子不改的话，每次运行结果都一样，因此每次都需要重置随机种子），每个随机数的范围在0~Max_Value系统相关最大值（最少为332767） </p>
+<p>然而很多情况下，非均匀的分布随机数也需要，还有浮点数等，这个函数并不适用。</p>
+<p>C++程序不应该使用库函数rand，而应该使用default_random_engine类和恰当分布类对象。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;random&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * args[])</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	default_random_engine e;</div><div class="line">	<span class="comment">//default_random_engine e(int); // 指定随机发生种子</span></div><div class="line">	</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; e()&lt;&lt;<span class="built_in">endl</span>;  <span class="comment">//直接生成  使用默认的分布对象</span></div><div class="line">	uniform_int_distribution&lt;<span class="keyword">unsigned</span>&gt; u(<span class="number">0</span>, <span class="number">9</span>);</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;++i)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; u(e) &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">//指定分布函数</span></div><div class="line">	&#125;</div><div class="line">	<span class="comment">// 一般使用时间戳来设置随机种子  秒级别的随机种子  在一秒内生成的随机数序列相同</span></div><div class="line">	<span class="comment">//default_random_engine e(time(0)); </span></div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">default_real_engine  ;<span class="comment">//实数随机生成引擎</span></div><div class="line">normal_distribution  ;<span class="comment">//正太分布：需要指定均值和标准差</span></div><div class="line">bernoulli_distrbution ;<span class="comment">//伯努利分布，可以生成50%的bool值</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>老版本C++一般使用srand((uint32)time(0))来重置随机种子 ，然后使用rand来生成</p>
+</blockquote>
+<h2 id="IO再探"><a href="#IO再探" class="headerlink" title="IO再探"></a>IO再探</h2><ol>
+<li><strong>ends与endl的区别:</strong><blockquote>
+<p>ends函数 终止字符串 endl 函数 终止一行并刷新缓冲区</p>
+</blockquote>
 </li>
-<li><p>防止类继承的方法有：在类名后加final关键字修饰</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">class Derived final:public Base &#123;</div><div class="line"> void fun(const Derived&amp;);</div><div class="line"></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</ol>
+<blockquote>
+<p>&lt;&lt; ends 相当于 &lt;&lt; ‘\0’<br>    &lt;&lt; endl 相当于 &lt;&lt; ‘\n’ &lt;&lt; flush</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt; </span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>; </div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123; </div><div class="line">   </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"a"</span> ; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"b"</span> &lt;&lt;ends; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"c"</span> &lt;&lt;<span class="built_in">endl</span>; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"e"</span> &lt;&lt; flush; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"f"</span> &lt;&lt; flush; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"g"</span> ; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"h"</span> &lt;&lt;ends; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"i"</span> &lt;&lt; flush; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"j"</span> &lt;&lt;<span class="built_in">endl</span>; </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>; </div><div class="line">&#125; </div><div class="line"></div><div class="line"><span class="comment">//结果 </span></div><div class="line">ab c </div><div class="line">efgh ij</div></pre></td></tr></table></figure>
+<ol>
+<li><p>控制bool输出格式（其他类型类似）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">cout&lt;&lt;boolalpha&lt;&lt;true;//这样可以直接输出字符串true而不是1，修正采用noboolalpha</div><div class="line"></div><div class="line">cout&lt;&lt;hex;十六进制</div><div class="line">cout&lt;&lt;oct;八进制</div><div class="line">cout&lt;&lt;dec；//十进制</div><div class="line">cout&lt;&lt;showbase；可以输出进制</div><div class="line">cout&lt;&lt;noshowbase;//遇上一个命令相反，一般搭配使用</div></pre></td></tr></table></figure>
 </li>
-<li><p>派生类向基类的自动类型转换只是针对指针和引用类型有效，而对于派生类类型和基类类型之间不存在这样的转换（基类定义了拷贝控制成员函数除外）</p>
+<li><p>文件IO流<br>文件输出输入流指针位置的控制</p>
 </li>
-</ul>
-<h2 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h2><ul>
-<li>动态绑定只有当我们通过指针或者引用调用虚函数时才会发生，当通过一个普通类型得我表达式调用虚函数时，在编译时就会将调用的版本确定下来。</li>
-<li>基类中虚函数在派生类中隐含地也是一个虚函数，当派生类覆盖了某个虚函数后，该函数在基类中的形参必须与派生类中的形参严格匹配。</li>
-<li>如果某次函数调用使用了默认实参，那么该实参由本次的静态类型决定：通过指针或者引用调用virtual函数，Base定义了默认实参，Derived继承了这个虚函数，调用时实际运行的是Derived的版本，但是传入函数的默认实际参数还是Base函数的默认实参，因此最好保证基类和派生类的默认实参一致。</li>
-<li>派生类继承而来的函数调用基类virtual函数的方式：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">base-&gt;Base::func(args);</div></pre></td></tr></table></figure>
-<h2 id="抽象基类"><a href="#抽象基类" class="headerlink" title="抽象基类"></a>抽象基类</h2><ul>
-<li>不能直接实例化（创建）抽查基类的对象</li>
-</ul>
-<h2 id="访问控制"><a href="#访问控制" class="headerlink" title="访问控制"></a>访问控制</h2><ul>
-<li><strong>派生类的成员和友元只能访问派生类对象的基类部分受保护成员，对于普通的基类对象中的成员不具有特殊的访问权限。</strong></li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">class Base&#123;</div><div class="line">protected:</div><div class="line">	int pro_mem;</div><div class="line">&#125;;</div><div class="line">class Sneaky :public Base &#123;</div><div class="line">	friend void clobber(Sneaky&amp;); //可以访问Sneaky::pro_mem</div><div class="line">	friend void clobber(Base&amp;);  //不能访问base::pro_mem</div><div class="line">	int j;</div><div class="line">public:</div><div class="line">	void visit() &#123;</div><div class="line">		this-&gt;pro_mem = 0; //正确  </div><div class="line">	&#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">void clobber(Sneaky&amp; s) &#123;</div><div class="line">	s.j = s.pro_mem = 0; //正确</div><div class="line">&#125;</div><div class="line">void clobber(Base&amp; b) &#123;</div><div class="line">	b.pro_mem = 0;  //错误</div><div class="line">&#125;</div><div class="line">void visit2() &#123;</div><div class="line">	Sneaky s;</div><div class="line">	s.pro_mem = 0;  //错误： 对象不能访问基类保护成员</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>默认情况下，使用class关键字定义的派生类是私有继承的；而使用struct关键字定义的派生类是公有继承的</li>
-<li>基类析构函数必须是虚函数，这样才会动态绑定，才会在delete 基类指针或者引用的时候能够调用正确的析构函数，否者delete一个指向派生类对象的基类指针将产生未定义的行为。</li>
-<li>如果构造函数或者析构函数调用了某个虚函数，则我们应该执行与构造函数或者析构函数所属类型相对应的虚函数版本。</li>
-<li>当派生类对象呗赋值给基类对象时，其中派生类部分将被切掉。</li>
-<li>一般在容器中是存放基类的指针或者引用（智能指针），不应该是类类型：<br><img src="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/6B3C93642A6D46FDA954FA196F01557C/4007" alt="image"></li>
-</ul>
+</ol>
+<p><img src="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/0069327153F6444F92E38D5262D47B7D/4467" alt="image"></p>
 
       
 
@@ -304,7 +307,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://genge.cc/2017/08/03/C-OOP/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://genge.cc/2017/08/11/C-高级特性/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -318,18 +321,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/08/05/C-模板与泛型编程/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          C++ 模板与泛型编程
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/08/03/C-类型转换/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">C++类型转换</div>
+    <a href="/2017/08/10/C-递归-引用或者参数传递/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C++ 递归 引用或者参数传递</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -356,7 +350,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基类派生类定义规则"><span class="toc-number">1.</span> <span class="toc-text">基类派生类定义规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#虚函数"><span class="toc-number">2.</span> <span class="toc-text">虚函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#抽象基类"><span class="toc-number">3.</span> <span class="toc-text">抽象基类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问控制"><span class="toc-number">4.</span> <span class="toc-text">访问控制</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#元组tuple"><span class="toc-number">1.</span> <span class="toc-text">元组tuple</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#位图bitset"><span class="toc-number">2.</span> <span class="toc-text">位图bitset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#随机数"><span class="toc-number">3.</span> <span class="toc-text">随机数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IO再探"><span class="toc-number">4.</span> <span class="toc-text">IO再探</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -370,7 +364,7 @@
   
   <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="C-OOP" data-title="C++ OOP" data-url="http://genge.cc/2017/08/03/C-OOP/"></div>
+	<div class="ds-thread" data-thread-key="C-高级特性" data-title="C++ 高级特性" data-url="http://genge.cc/2017/08/11/C-高级特性/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -393,8 +387,8 @@
   <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
 <script>
   var cloudTieConfig = {
-    url: "http://genge.cc/2017/08/03/C-OOP/", 
-    sourceId: "C-OOP",
+    url: "http://genge.cc/2017/08/11/C-高级特性/", 
+    sourceId: "C-高级特性",
     productKey: "true",
     target: "cloud-tie-wrapper"
   };

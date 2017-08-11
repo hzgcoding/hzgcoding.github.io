@@ -149,6 +149,116 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-C-高级特性" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/11/C-高级特性/">C++ 高级特性</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/11/C-高级特性/" class="archive-article-date">
+  	<time datetime="2017-08-11T06:28:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="元组tuple"><a href="#元组tuple" class="headerlink" title="元组tuple"></a>元组tuple</h2><p>包含标准库<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tuple&gt;</span></span></div></pre></td></tr></table></figure></p>
+<p>tuple(元组)在定义的时候需要制定每个字段的类型，字段个数定义过后不能再次改变，和pair类似，算是其加强版。两个tuple就可以进行&lt; 和 == 运算，但是前提是字段个数相同，而且字段类型也需要一致。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tuple&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * args[])</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	tuple&lt;<span class="keyword">int</span>, <span class="built_in">string</span>&gt; tup1 = make_tuple(<span class="number">1</span>, <span class="string">"huzhgien"</span>);</div><div class="line">	<span class="function"><span class="keyword">typedef</span> <span class="title">decltype</span><span class="params">(tup1)</span> my_tuple</span>;</div><div class="line">	</div><div class="line">	<span class="comment">//tuple&lt;int, string&gt; tup1(1, "huzhgien");</span></div><div class="line">	<span class="comment">// 等价  explicit构造函数不能使用=赋值方式初始化</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; get&lt;<span class="number">1</span>&gt;(tup1).c_str()&lt;&lt;<span class="built_in">endl</span>;     <span class="comment">//得到tuple的第二个字段值</span></div><div class="line">	<span class="comment">//tuple_element&lt;1, my_tuple&gt;::type cnt = get&lt;1&gt;(tup1);</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; tuple_size&lt;my_tuple&gt;::value &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">//得到tuple的字段个数</span></div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong><em>这个数据结构常常用在函数需要返回多个值且不需要新建一个struct或者class时使用</em></strong></p>
+<h2 id="位图bitset"><a href="#位图bitset" class="headerlink" title="位图bitset"></a>位图bitset</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// bitvec1 比初始值小：初始值中的高位被丢弃，只保留13位</span></div><div class="line"><span class="built_in">bitset</span>&lt;13&gt; bitvec1(<span class="number">0xbeef</span>);  <span class="comment">// 二进制位序列为1111011101111</span></div><div class="line"></div><div class="line"><span class="comment">// bitvec1 比初始值大：他的高位置为0</span></div><div class="line"><span class="built_in">bitset</span>&lt;20&gt; bitvec2(<span class="number">0xbeef</span>);  <span class="comment">// 二进制位序列为0001011111011101111</span></div><div class="line"></div><div class="line"><span class="comment">// 在64位机器中,long long 0ULL是64个0比特，因此~0ULL是64个1</span></div><div class="line"><span class="built_in">bitset</span>&lt;128&gt; bitvec3(~<span class="number">0U</span>LL);  <span class="comment">// 0~63位为1；63~127位为0</span></div></pre></td></tr></table></figure>
+<p>还可以使用字符串来初始化bitset<br>字符串中下标最小的字符对应高位，反之亦然；如果string包含字符数比bitset少，那么biset的高位被置为0;</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">bitset</span>&lt;32&gt; bitvec4(<span class="string">"1100"</span>); <span class="comment">//2、3 两位为1，剩余两位为0；其他为都是0</span></div><div class="line"><span class="function"><span class="built_in">string</span> <span class="title">str</span><span class="params">(<span class="string">"1111111111111111000000"</span>)</span></span>;</div><div class="line"><span class="built_in">bitset</span>&lt;32&gt; bitvec6(str,<span class="number">5</span>,<span class="number">4</span>);  <span class="comment">// 使用字符串的其中几位来初始化bitset</span></div></pre></td></tr></table></figure>
+<p>关于bitset一些操作：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/4A68ADE99018414EB7B6F81FE9609E27/4364" alt="image"></p>
+<h2 id="随机数"><a href="#随机数" class="headerlink" title="随机数"></a>随机数</h2><blockquote>
+<p>在老版本的c和c++语言中都依赖于一个简单的C库函数rand来生成随机数，这个函数生成均匀分布的伪随机数（随机种子不改的话，每次运行结果都一样，因此每次都需要重置随机种子），每个随机数的范围在0~Max_Value系统相关最大值（最少为332767） </p>
+<p>然而很多情况下，非均匀的分布随机数也需要，还有浮点数等，这个函数并不适用。</p>
+<p>C++程序不应该使用库函数rand，而应该使用default_random_engine类和恰当分布类对象。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;random&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> * args[])</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	default_random_engine e;</div><div class="line">	<span class="comment">//default_random_engine e(int); // 指定随机发生种子</span></div><div class="line">	</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; e()&lt;&lt;<span class="built_in">endl</span>;  <span class="comment">//直接生成  使用默认的分布对象</span></div><div class="line">	uniform_int_distribution&lt;<span class="keyword">unsigned</span>&gt; u(<span class="number">0</span>, <span class="number">9</span>);</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;++i)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; u(e) &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">//指定分布函数</span></div><div class="line">	&#125;</div><div class="line">	<span class="comment">// 一般使用时间戳来设置随机种子  秒级别的随机种子  在一秒内生成的随机数序列相同</span></div><div class="line">	<span class="comment">//default_random_engine e(time(0)); </span></div><div class="line">	system(<span class="string">"pause"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">default_real_engine  ;<span class="comment">//实数随机生成引擎</span></div><div class="line">normal_distribution  ;<span class="comment">//正太分布：需要指定均值和标准差</span></div><div class="line">bernoulli_distrbution ;<span class="comment">//伯努利分布，可以生成50%的bool值</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>老版本C++一般使用srand((uint32)time(0))来重置随机种子 ，然后使用rand来生成</p>
+</blockquote>
+<h2 id="IO再探"><a href="#IO再探" class="headerlink" title="IO再探"></a>IO再探</h2><ol>
+<li><strong>ends与endl的区别:</strong><blockquote>
+<p>ends函数 终止字符串 endl 函数 终止一行并刷新缓冲区</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>&lt;&lt; ends 相当于 &lt;&lt; ‘\0’<br>    &lt;&lt; endl 相当于 &lt;&lt; ‘\n’ &lt;&lt; flush</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt; </span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>; </div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123; </div><div class="line">   </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"a"</span> ; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"b"</span> &lt;&lt;ends; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"c"</span> &lt;&lt;<span class="built_in">endl</span>; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"e"</span> &lt;&lt; flush; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"f"</span> &lt;&lt; flush; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"g"</span> ; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"h"</span> &lt;&lt;ends; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"i"</span> &lt;&lt; flush; </div><div class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"j"</span> &lt;&lt;<span class="built_in">endl</span>; </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>; </div><div class="line">&#125; </div><div class="line"></div><div class="line"><span class="comment">//结果 </span></div><div class="line">ab c </div><div class="line">efgh ij</div></pre></td></tr></table></figure>
+<ol>
+<li><p>控制bool输出格式（其他类型类似）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">cout&lt;&lt;boolalpha&lt;&lt;true;//这样可以直接输出字符串true而不是1，修正采用noboolalpha</div><div class="line"></div><div class="line">cout&lt;&lt;hex;十六进制</div><div class="line">cout&lt;&lt;oct;八进制</div><div class="line">cout&lt;&lt;dec；//十进制</div><div class="line">cout&lt;&lt;showbase；可以输出进制</div><div class="line">cout&lt;&lt;noshowbase;//遇上一个命令相反，一般搭配使用</div></pre></td></tr></table></figure>
+</li>
+<li><p>文件IO流<br>文件输出输入流指针位置的控制</p>
+</li>
+</ol>
+<p><img src="http://note.youdao.com/yws/public/resource/442f4d903c7a49013290c1fd611019a7/xmlnote/0069327153F6444F92E38D5262D47B7D/4467" alt="image"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">c++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/11/C-高级特性/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-C-递归-引用或者参数传递" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1025,11 +1135,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">c++</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">c++</a>
               </li>
             
             <div class="clearfix"></div>
