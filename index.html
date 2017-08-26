@@ -149,6 +149,120 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-条款02-尽量以const，enum，inline，替换-define" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/26/条款02-尽量以const，enum，inline，替换-define/">条款02  尽量以const，enum，inline，替换#define</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/26/条款02-尽量以const，enum，inline，替换-define/" class="archive-article-date">
+  	<time datetime="2017-08-26T07:30:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="预处理器与编译器"><a href="#预处理器与编译器" class="headerlink" title="预处理器与编译器"></a>预处理器与编译器</h2><p><code>#define</code>属于预处理，即在所有编译前将符号替换掉<br><code>const</code>,<code>enums</code>,<code>inline</code> 等属于编译期处理的</p>
+<h2 id="常量定义"><a href="#常量定义" class="headerlink" title="常量定义"></a>常量定义</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> ASPECT_RATIO 1.63     <span class="comment">//1</span></span></div><div class="line"><span class="keyword">const</span> <span class="keyword">double</span> AspectRatio = <span class="number">1.63</span>   <span class="comment">//2</span></div></pre></td></tr></table></figure>
+<ol>
+<li>第一种写法导致在程序调试或者运行后看不到<code>ASPECT_RATIO</code> 的存在，因为在预处理器就已经替换所有，在编译器中记号表（<code>symbol table</code>）中找不到这个符号，这样就对程序调试造成很大困难，因为你并不知道1.63从哪里而来，表示什么意思；</li>
+<li>第二种是比较推荐的，除了上述，这种可能比<code>#define</code>更小代码量，使用<code>#define</code>可能会导致目标码中出现多份1.63，而const只有一份存在</li>
+</ol>
+<h2 id="常量替换"><a href="#常量替换" class="headerlink" title="常量替换"></a>常量替换</h2><ul>
+<li><p><strong>定义常量指针</strong></p>
+<p>  务必使用两个<code>const</code>保证不会被改变，保持常量的性质<br>  <code>const char* const authorName = &quot;huzhigen&quot;</code>,并且<code>string</code>一般都比<code>char*</code>要更加适合<code>const std:string authorName(&quot;huzhigen&quot;)</code></p>
+</li>
+<li><p><strong>类专属常量</strong></p>
+<p>  class专属常量，既然是常量就不会被改变，那么更好的做法是加上<code>static</code>修饰,所有类对象共享一个常量</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">GamePlayer</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line">    <span class="keyword">private</span>:</div><div class="line">        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> NumTurns =<span class="number">5</span>; <span class="comment">//1常量声明</span></div><div class="line">        <span class="keyword">int</span> scores[NumTurns];  <span class="comment">//2使用常量 </span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>顺带一提，`#define`就没法定义class专属常量了，因为没法控制scope作用域，一旦宏被定义，他就在其后的编译过程中有效，除非使用`#undef`，并且也不能提供任何封装性，即没有`private #define`这样的语法。
+
+另外对于语句1，有些编译器是不支持（或者错误的不允许）常量声明时赋值的，即`in class 初值设定`,那么需要在类实现文件中定义此常量`const int GamePlayer::NumTurns = 5;`
+
+但是这时，语句2就会报错，数组声明时必须知道其大小（必须在编译器知道数组的长度），那么这时候怎么办呢？`enum hack` 无疑可以很好解决这样的问题。
+</code></pre><h2 id="the-enum-hack"><a href="#the-enum-hack" class="headerlink" title="the enum hack"></a>the enum hack</h2><p>改用enum的写法后：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">GamePlayer</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line">    <span class="keyword">private</span>:</div><div class="line">        <span class="keyword">enum</span> &#123; NumTurns = <span class="number">5</span> &#125;;  <span class="comment">//enum hack </span></div><div class="line">        <span class="keyword">int</span> scores[NumTurns];  <span class="comment">//2使用常量 </span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>enum hack</code>与<code>#define</code>是比较像的，都不能获取其地址，而<code>const</code>就可以.</p>
+<h3 id="使用enum-hack的好处："><a href="#使用enum-hack的好处：" class="headerlink" title="使用enum hack的好处："></a>使用<code>enum hack</code>的好处：</h3><ul>
+<li><code>enum hack</code>的行为更像<code>#define</code>而不是<code>const</code>，如果你不希望别人得到你的常量成员的指针或引用，你可以用<code>enum hack</code>替代之。（为什么不直接用#define呢？首先，因为#define是字符串替换，所以不利于程序调试。其次，#define的可视范围难以控制，比如你怎么让#define定义的常量只在一个类内可见呢？除非你用丑陋的#undef。</li>
+<li>使用enum hack不会导致 “不必要的内存分配”:创建一个pointer或者reference指向该常量后，不优秀的编译器可能会分配少许内存给指针等，当我们使用enum后，就可以加以约束，不允许有指针或者引用指向他们，<strong>Enums和 #defines 一样绝不会导致非必要的内存分配</strong></li>
+<li>enum hack是模板元编程的一项基本技术，大量的代码在使用它。当你看到它时，你要认识它。</li>
+</ul>
+<h2 id="使用inline-template-function替换-define-function"><a href="#使用inline-template-function替换-define-function" class="headerlink" title="使用inline template function替换#define function"></a>使用inline template function替换#define function</h2><p><code>#define</code>定义的函数，虽然在省略了<code>function call</code>的开销，但是他不仅难看，而且很容出错，难以控制.</p>
+<p>例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> GetMax(a , b)  f((a) &gt; (b) ? (a) : (b))</span></div></pre></td></tr></table></figure>
+<p>写这种宏不仅痛苦，也不好看，每个参数也必须加括号，否者必然会遇到麻烦</p>
+<p>即使如此，也会出现一些意想不到的错误.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a =<span class="number">5</span> ,b =<span class="number">0</span>;</div><div class="line">GetMax(++a,b);    <span class="comment">// a被累加依次</span></div><div class="line">GetMax(++a,b+<span class="number">10</span>); <span class="comment">//a会被累加两次</span></div></pre></td></tr></table></figure>
+<p>a 的递增次数取决于 “它被拿来和谁比较”</p>
+<p>我们可以用inline template function更好实现这样的功能</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">GetMax</span><span class="params">(<span class="keyword">const</span> T&amp; a, <span class="keyword">const</span> T&amp; b)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    f(a&gt;b?a:b);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看出这里不需要为每个参数加括号，也不需要担心参数执行非预期行为，而且作用域也是可控的，只要愿意可以将此function写成private inline函数，这是宏没法做到的</p>
+<h2 id="请记住"><a href="#请记住" class="headerlink" title="请记住"></a>请记住</h2><ul>
+<li>对于单纯常量，最好以<code>const</code>对象或者<code>enum</code>替换<code>#define</code></li>
+<li>对于形似函数的宏（<code>macros</code>），最好改用<code>inline</code>函数替换<code>#define</code></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">c++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/26/条款02-尽量以const，enum，inline，替换-define/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-LinkedList源码分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1085,77 +1199,10 @@
 
 
   
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/08/01/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2017/08/01/hello-world/" class="archive-article-date">
-  	<time datetime="2017-08-01T08:03:05.274Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/08/01/hello-world/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 
 
@@ -1245,11 +1292,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">c++</a>
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+                <a href="javascript:void(0)" class="js-tag color4">c++</a>
               </li>
              
               <li class="article-tag-list-item">
