@@ -6,19 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://genge.cc">
-  <title>条款02  尽量以const，enum，inline，替换#define | Genge</title>
+  <title>Lua基础知识 | Genge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="预处理器与编译器#define属于预处理，即在所有编译前将符号替换掉const,enums,inline 等属于编译期处理的 常量定义12#define ASPECT_RATIO 1.63     //1const double AspectRatio = 1.63   //2  第一种写法导致在程序调试或者运行后看不到ASPECT_RATIO 的存在，因为在预处理器就已经替换所有，在编译器中记号">
-<meta name="keywords" content="c++">
+  <meta name="description" content="Lua基础知识不一样 变量没有类型，值有类型 变量默认都是global，除非声明local，若变量名相同，将覆盖之 变量交换值方便a,b = b,a 当变量没有被初始化（仅仅是声明），被定义为nil 索引从1开始，这点跟其他的语言区别很大，格外注意 0和空字符串被认为是true,条件检查也是如此 不等于号~= 使用两个点.. 连接两个字符串 #:一个一元运算符返回一个字符串或一个表的长度,   #">
+<meta name="keywords" content="lua">
 <meta property="og:type" content="article">
-<meta property="og:title" content="条款02  尽量以const，enum，inline，替换#define">
-<meta property="og:url" content="http://genge.cc/2017/08/26/条款02-尽量以const，enum，inline，替换-define/index.html">
+<meta property="og:title" content="Lua基础知识">
+<meta property="og:url" content="http://genge.cc/2017/09/12/Lua基础知识/index.html">
 <meta property="og:site_name" content="Genge">
-<meta property="og:description" content="预处理器与编译器#define属于预处理，即在所有编译前将符号替换掉const,enums,inline 等属于编译期处理的 常量定义12#define ASPECT_RATIO 1.63     //1const double AspectRatio = 1.63   //2  第一种写法导致在程序调试或者运行后看不到ASPECT_RATIO 的存在，因为在预处理器就已经替换所有，在编译器中记号">
-<meta property="og:updated_time" content="2017-08-26T07:39:14.465Z">
+<meta property="og:description" content="Lua基础知识不一样 变量没有类型，值有类型 变量默认都是global，除非声明local，若变量名相同，将覆盖之 变量交换值方便a,b = b,a 当变量没有被初始化（仅仅是声明），被定义为nil 索引从1开始，这点跟其他的语言区别很大，格外注意 0和空字符串被认为是true,条件检查也是如此 不等于号~= 使用两个点.. 连接两个字符串 #:一个一元运算符返回一个字符串或一个表的长度,   #">
+<meta property="og:updated_time" content="2017-09-12T02:47:14.026Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="条款02  尽量以const，enum，inline，替换#define">
-<meta name="twitter:description" content="预处理器与编译器#define属于预处理，即在所有编译前将符号替换掉const,enums,inline 等属于编译期处理的 常量定义12#define ASPECT_RATIO 1.63     //1const double AspectRatio = 1.63   //2  第一种写法导致在程序调试或者运行后看不到ASPECT_RATIO 的存在，因为在预处理器就已经替换所有，在编译器中记号">
+<meta name="twitter:title" content="Lua基础知识">
+<meta name="twitter:description" content="Lua基础知识不一样 变量没有类型，值有类型 变量默认都是global，除非声明local，若变量名相同，将覆盖之 变量交换值方便a,b = b,a 当变量没有被初始化（仅仅是声明），被定义为nil 索引从1开始，这点跟其他的语言区别很大，格外注意 0和空字符串被认为是true,条件检查也是如此 不等于号~= 使用两个点.. 连接两个字符串 #:一个一元运算符返回一个字符串或一个表的长度,   #">
   
     <link rel="alternative" href="/atom.xml" title="Genge" type="application/atom+xml">
   
@@ -152,67 +152,55 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-条款02-尽量以const，enum，inline，替换-define" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Lua基础知识" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      条款02  尽量以const，enum，inline，替换#define
+      Lua基础知识
     </h1>
   
 
         
-        <a href="/2017/08/26/条款02-尽量以const，enum，inline，替换-define/" class="archive-article-date">
-  	<time datetime="2017-08-26T07:30:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-26</time>
+        <a href="/2017/09/12/Lua基础知识/" class="archive-article-date">
+  	<time datetime="2017-09-12T02:46:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-12</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="预处理器与编译器"><a href="#预处理器与编译器" class="headerlink" title="预处理器与编译器"></a>预处理器与编译器</h2><p><code>#define</code>属于预处理，即在所有编译前将符号替换掉<br><code>const</code>,<code>enums</code>,<code>inline</code> 等属于编译期处理的</p>
-<h2 id="常量定义"><a href="#常量定义" class="headerlink" title="常量定义"></a>常量定义</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> ASPECT_RATIO 1.63     <span class="comment">//1</span></span></div><div class="line"><span class="keyword">const</span> <span class="keyword">double</span> AspectRatio = <span class="number">1.63</span>   <span class="comment">//2</span></div></pre></td></tr></table></figure>
-<ol>
-<li>第一种写法导致在程序调试或者运行后看不到<code>ASPECT_RATIO</code> 的存在，因为在预处理器就已经替换所有，在编译器中记号表（<code>symbol table</code>）中找不到这个符号，这样就对程序调试造成很大困难，因为你并不知道1.63从哪里而来，表示什么意思；</li>
-<li>第二种是比较推荐的，除了上述，这种可能比<code>#define</code>更小代码量，使用<code>#define</code>可能会导致目标码中出现多份1.63，而const只有一份存在</li>
+        <h2 id="Lua基础知识"><a href="#Lua基础知识" class="headerlink" title="Lua基础知识"></a>Lua基础知识</h2><h3 id="不一样"><a href="#不一样" class="headerlink" title="不一样"></a>不一样</h3><ol>
+<li>变量没有类型，值有类型</li>
+<li>变量默认都是global，除非声明local，若变量名相同，将覆盖之</li>
+<li>变量交换值方便<code>a,b = b,a</code></li>
+<li>当变量没有被初始化（仅仅是声明），被定义为nil</li>
+<li><strong>索引从1开始，这点跟其他的语言区别很大，格外注意</strong></li>
+<li><strong>0和空字符串被认为是true,条件检查也是如此</strong></li>
+<li>不等于号<code>~=</code></li>
+<li>使用两个点<code>..</code> 连接两个字符串</li>
+<li><code>#</code>:一个一元运算符返回一个字符串或一个表的长度,   #”Hello” 会返回 5.</li>
 </ol>
-<h2 id="常量替换"><a href="#常量替换" class="headerlink" title="常量替换"></a>常量替换</h2><ul>
-<li><p><strong>定义常量指针</strong></p>
-<p>  务必使用两个<code>const</code>保证不会被改变，保持常量的性质<br>  <code>const char* const authorName = &quot;huzhigen&quot;</code>,并且<code>string</code>一般都比<code>char*</code>要更加适合<code>const std:string authorName(&quot;huzhigen&quot;)</code></p>
-</li>
-<li><p><strong>类专属常量</strong></p>
-<p>  class专属常量，既然是常量就不会被改变，那么更好的做法是加上<code>static</code>修饰,所有类对象共享一个常量</p>
-  <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">GamePlayer</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line">    <span class="keyword">private</span>:</div><div class="line">        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> NumTurns =<span class="number">5</span>; <span class="comment">//1常量声明</span></div><div class="line">        <span class="keyword">int</span> scores[NumTurns];  <span class="comment">//2使用常量 </span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
+<h3 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h3><blockquote>
+<p>迭代器是一种结构，使能够遍历所谓的集合或容器中的元素。在Lua中，这些集合通常是指那些用于创建各种数据结构，如数组表。</p>
+</blockquote>
+<h4 id="一般迭代器"><a href="#一般迭代器" class="headerlink" title="一般迭代器"></a>一般迭代器</h4><p>一个通用的迭代器提供的键值对集合中的每个元素：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">array = &#123;<span class="string">"Lua"</span>, <span class="string">"Tutorial"</span>&#125;</div><div class="line"></div><div class="line"><span class="keyword">for</span> key,value <span class="keyword">in</span> <span class="built_in">ipairs</span>(array)   <span class="comment">-- 使用默认ipairs迭代函数</span></div><div class="line"><span class="keyword">do</span></div><div class="line">   <span class="built_in">print</span>(key, value)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>输出结果如下：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>  Lua</div><div class="line"><span class="number">2</span>  Tutorial</div></pre></td></tr></table></figure></p>
+<p>Lua中，有时候使用函数来表示迭代器。基于这些迭代器的功能状态保持，有两种主要类型：</p>
+<ul>
+<li>无状态的迭代器</li>
+<li>迭代器状态</li>
 </ul>
-<pre><code>顺带一提，`#define`就没法定义class专属常量了，因为没法控制scope作用域，一旦宏被定义，他就在其后的编译过程中有效，除非使用`#undef`，并且也不能提供任何封装性，即没有`private #define`这样的语法。
-
-另外对于语句1，有些编译器是不支持（或者错误的不允许）常量声明时赋值的，即`in class 初值设定`,那么需要在类实现文件中定义此常量`const int GamePlayer::NumTurns = 5;`
-
-但是这时，语句2就会报错，数组声明时必须知道其大小（必须在编译器知道数组的长度），那么这时候怎么办呢？`enum hack` 无疑可以很好解决这样的问题。
-</code></pre><h2 id="the-enum-hack"><a href="#the-enum-hack" class="headerlink" title="the enum hack"></a>the enum hack</h2><p>改用enum的写法后：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">GamePlayer</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line">    <span class="keyword">private</span>:</div><div class="line">        <span class="keyword">enum</span> &#123; NumTurns = <span class="number">5</span> &#125;;  <span class="comment">//enum hack </span></div><div class="line">        <span class="keyword">int</span> scores[NumTurns];  <span class="comment">//2使用常量 </span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><code>enum hack</code>与<code>#define</code>是比较像的，都不能获取其地址，而<code>const</code>就可以.</p>
-<h3 id="使用enum-hack的好处："><a href="#使用enum-hack的好处：" class="headerlink" title="使用enum hack的好处："></a>使用<code>enum hack</code>的好处：</h3><ul>
-<li><code>enum hack</code>的行为更像<code>#define</code>而不是<code>const</code>，如果你不希望别人得到你的常量成员的指针或引用，你可以用<code>enum hack</code>替代之。（为什么不直接用#define呢？首先，因为#define是字符串替换，所以不利于程序调试。其次，#define的可视范围难以控制，比如你怎么让#define定义的常量只在一个类内可见呢？除非你用丑陋的#undef。</li>
-<li>使用enum hack不会导致 “不必要的内存分配”:创建一个pointer或者reference指向该常量后，不优秀的编译器可能会分配少许内存给指针等，当我们使用enum后，就可以加以约束，不允许有指针或者引用指向他们，<strong>Enums和 #defines 一样绝不会导致非必要的内存分配</strong></li>
-<li>enum hack是模板元编程的一项基本技术，大量的代码在使用它。当你看到它时，你要认识它。</li>
-</ul>
-<h2 id="使用inline-template-function替换-define-function"><a href="#使用inline-template-function替换-define-function" class="headerlink" title="使用inline template function替换#define function"></a>使用inline template function替换#define function</h2><p><code>#define</code>定义的函数，虽然在省略了<code>function call</code>的开销，但是他不仅难看，而且很容出错，难以控制.</p>
-<p>例如：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> GetMax(a , b)  f((a) &gt; (b) ? (a) : (b))</span></div></pre></td></tr></table></figure>
-<p>写这种宏不仅痛苦，也不好看，每个参数也必须加括号，否者必然会遇到麻烦</p>
-<p>即使如此，也会出现一些意想不到的错误.</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> a =<span class="number">5</span> ,b =<span class="number">0</span>;</div><div class="line">GetMax(++a,b);    <span class="comment">// a被累加依次</span></div><div class="line">GetMax(++a,b+<span class="number">10</span>); <span class="comment">//a会被累加两次</span></div></pre></td></tr></table></figure>
-<p>a 的递增次数取决于 “它被拿来和谁比较”</p>
-<p>我们可以用inline template function更好实现这样的功能</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">GetMax</span><span class="params">(<span class="keyword">const</span> T&amp; a, <span class="keyword">const</span> T&amp; b)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    f(a&gt;b?a:b);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可以看出这里不需要为每个参数加括号，也不需要担心参数执行非预期行为，而且作用域也是可控的，只要愿意可以将此function写成private inline函数，这是宏没法做到的</p>
-<h2 id="请记住"><a href="#请记住" class="headerlink" title="请记住"></a>请记住</h2><ul>
-<li>对于单纯常量，最好以<code>const</code>对象或者<code>enum</code>替换<code>#define</code></li>
-<li>对于形似函数的宏（<code>macros</code>），最好改用<code>inline</code>函数替换<code>#define</code></li>
-</ul>
+<p><strong>无状态的迭代器</strong></p>
+<p>这类型的迭代器功能不保留任何状态。<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 实现打印n个数的平方</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">square</span><span class="params">(iteratorMaxCount,currentNumber)</span></span></div><div class="line">   <span class="keyword">if</span> currentNumber&lt;iteratorMaxCount</div><div class="line">   <span class="keyword">then</span></div><div class="line">      currentNumber = currentNumber+<span class="number">1</span></div><div class="line">   <span class="keyword">return</span> currentNumber, currentNumber*currentNumber</div><div class="line">   <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> square,<span class="number">3</span>,<span class="number">0</span></div><div class="line"><span class="keyword">do</span></div><div class="line">   <span class="built_in">print</span>(i,n)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>输出结果如下：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>   <span class="number">1</span></div><div class="line"><span class="number">2</span>   <span class="number">4</span></div><div class="line"><span class="number">3</span>   <span class="number">9</span></div></pre></td></tr></table></figure></p>
+<p>我们可以稍作修改，以模仿迭代器的工作方式ipairs函数：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">square</span><span class="params">(iteratorMaxCount,currentNumber)</span></span></div><div class="line">   <span class="keyword">if</span> currentNumber&lt;iteratorMaxCount</div><div class="line">   <span class="keyword">then</span></div><div class="line">      currentNumber = currentNumber+<span class="number">1</span></div><div class="line">   <span class="keyword">return</span> currentNumber, currentNumber*currentNumber</div><div class="line">   <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">squares</span><span class="params">(iteratorMaxCount)</span></span></div><div class="line">   <span class="keyword">return</span> square,iteratorMaxCount,<span class="number">0</span></div><div class="line"><span class="keyword">end</span>  </div><div class="line"></div><div class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> squares(<span class="number">3</span>)</div><div class="line"><span class="keyword">do</span> </div><div class="line">    <span class="built_in">print</span>(i,n)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p><strong>有状态迭代器</strong></p>
+<p>使用闭包的概念可以实现:<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">array = &#123;<span class="string">"Lua"</span>, <span class="string">"Tutorial"</span>&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">elementIterator</span> <span class="params">(collection)</span></span></div><div class="line">   <span class="keyword">local</span> index = <span class="number">0</span></div><div class="line">   <span class="keyword">local</span> count = #collection</div><div class="line">   <span class="comment">-- The closure function is returned</span></div><div class="line">   <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span></span></div><div class="line">      index = index + <span class="number">1</span></div><div class="line">      <span class="keyword">if</span> index &lt;= count</div><div class="line">      <span class="keyword">then</span></div><div class="line">         <span class="comment">-- return the current element of the iterator</span></div><div class="line">         <span class="keyword">return</span> collection[index]</div><div class="line">      <span class="keyword">end</span></div><div class="line">   <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> element <span class="keyword">in</span> elementIterator(array)</div><div class="line"><span class="keyword">do</span></div><div class="line">   <span class="built_in">print</span>(element)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>当我们运行上面的程序，会得到下面的输出。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Lua</div><div class="line">Tutorial</div></pre></td></tr></table></figure>
 
       
 
@@ -252,7 +240,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">c++</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">lua</a>
         		</li>
       		
 		</ul>
@@ -308,7 +296,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://genge.cc/2017/08/26/条款02-尽量以const，enum，inline，替换-define/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://genge.cc/2017/09/12/Lua基础知识/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -322,18 +310,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/09/12/Lua基础知识/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Lua基础知识
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/08/11/LinkedList源码分析/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">LinkedList源码分析</div>
+    <a href="/2017/08/26/条款02-尽量以const，enum，inline，替换-define/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">条款02  尽量以const，enum，inline，替换#define</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -360,7 +339,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#预处理器与编译器"><span class="toc-number">1.</span> <span class="toc-text">预处理器与编译器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量定义"><span class="toc-number">2.</span> <span class="toc-text">常量定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量替换"><span class="toc-number">3.</span> <span class="toc-text">常量替换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#the-enum-hack"><span class="toc-number">4.</span> <span class="toc-text">the enum hack</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用enum-hack的好处："><span class="toc-number">4.1.</span> <span class="toc-text">使用enum hack的好处：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用inline-template-function替换-define-function"><span class="toc-number">5.</span> <span class="toc-text">使用inline template function替换#define function</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#请记住"><span class="toc-number">6.</span> <span class="toc-text">请记住</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lua基础知识"><span class="toc-number">1.</span> <span class="toc-text">Lua基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#不一样"><span class="toc-number">1.1.</span> <span class="toc-text">不一样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#迭代器"><span class="toc-number">1.2.</span> <span class="toc-text">迭代器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#一般迭代器"><span class="toc-number">1.2.1.</span> <span class="toc-text">一般迭代器</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -374,7 +353,7 @@
   
   <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="条款02-尽量以const，enum，inline，替换-define" data-title="条款02  尽量以const，enum，inline，替换#define" data-url="http://genge.cc/2017/08/26/条款02-尽量以const，enum，inline，替换-define/"></div>
+	<div class="ds-thread" data-thread-key="Lua基础知识" data-title="Lua基础知识" data-url="http://genge.cc/2017/09/12/Lua基础知识/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -397,8 +376,8 @@
   <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
 <script>
   var cloudTieConfig = {
-    url: "http://genge.cc/2017/08/26/条款02-尽量以const，enum，inline，替换-define/", 
-    sourceId: "条款02-尽量以const，enum，inline，替换-define",
+    url: "http://genge.cc/2017/09/12/Lua基础知识/", 
+    sourceId: "Lua基础知识",
     productKey: "true",
     target: "cloud-tie-wrapper"
   };

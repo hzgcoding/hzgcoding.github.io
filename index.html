@@ -149,6 +149,108 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Lua基础知识" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/09/12/Lua基础知识/">Lua基础知识</a>
+    </h1>
+  
+
+        
+        <a href="/2017/09/12/Lua基础知识/" class="archive-article-date">
+  	<time datetime="2017-09-12T02:46:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Lua基础知识"><a href="#Lua基础知识" class="headerlink" title="Lua基础知识"></a>Lua基础知识</h2><h3 id="不一样"><a href="#不一样" class="headerlink" title="不一样"></a>不一样</h3><ol>
+<li>变量没有类型，值有类型</li>
+<li>变量默认都是global，除非声明local，若变量名相同，将覆盖之</li>
+<li>变量交换值方便<code>a,b = b,a</code></li>
+<li>当变量没有被初始化（仅仅是声明），被定义为nil</li>
+<li><strong>索引从1开始，这点跟其他的语言区别很大，格外注意</strong></li>
+<li><strong>0和空字符串被认为是true,条件检查也是如此</strong></li>
+<li>不等于号<code>~=</code></li>
+<li>使用两个点<code>..</code> 连接两个字符串</li>
+<li><code>#</code>:一个一元运算符返回一个字符串或一个表的长度,   #”Hello” 会返回 5.</li>
+</ol>
+<h3 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h3><blockquote>
+<p>迭代器是一种结构，使能够遍历所谓的集合或容器中的元素。在Lua中，这些集合通常是指那些用于创建各种数据结构，如数组表。</p>
+</blockquote>
+<h4 id="一般迭代器"><a href="#一般迭代器" class="headerlink" title="一般迭代器"></a>一般迭代器</h4><p>一个通用的迭代器提供的键值对集合中的每个元素：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">array = &#123;<span class="string">"Lua"</span>, <span class="string">"Tutorial"</span>&#125;</div><div class="line"></div><div class="line"><span class="keyword">for</span> key,value <span class="keyword">in</span> <span class="built_in">ipairs</span>(array)   <span class="comment">-- 使用默认ipairs迭代函数</span></div><div class="line"><span class="keyword">do</span></div><div class="line">   <span class="built_in">print</span>(key, value)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>输出结果如下：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>  Lua</div><div class="line"><span class="number">2</span>  Tutorial</div></pre></td></tr></table></figure></p>
+<p>Lua中，有时候使用函数来表示迭代器。基于这些迭代器的功能状态保持，有两种主要类型：</p>
+<ul>
+<li>无状态的迭代器</li>
+<li>迭代器状态</li>
+</ul>
+<p><strong>无状态的迭代器</strong></p>
+<p>这类型的迭代器功能不保留任何状态。<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 实现打印n个数的平方</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">square</span><span class="params">(iteratorMaxCount,currentNumber)</span></span></div><div class="line">   <span class="keyword">if</span> currentNumber&lt;iteratorMaxCount</div><div class="line">   <span class="keyword">then</span></div><div class="line">      currentNumber = currentNumber+<span class="number">1</span></div><div class="line">   <span class="keyword">return</span> currentNumber, currentNumber*currentNumber</div><div class="line">   <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> square,<span class="number">3</span>,<span class="number">0</span></div><div class="line"><span class="keyword">do</span></div><div class="line">   <span class="built_in">print</span>(i,n)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>输出结果如下：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>   <span class="number">1</span></div><div class="line"><span class="number">2</span>   <span class="number">4</span></div><div class="line"><span class="number">3</span>   <span class="number">9</span></div></pre></td></tr></table></figure></p>
+<p>我们可以稍作修改，以模仿迭代器的工作方式ipairs函数：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">square</span><span class="params">(iteratorMaxCount,currentNumber)</span></span></div><div class="line">   <span class="keyword">if</span> currentNumber&lt;iteratorMaxCount</div><div class="line">   <span class="keyword">then</span></div><div class="line">      currentNumber = currentNumber+<span class="number">1</span></div><div class="line">   <span class="keyword">return</span> currentNumber, currentNumber*currentNumber</div><div class="line">   <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">squares</span><span class="params">(iteratorMaxCount)</span></span></div><div class="line">   <span class="keyword">return</span> square,iteratorMaxCount,<span class="number">0</span></div><div class="line"><span class="keyword">end</span>  </div><div class="line"></div><div class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> squares(<span class="number">3</span>)</div><div class="line"><span class="keyword">do</span> </div><div class="line">    <span class="built_in">print</span>(i,n)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p><strong>有状态迭代器</strong></p>
+<p>使用闭包的概念可以实现:<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">array = &#123;<span class="string">"Lua"</span>, <span class="string">"Tutorial"</span>&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">elementIterator</span> <span class="params">(collection)</span></span></div><div class="line">   <span class="keyword">local</span> index = <span class="number">0</span></div><div class="line">   <span class="keyword">local</span> count = #collection</div><div class="line">   <span class="comment">-- The closure function is returned</span></div><div class="line">   <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span></span></div><div class="line">      index = index + <span class="number">1</span></div><div class="line">      <span class="keyword">if</span> index &lt;= count</div><div class="line">      <span class="keyword">then</span></div><div class="line">         <span class="comment">-- return the current element of the iterator</span></div><div class="line">         <span class="keyword">return</span> collection[index]</div><div class="line">      <span class="keyword">end</span></div><div class="line">   <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> element <span class="keyword">in</span> elementIterator(array)</div><div class="line"><span class="keyword">do</span></div><div class="line">   <span class="built_in">print</span>(element)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>当我们运行上面的程序，会得到下面的输出。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Lua</div><div class="line">Tutorial</div></pre></td></tr></table></figure>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">lua</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/09/12/Lua基础知识/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-条款02-尽量以const，enum，inline，替换-define" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1081,124 +1183,6 @@
 
 
   
-    <article id="post-CPP学习之旅" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/08/01/CPP学习之旅/">C++ 学习之旅</a>
-    </h1>
-  
-
-        
-        <a href="/2017/08/01/CPP学习之旅/" class="archive-article-date">
-  	<time datetime="2017-08-01T12:04:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="顺序容器"><a href="#顺序容器" class="headerlink" title="顺序容器"></a>顺序容器</h2><ol>
-<li>支持随机访问容器：vector、deque、array、stringlist双向访问，forward_list单向顺序访，除了 array外 其他容器都支持增加和删除操作！</li>
-</ol>
-<h2 id="关联容器"><a href="#关联容器" class="headerlink" title="关联容器"></a>关联容器</h2><ol>
-<li>联容器的迭代器都是双向的</li>
-<li><p>map、set等都可以用列表初始化</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span>&lt;<span class="built_in">string</span>&gt; exclude = &#123;<span class="string">"the"</span>,<span class="string">"but"</span>,<span class="string">"huzhigen"</span>,<span class="string">"and"</span>,<span class="string">"You"</span>&#125;</div><div class="line"><span class="built_in">map</span>&lt;<span class="built_in">string</span>,<span class="built_in">string</span>&gt; authors = &#123;</div><div class="line">    &#123;<span class="string">"123"</span>,<span class="string">"456"</span>&#125;,</div><div class="line">    &#123;<span class="string">"hzg"</span>,<span class="string">"world"</span>&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li>pair的两个成员都是public的 ，可以使用p.first或者p.second来取得</li>
-<li>pair对象进行比较相等的条件为first和second分别相等</li>
-<li>set、mapde的成员key_type表示关键字的类型，set中value_type表示关键字类型，而map中表示的是pair<const kay_type,mapped_type="">类型，mapped_type才是关键字关联的类型</const></li>
-<li>set的迭代器只能访问set中的元素，而不能修改集合的元素值。</li>
-<li>使用一个不再容器中的关键字作为下标，会添加一个具有此关键字的元素到map中</li>
-</ol>
-<h2 id="动态内存"><a href="#动态内存" class="headerlink" title="动态内存"></a>动态内存</h2><ol>
-<li><p>对于内置类型来说：值初始化的内置类型对象有着良好定义的值，而默认初始化的对象值是未定义的。</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> *p1 = <span class="keyword">new</span> <span class="keyword">int</span>;   <span class="comment">// 默认初始化，指向的对象未定义</span></div><div class="line"><span class="keyword">int</span> *p2 = <span class="keyword">new</span> <span class="keyword">int</span>();   <span class="comment">//值初始化为0</span></div></pre></td></tr></table></figure>
-</li>
-</ol>
-<pre><code>而对于其他定义类型则使用默认构造器初始化
-
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">string</span> *p1 = <span class="keyword">new</span> <span class="built_in">string</span>;   <span class="comment">// 默认初始化，指向的对象是空string</span></div><div class="line"><span class="built_in">string</span> *p2 = <span class="keyword">new</span> <span class="built_in">string</span>();   <span class="comment">//值初始化为空string</span></div></pre></td></tr></table></figure>
-</code></pre><ol>
-<li><p>由于编译器也好用初始化器的类型来推断要分配的类型，只有初始化括号仅有一个参数的时候才可以使用auto。</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> p1 = <span class="keyword">new</span> <span class="keyword">auto</span>(obj);   <span class="comment">// p指向一个与obj类型相同的对象，而且该对象使用obj进行初始化</span></div><div class="line"><span class="keyword">auto</span> p2 = <span class="keyword">new</span>  <span class="keyword">auto</span>&#123;a,b,c&#125;;   <span class="comment">//错误</span></div></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>传递给delete的指针必须指向动态分配的内存，或者是一个空指针。释放一块并非new分配的内存，或者将相同的指针值释放多次，其行为是未定义的。new出来的对象一定是等到delete后才会释放内存，因此调用者必须记得显式释放内存，并且将指针置为空。不然会导致内存泄漏问题。</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">delete</span> p;</div><div class="line">p = <span class="literal">nullptr</span>;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li>使用内置指针访问智能指针所负责的对象是很危险的，因为无法知道对象何时会被销毁。永远不要用get初始化另一个智能指针或者为另一个智能指针赋值。</li>
-<li>智能指针应该注意的地方：<ul>
-<li>不使用相同的内置指针初始化多个智能指针</li>
-<li>不delete  get（）返回的指针</li>
-<li>不使用get（）初始化或者reset另一个智能指针</li>
-<li>记住使用get（）返回的指针最后一个对应的智能指针销毁后，你的指针就变为无效</li>
-<li>如果智能指针管理的资源不是new 分配的内存，应该传递给他一个删除器（类似析构）</li>
-</ul>
-</li>
-</ol>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">c++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/08/01/CPP学习之旅/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1292,11 +1276,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">c++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">c++</a>
+                <a href="javascript:void(0)" class="js-tag color4">lua</a>
               </li>
              
               <li class="article-tag-list-item">
