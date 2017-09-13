@@ -149,6 +149,109 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-C-拷贝构造函数和赋值运算符" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/02/C-拷贝构造函数和赋值运算符/">C++ 拷贝构造函数和赋值运算符</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/02/C-拷贝构造函数和赋值运算符/" class="archive-article-date">
+  	<time datetime="2017-08-02T03:38:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文主要介绍了拷贝构造函数和赋值运算符的区别，以及在什么时候调用拷贝构造函数、什么情况下调用赋值运算符。最后，简单的分析了下深拷贝和浅拷贝的问题。</p>
+<h2 id="拷贝构造函数和赋值运算符"><a href="#拷贝构造函数和赋值运算符" class="headerlink" title="拷贝构造函数和赋值运算符"></a>拷贝构造函数和赋值运算符</h2><p>在默认情况下（用户没有定义，但是也没有显式的删除），编译器会自动的隐式生成一个拷贝构造函数和赋值运算符。但用户可以使用delete来指定不生成拷贝构造函数和赋值运算符，这样的对象就不能通过值传递，也不能进行赋值运算。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">class Person</div><div class="line">&#123;</div><div class="line">public:</div><div class="line"></div><div class="line">    Person(const Person&amp; p) = delete;</div><div class="line"></div><div class="line">    Person&amp; operator=(const Person&amp; p) = delete;</div><div class="line"></div><div class="line">private:</div><div class="line">    int age;</div><div class="line">    string name;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>上面的定义的类Person显式的删除了拷贝构造函数和赋值运算符，在需要调用拷贝构造函数或者赋值运算符的地方，会提示<em>无法调用该函数，它是已删除的函数</em>。</p>
+<p>还有一点需要注意的是，<strong>拷贝构造函数必须以引用的方式传递参数</strong>。这是因为，<em>在值传递的方式传递给一个函数的时候，会调用拷贝构造函数生成函数的实参。如果拷贝构造函数的参数仍然是以值的方式，就会无限循环的调用下去，直到函数的栈溢出。</em></p>
+<h2 id="何时调用"><a href="#何时调用" class="headerlink" title="何时调用"></a>何时调用</h2><p>拷贝构造函数和赋值运算符的行为比较相似，都是将一个对象的值复制给另一个对象；但是其结果却有些不同，拷贝构造函数使用传入对象的值生成一个新的对象的实例，而赋值运算符是将对象的值复制给一个已经存在的实例。这种区别从两者的名字也可以很轻易的分辨出来，拷贝构造函数也是一种构造函数，那么它的功能就是创建一个新的对象实例；赋值运算符是执行某种运算，将一个对象的值复制给另一个对象（已经存在的）。<strong>调用的是拷贝构造函数还是赋值运算符，主要是看是否有新的对象实例产生。如果产生了新的对象实例，那调用的就是拷贝构造函数；如果没有，那就是对已有的对象赋值，调用的是赋值运算符。</strong></p>
+<h3 id="调用拷贝构造函数主要有以下场景："><a href="#调用拷贝构造函数主要有以下场景：" class="headerlink" title="调用拷贝构造函数主要有以下场景："></a>调用拷贝构造函数主要有以下场景：</h3><p>对象作为函数的参数，以值传递的方式传给函数。　<br>对象作为函数的返回值，以值的方式从函数返回<br>使用一个对象给另一个对象初始化<br>代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">class Person</div><div class="line">&#123;</div><div class="line">public:</div><div class="line">    Person()&#123;&#125;</div><div class="line">    Person(const Person&amp; p)</div><div class="line">    &#123;</div><div class="line">        cout &lt;&lt; &quot;Copy Constructor&quot; &lt;&lt; endl;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Person&amp; operator=(const Person&amp; p)</div><div class="line">    &#123;</div><div class="line">        cout &lt;&lt; &quot;Assign&quot; &lt;&lt; endl;</div><div class="line">        return *this;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">private:</div><div class="line">    int age;</div><div class="line">    string name;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">void f(Person p)</div><div class="line">&#123;</div><div class="line">    return;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Person f1()</div><div class="line">&#123;</div><div class="line">    Person p;</div><div class="line">    return p;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">    Person p;</div><div class="line">    Person p1 = p;    // 1</div><div class="line">    Person p2;</div><div class="line">    p2 = p;           // 2</div><div class="line">    f(p2);            // 3</div><div class="line"></div><div class="line">    p2 = f1();        // 4</div><div class="line"></div><div class="line">    Person p3 = f1(); // 5</div><div class="line"></div><div class="line">    getchar();</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面代码中定义了一个类Person，显式的定义了拷贝构造函数和赋值运算符。然后定义了两个函数:f，以值的方式参传入Person对象；f1，以值的方式返回Person对象。在main中模拟了5中场景，测试调用的是拷贝构造函数还是赋值运算符。执行结果如下：</p>
+<p><img src="http://images2015.cnblogs.com/blog/439761/201612/439761-20161207163440429-300030531.png" alt=""></p>
+<h3 id="分析如下："><a href="#分析如下：" class="headerlink" title="分析如下："></a>分析如下：</h3><ol>
+<li>这是虽然使用了”=”，但是实际上使用对象p来创建一个新的对象p1。也就是产生了新的对象，所以调用的是拷贝构造函数。</li>
+<li>首先声明一个对象p2，然后使用赋值运算符”=”，将p的值复制给p2，显然是调用赋值运算符，为一个已经存在的对象赋值 。</li>
+<li>以值传递的方式将对象p2传入函数f内，调用拷贝构造函数构建一个函数f可用的实参。</li>
+<li>这条语句拷贝构造函数和赋值运算符都调用了。函数f1以值的方式返回一个Person对象，在返回时会调用拷贝构造函数创建一个临时对象tmp作为返回值；返回后调用赋值运算符将临时对象tmp赋值给p2.</li>
+<li>按照4的解释，应该是首先调用拷贝构造函数创建临时对象；然后再调用拷贝构造函数使用刚才创建的临时对象创建新的对象p3，也就是会调用两次拷贝构造函数。不过，编译器也没有那么傻，应该是直接调用拷贝构造函数使用返回值创建了对象p3。</li>
+</ol>
+<h2 id="深拷贝、浅拷贝"><a href="#深拷贝、浅拷贝" class="headerlink" title="深拷贝、浅拷贝"></a>深拷贝、浅拷贝</h2><p>说到拷贝构造函数，就不得不提深拷贝和浅拷贝。通常，默认生成的拷贝构造函数和赋值运算符，只是简单的进行值的复制。例如：上面的Person类，字段只有int和string两种类型，这在拷贝或者赋值时进行值复制创建的出来的对象和源对象也是没有任何关联，对源对象的任何操作都不会影响到拷贝出来的对象。反之，假如Person有一个对象为int <em>，这时在拷贝时还只是进行值复制，那么创建出来的Person对象的int </em>的值就和源对象的int *指向的是同一个位置。任何一个对象对该值的修改都会影响到另一个对象，这种情况就是浅拷贝。</p>
+<p>深拷贝和浅拷贝主要是针对类中的指针和动态分配的空间来说的，因为对于指针只是简单的值复制并不能分割开两个对象的关联，任何一个对象对该指针的操作都会影响到另一个对象。这时候就需要提供自定义的深拷贝的拷贝构造函数，消除这种影响。通常的原则是：</p>
+<ul>
+<li>含有指针类型的成员或者有动态分配内存的成员都应该提供自定义的拷贝构造函数</li>
+<li>在提供拷贝构造函数的同时，还应该考虑实现自定义的赋值运算符</li>
+</ul>
+<p>对于拷贝构造函数的实现要确保以下几点：</p>
+<ul>
+<li>对于值类型的成员进行值复制</li>
+<li>对于指针和动态分配的空间，在拷贝中应重新分配分配空间</li>
+<li>对于基类，要调用基类合适的拷贝方法，完成基类的拷贝<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2></li>
+<li>拷贝构造函数和赋值运算符的行为比较相似，却产生不同的结果；拷贝构造函数使用已有的对象创建一个新的对象，赋值运算符是将一个对象的值复制给另一个已存在的对象。区分是调用拷贝构造函数还是赋值运算符，主要是否有新的对象产生。</li>
+<li>关于深拷贝和浅拷贝。当类有指针成员或有动态分配空间，都应实现自定义的拷贝构造函数。提供了拷贝构造函数，最后也实现赋值运算符。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/02/C-拷贝构造函数和赋值运算符/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-CPP学习之旅" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -439,11 +542,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">lua</a>
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
+                <a href="javascript:void(0)" class="js-tag color4">lua</a>
               </li>
             
             <div class="clearfix"></div>
