@@ -6,19 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://genge.cc">
-  <title>C++ 学习之旅 | Genge</title>
+  <title>条款33: 避免遮掩继承而来的名称 | Genge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="顺序容器 支持随机访问容器：vector、deque、array、stringlist双向访问，forward_list单向顺序访，除了 array外 其他容器都支持增加和删除操作！  关联容器 联容器的迭代器都是双向的 map、set等都可以用列表初始化  12345set&amp;lt;string&amp;gt; exclude = &amp;#123;&quot;the&quot;,&quot;but&quot;,&quot;huzhigen&quot;,&quot;and&quot;,&quot;Y">
+  <meta name="description" content="变量覆盖首先看如下最简单不过的C++代码：123456int x;  // global xvoid someFunc() &amp;#123;	double x;  // local x	std::cin &amp;gt;&amp;gt; x;&amp;#125; 我相信会CPP的程序猿应该都知道,在someFunc中访问变量x的时候，访问的是double x并非int x，也就是在somefunc作用域中x覆盖了int x，">
 <meta name="keywords" content="c++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++ 学习之旅">
-<meta property="og:url" content="http://genge.cc/2017/08/01/CPP学习之旅/index.html">
+<meta property="og:title" content="条款33: 避免遮掩继承而来的名称">
+<meta property="og:url" content="http://genge.cc/2017/09/16/条款33-避免遮掩继承而来的名称/index.html">
 <meta property="og:site_name" content="Genge">
-<meta property="og:description" content="顺序容器 支持随机访问容器：vector、deque、array、stringlist双向访问，forward_list单向顺序访，除了 array外 其他容器都支持增加和删除操作！  关联容器 联容器的迭代器都是双向的 map、set等都可以用列表初始化  12345set&amp;lt;string&amp;gt; exclude = &amp;#123;&quot;the&quot;,&quot;but&quot;,&quot;huzhigen&quot;,&quot;and&quot;,&quot;Y">
-<meta property="og:updated_time" content="2017-08-02T01:53:04.421Z">
+<meta property="og:description" content="变量覆盖首先看如下最简单不过的C++代码：123456int x;  // global xvoid someFunc() &amp;#123;	double x;  // local x	std::cin &amp;gt;&amp;gt; x;&amp;#125; 我相信会CPP的程序猿应该都知道,在someFunc中访问变量x的时候，访问的是double x并非int x，也就是在somefunc作用域中x覆盖了int x，">
+<meta property="og:updated_time" content="2017-09-18T03:35:44.681Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++ 学习之旅">
-<meta name="twitter:description" content="顺序容器 支持随机访问容器：vector、deque、array、stringlist双向访问，forward_list单向顺序访，除了 array外 其他容器都支持增加和删除操作！  关联容器 联容器的迭代器都是双向的 map、set等都可以用列表初始化  12345set&amp;lt;string&amp;gt; exclude = &amp;#123;&quot;the&quot;,&quot;but&quot;,&quot;huzhigen&quot;,&quot;and&quot;,&quot;Y">
+<meta name="twitter:title" content="条款33: 避免遮掩继承而来的名称">
+<meta name="twitter:description" content="变量覆盖首先看如下最简单不过的C++代码：123456int x;  // global xvoid someFunc() &amp;#123;	double x;  // local x	std::cin &amp;gt;&amp;gt; x;&amp;#125; 我相信会CPP的程序猿应该都知道,在someFunc中访问变量x的时候，访问的是double x并非int x，也就是在somefunc作用域中x覆盖了int x，">
   
     <link rel="alternative" href="/atom.xml" title="Genge" type="application/atom+xml">
   
@@ -152,70 +152,50 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-CPP学习之旅" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-条款33-避免遮掩继承而来的名称" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      C++ 学习之旅
+      条款33: 避免遮掩继承而来的名称
     </h1>
   
 
         
-        <a href="/2017/08/01/CPP学习之旅/" class="archive-article-date">
-  	<time datetime="2017-08-01T12:04:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-01</time>
+        <a href="/2017/09/16/条款33-避免遮掩继承而来的名称/" class="archive-article-date">
+  	<time datetime="2017-09-16T03:46:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-16</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="顺序容器"><a href="#顺序容器" class="headerlink" title="顺序容器"></a>顺序容器</h2><ol>
-<li>支持随机访问容器：vector、deque、array、stringlist双向访问，forward_list单向顺序访，除了 array外 其他容器都支持增加和删除操作！</li>
-</ol>
-<h2 id="关联容器"><a href="#关联容器" class="headerlink" title="关联容器"></a>关联容器</h2><ol>
-<li>联容器的迭代器都是双向的</li>
-<li><p>map、set等都可以用列表初始化</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span>&lt;<span class="built_in">string</span>&gt; exclude = &#123;<span class="string">"the"</span>,<span class="string">"but"</span>,<span class="string">"huzhigen"</span>,<span class="string">"and"</span>,<span class="string">"You"</span>&#125;</div><div class="line"><span class="built_in">map</span>&lt;<span class="built_in">string</span>,<span class="built_in">string</span>&gt; authors = &#123;</div><div class="line">    &#123;<span class="string">"123"</span>,<span class="string">"456"</span>&#125;,</div><div class="line">    &#123;<span class="string">"hzg"</span>,<span class="string">"world"</span>&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li>pair的两个成员都是public的 ，可以使用p.first或者p.second来取得</li>
-<li>pair对象进行比较相等的条件为first和second分别相等</li>
-<li>set、mapde的成员key_type表示关键字的类型，set中value_type表示关键字类型，而map中表示的是pair<const kay_type,mapped_type="">类型，mapped_type才是关键字关联的类型</const></li>
-<li>set的迭代器只能访问set中的元素，而不能修改集合的元素值。</li>
-<li>使用一个不再容器中的关键字作为下标，会添加一个具有此关键字的元素到map中</li>
-</ol>
-<h2 id="动态内存"><a href="#动态内存" class="headerlink" title="动态内存"></a>动态内存</h2><ol>
-<li><p>对于内置类型来说：值初始化的内置类型对象有着良好定义的值，而默认初始化的对象值是未定义的。</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> *p1 = <span class="keyword">new</span> <span class="keyword">int</span>;   <span class="comment">// 默认初始化，指向的对象未定义</span></div><div class="line"><span class="keyword">int</span> *p2 = <span class="keyword">new</span> <span class="keyword">int</span>();   <span class="comment">//值初始化为0</span></div></pre></td></tr></table></figure>
-</li>
-</ol>
-<pre><code>而对于其他定义类型则使用默认构造器初始化
-
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">string</span> *p1 = <span class="keyword">new</span> <span class="built_in">string</span>;   <span class="comment">// 默认初始化，指向的对象是空string</span></div><div class="line"><span class="built_in">string</span> *p2 = <span class="keyword">new</span> <span class="built_in">string</span>();   <span class="comment">//值初始化为空string</span></div></pre></td></tr></table></figure>
-</code></pre><ol>
-<li><p>由于编译器也好用初始化器的类型来推断要分配的类型，只有初始化括号仅有一个参数的时候才可以使用auto。</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> p1 = <span class="keyword">new</span> <span class="keyword">auto</span>(obj);   <span class="comment">// p指向一个与obj类型相同的对象，而且该对象使用obj进行初始化</span></div><div class="line"><span class="keyword">auto</span> p2 = <span class="keyword">new</span>  <span class="keyword">auto</span>&#123;a,b,c&#125;;   <span class="comment">//错误</span></div></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>传递给delete的指针必须指向动态分配的内存，或者是一个空指针。释放一块并非new分配的内存，或者将相同的指针值释放多次，其行为是未定义的。new出来的对象一定是等到delete后才会释放内存，因此调用者必须记得显式释放内存，并且将指针置为空。不然会导致内存泄漏问题。</p>
- <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">delete</span> p;</div><div class="line">p = <span class="literal">nullptr</span>;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li>使用内置指针访问智能指针所负责的对象是很危险的，因为无法知道对象何时会被销毁。永远不要用get初始化另一个智能指针或者为另一个智能指针赋值。</li>
-<li>智能指针应该注意的地方：<ul>
-<li>不使用相同的内置指针初始化多个智能指针</li>
-<li>不delete  get（）返回的指针</li>
-<li>不使用get（）初始化或者reset另一个智能指针</li>
-<li>记住使用get（）返回的指针最后一个对应的智能指针销毁后，你的指针就变为无效</li>
-<li>如果智能指针管理的资源不是new 分配的内存，应该传递给他一个删除器（类似析构）</li>
-</ul>
-</li>
+        <h2 id="变量覆盖"><a href="#变量覆盖" class="headerlink" title="变量覆盖"></a>变量覆盖</h2><p>首先看如下最简单不过的C++代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> x;  <span class="comment">// global x</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">someFunc</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">double</span> x;  <span class="comment">// local x</span></div><div class="line">	<span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; x;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我相信会CPP的程序猿应该都知道,在<code>someFunc</code>中访问变量x的时候，访问的是<code>double x</code>并非<code>int x</code>，也就是在somefunc作用域中x覆盖了int x，这个不难分析，在实际编码过程中，我们应该尽量去避免这样的事情发生，毕竟cpp中有那么多控制变量作用域的方式，cpp也为此做了很多努力！</p>
+<h2 id="简单函数覆盖"><a href="#简单函数覆盖" class="headerlink" title="简单函数覆盖"></a>简单函数覆盖</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line"><span class="keyword">private</span>:</div><div class="line">	<span class="keyword">int</span> x;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> </span>= <span class="number">0</span>;</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf2</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf3</span><span class="params">()</span></span>;</div><div class="line">	<span class="comment">/*</span></div><div class="line"><span class="comment">	...</span></div><div class="line"><span class="comment">	*/</span></div><div class="line">&#125;;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">public</span> Base</div><div class="line">&#123;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf4</span><span class="params">()</span></span>;</div><div class="line">	<span class="comment">/*</span></div><div class="line"><span class="comment">	...</span></div><div class="line"><span class="comment">	*/</span></div><div class="line">&#125;;</div><div class="line"><span class="keyword">void</span> Derived::mf4()&#123;</div><div class="line">    <span class="comment">//...</span></div><div class="line">    mf2();</div><div class="line">    <span class="comment">//...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当编译器看到使用名称mf2，必须知道mf2的定义在哪儿。具体做法为查找各作用域，看是否存在名称为mf2的声明式，首先查找local作用域也就是mf4内部，然后在外围作用域查找即class Derived中，还是没找到，这时候再次扩大作用域，在class Base中查找，发现存在mf2的声明式，停止查找。如果还是没有查找到，那么会继续扩大作用域在class所属namespace的作用域中查找，最后往global作用域中查找，直到找到mf2的声明式为止。</p>
+<p>这里只是常规的查找范围，但范围并不是全面。但这足够说明问题，因为本文并不是讲述如何设计一个最好的查找规则。</p>
+<h2 id="重载覆盖"><a href="#重载覆盖" class="headerlink" title="重载覆盖"></a>重载覆盖</h2><p>再看一个比较复杂许多人可能会犯错：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line"><span class="keyword">private</span>:</div><div class="line">	<span class="keyword">int</span> x;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> </span>= <span class="number">0</span>;</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">(<span class="keyword">int</span>)</span></span>;</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf2</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf3</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf3</span><span class="params">(<span class="keyword">double</span>)</span></span>;</div><div class="line">	<span class="comment">/*</span></div><div class="line"><span class="comment">	...</span></div><div class="line"><span class="comment">	*/</span></div><div class="line">&#125;;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">public</span> Base</div><div class="line">&#123;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf3</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf4</span><span class="params">()</span></span>;</div><div class="line">	<span class="comment">/*</span></div><div class="line"><span class="comment">	...</span></div><div class="line"><span class="comment">	*/</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>调用如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Derived d ;</div><div class="line"><span class="keyword">int</span> x;</div><div class="line"><span class="comment">//....</span></div><div class="line">d.mf1();    <span class="comment">// true</span></div><div class="line">d.mf1(x);   <span class="comment">// false</span></div><div class="line">d.mf2();   <span class="comment">// true</span></div><div class="line">d.mf3();   <span class="comment">// true</span></div><div class="line">d.mf3(x);  <span class="comment">// fasle</span></div></pre></td></tr></table></figure></p>
+<p>不出意外，很多cpp程序员对调用这段代码的结果并不是很理解，很迷惑，是的，我也是其中一员。因为以作用域为基础的“名称遮掩规则”并没有改变，因此<code>base class</code>内所有名为<code>mf1</code>和<code>mf3</code>的函数都被<code>derived class</code>内的<code>mf1</code>和<code>mf3</code>遮掩掉咯，即使<code>base</code>和<code>derived</code>内的函数有不同的参数类型而且不论是<code>virtual</code>还是<code>non-virtual</code>也一样适用。即<code>derived</code>内的函数<code>mf3</code>遮掩了一个名为<code>mf3</code>但是类型不同的<code>base</code>函数。</p>
+<p>所以在调用<code>mf1</code>的有参函数时会报错，编译器直接不通过，给的错误提示是并不存在这样的函数<br>（参数过多），很明显是被遮掩了。、</p>
+<p>然后有时候我们有这样的需求，该怎么样去实现呢？</p>
+<p>答案是使用<code>using</code>声明式达成目标。</p>
+<p>修改后代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line"><span class="keyword">private</span>:</div><div class="line">	<span class="keyword">int</span> x;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> </span>= <span class="number">0</span>;</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">(<span class="keyword">int</span>)</span></span>;</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf2</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf3</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf3</span><span class="params">(<span class="keyword">double</span>)</span></span>;</div><div class="line">	<span class="comment">/*</span></div><div class="line"><span class="comment">	...</span></div><div class="line"><span class="comment">	*/</span></div><div class="line">&#125;;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">public</span> Base</div><div class="line">&#123;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="keyword">using</span> Base::mf1;</div><div class="line">	<span class="keyword">using</span> Base::mf3;</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf3</span><span class="params">()</span></span>;</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">mf4</span><span class="params">()</span></span>;</div><div class="line">	<span class="comment">/*</span></div><div class="line"><span class="comment">	...</span></div><div class="line"><span class="comment">	*/</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>这儿当调用<code>mf1</code>和<code>mf3</code>有参函数的时候，调用的是<code>Base</code>的函数，因为使用<code>using</code>声明式将其暴露在<code>Derived class</code>中.</p>
+<blockquote>
+<p>这意味着如果你继承Base class并加上重载函数，而你又希望重新定义或者覆写（重写）其中一部分，那么你必须为那些原本会被遮掩的每个名称引入一个using声明式，否者某些你希望继承的名称也会被遮掩，不能正确的访问。</p>
+</blockquote>
+<p>然而有时候，我们想要继承某个函数，而其他的名称相同参数不同的函数希望被遮掩。这时候怎么实现呢？</p>
+<p>答案是使用<code>private</code>继承和<code>inline</code>转交函数，因为<code>public</code>继承所暗示的意思是“base 和 <code>derived classes</code>之间的<code>is-a</code>关系“</p>
+<p>该版本后代码为：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span></span></div><div class="line"><span class="class">&#123;</span></div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> </span>= <span class="number">0</span>;</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">(<span class="keyword">int</span>)</span></span>;</div><div class="line">&#125;;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">private</span> Base</div><div class="line">&#123;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">mf1</span><span class="params">()</span> override</span></div><div class="line"><span class="function">	</span>&#123;</div><div class="line">		Base::mf1();    <span class="comment">//inline转交函数</span></div><div class="line">	&#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	Derived d;</div><div class="line">	<span class="keyword">int</span> x;</div><div class="line">	d.mf1(x); <span class="comment">//false</span></div><div class="line">	d.mf1();  <span class="comment">//true</span></div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><code>derived class</code>内的名称会遮掩<code>base class</code>内的名称，在<code>public</code>继承下从来没有人希望如此。</li>
+<li>解决办法主要有使用<code>using</code>声明式和<code>inline</code>转交函数</li>
 </ol>
 
       
@@ -312,7 +292,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://genge.cc/2017/08/01/CPP学习之旅/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://genge.cc/2017/09/16/条款33-避免遮掩继承而来的名称/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -326,18 +306,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/08/02/C-拷贝构造函数和赋值运算符/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          C++ 拷贝构造函数和赋值运算符
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/08/01/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello World</div>
+    <a href="/2017/09/13/lua-协同程序/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">lua 协同程序</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -364,7 +335,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#顺序容器"><span class="toc-number">1.</span> <span class="toc-text">顺序容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关联容器"><span class="toc-number">2.</span> <span class="toc-text">关联容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态内存"><span class="toc-number">3.</span> <span class="toc-text">动态内存</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#变量覆盖"><span class="toc-number">1.</span> <span class="toc-text">变量覆盖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简单函数覆盖"><span class="toc-number">2.</span> <span class="toc-text">简单函数覆盖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重载覆盖"><span class="toc-number">3.</span> <span class="toc-text">重载覆盖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -378,7 +349,7 @@
   
   <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="CPP学习之旅" data-title="C++ 学习之旅" data-url="http://genge.cc/2017/08/01/CPP学习之旅/"></div>
+	<div class="ds-thread" data-thread-key="条款33-避免遮掩继承而来的名称" data-title="条款33: 避免遮掩继承而来的名称" data-url="http://genge.cc/2017/09/16/条款33-避免遮掩继承而来的名称/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -401,8 +372,8 @@
   <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
 <script>
   var cloudTieConfig = {
-    url: "http://genge.cc/2017/08/01/CPP学习之旅/", 
-    sourceId: "CPP学习之旅",
+    url: "http://genge.cc/2017/09/16/条款33-避免遮掩继承而来的名称/", 
+    sourceId: "条款33-避免遮掩继承而来的名称",
     productKey: "true",
     target: "cloud-tie-wrapper"
   };
