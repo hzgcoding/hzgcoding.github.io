@@ -1,7 +1,8 @@
 ---
 title: Linux shell语言——dash和bash
 date: 2020-01-23 15:13:45
-tags:
+tags: linux
+categories: Shell
 ---
 
 什么是bash ？

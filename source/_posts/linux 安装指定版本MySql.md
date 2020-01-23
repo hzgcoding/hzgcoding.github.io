@@ -1,7 +1,8 @@
 ---
 title: linux 安装指定版本MySql
 date: 2020-01-23 15:12:39
-tags:
+tags: linux
+categories: Mysql
 ---
 
 由于工作环境、生产环境，我们使用的操作系统为为CentOS6.9，所需mysql版本为5.7，目前CentOS6.x系统默认mysql版本为5.1，这个版本是实在是太旧了。

@@ -1,7 +1,8 @@
 ---
 title: 全局唯一ID生成算法优化
 date: 2020-01-23 15:12:42
-tags:
+tags: uuid
+categories: C/C++
 ---
 
 <!-- toc -->

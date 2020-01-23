@@ -1,7 +1,8 @@
 ---
 title: 各类APP排行榜实现
 date: 2020-01-23 15:12:45
-tags:
+tags: rank
+categories: Game
 ---
 
 ## 需求背景

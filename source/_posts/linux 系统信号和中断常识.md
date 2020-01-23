@@ -1,7 +1,8 @@
 ---
 title: linux 系统信号和中断常识
 date: 2020-01-23 15:12:40
-tags:
+tags: linux
+categories: Linux
 ---
 ### 什么是中断
 1. 中断基本概念

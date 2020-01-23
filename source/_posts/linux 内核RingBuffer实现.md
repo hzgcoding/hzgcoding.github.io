@@ -1,7 +1,8 @@
 ---
 title: linux 内核RingBuffer实现
 date: 2020-01-22 15:12:45
-tags:
+tags: linux
+categories: C/C++
 ---
 
 实现方式非常巧妙，刚开始看的有点奇怪，当发现实现原理后惊讶了一番..

@@ -1,7 +1,8 @@
 ---
 title: Timer 定时器技术分享
 date: 2020-01-23 15:12:45
-tags:
+tags: timer
+categories: Linux
 ---
 
 ## 说点废话
