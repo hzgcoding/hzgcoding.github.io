@@ -70,6 +70,9 @@ menu:
   - page: about
     directory: about/
     icon: fa-user
+  - page: history
+    directory: timeline/
+    icon: fa-history
   - page: rss
     directory: atom.xml
     icon: fa-rss
@@ -90,13 +93,13 @@ links:
 
 timeline:
   - num: 1
-    word: 2014/06/12-Start
+    word: 武汉加油
   - num: 2
-    word: 2014/11/29-XXX
+    word: 不能回家过年，太可怜了  
   - num: 3
-    word: 2015/02/18-DDD
+    word: 还有几天就要上班了，期待已久！！！
   - num: 4
-    word: More
+    word: 今天微信步数能突破两百步！！！
 
 # Static files
 js: js

@@ -30,6 +30,7 @@ category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
+rss: /atom.xml
 
 # Writing
 new_post_name: :title.md # File name of new posts
@@ -47,10 +48,19 @@ future: true
 highlight:
   enable: true
   line_number: true
-  auto_detect: false
+  auto_detect: true
   tab_replace: ''
   wrap: true
   hljs: false
+
+#RSS订阅
+plugin:
+  - hexo-generator-feed
+#Feed Atom
+feed:
+type: atom
+path: atom.xml
+limit: 20
 
 # Home page setting
 # path: Root path for your blogs index page. (default = '')

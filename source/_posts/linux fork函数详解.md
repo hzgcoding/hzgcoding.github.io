@@ -3,6 +3,7 @@ title: linux fork函数详解
 date: 2020-01-23 15:12:45
 tags: linux
 categories: C/C++
+toc: true
 ---
 
 ### 函数原型： ` pid_t	fork(void) ` 
