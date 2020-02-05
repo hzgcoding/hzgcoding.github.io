@@ -100,6 +100,8 @@ timeline:
     word: 还有几天就要上班了，期待已久！！！
   - num: 4
     word: 今天微信步数能突破两百步！！！
+  - num: 5
+    word: 做完功能一定要自测！！！
 
 # Static files
 js: js
