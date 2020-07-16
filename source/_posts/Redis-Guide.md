@@ -95,4 +95,119 @@ categories: Redis
 1. HSETNX HASH FIELD VALUE
    只在字段不存在的时候设置值，返回值为1，设置失败返回0
 
-   
+### HGET 命令
+
+1. HGET HASH FIELD VALUE
+   获取字段值
+
+### HINCRBY or HINCRFLOATBY
+
+1. HINCRBY HASH FIELD INCRMENT 对数值进行加减
+
+
+### HSTRLEN 命令
+
+1. HSTRLEN HASH FIELD 获取字段值长度
+
+### HEXISTS 命令
+
+1. 检查字段值是否存在
+
+### HDEL 命令
+
+1. HDEL HASH FILED 删除字段
+
+### HLEN 命令
+
+1. HLEN HASH 获取散列表字段个数
+
+### HMSET/HMGET 系列命令
+
+1. 效果同MSET/MGET
+
+### HKEYS/HVALS/HGETALL 命令
+
+1. 获取散列表中所有字段FIELD
+2. 获取散列表中所有VALUE
+3. 获取散列表中所有FIELD和VALUE
+   格式为数组： FIELD1:VALUE1:FILED2:VALUE2......
+
+## 列表结构
+
+### Redis List列表是一种线性的有序结构
+
+### LPUSH 命令
+
+1. LPUSH KEY VALUE0 [ VALUE1 VALUE2 ...]  返回推入会列表元素个数
+   向列表左端新增n个VALUE, 'L' 表示是left 而不是 list
+
+### RPUSH 命令
+
+1. RPUSH KEY VALUE0 [ VALUE1 VALUE2 ...] 返回推入会列表元素个数
+   向列表右端新增n个VALUE, 'R' 表示是right
+
+### RPUSHX/LPUSHX 命令
+
+1. 与上两个命令同，但是在列表KEY不存在的时候的结果不一样，这两个命令在列表KEY不存在的时候会推入失败， 返回0
+
+### LPOP/RPOP
+
+1. LPOP/RPOP LISTKEY 弹出最左边/右边的元素， 返回POP后的元素
+
+### RPOPLPUSH 命令
+
+1. RPOPLPUSH source target 返回被弹出的元素值
+   将源source列表最右端元素弹出，插入到目标target列表最左端
+   其中source和target可以相同，即将列表首尾对调
+   当source 为空时，执行会失败，返回空
+
+### LLEN 命令
+
+1. 获取列表长度
+
+### LINDEX 命令
+
+1. LINDEX list index 获取列表指定索引元素
+   index为正数： 左端为0， 范围为 0 -- N-1
+   index为负数： 右端为-1， 范围为 -N -- -1
+
+### LRANGE 命令
+
+1. 获取指定索引范围内的所有元素
+   LRANGE list start end
+   LRANGE list 0 -1 获取全部元素
+   当start和end都超出范围时，将会返回空列表；当只有一个超出时，Redis会对超出的索引进行修正，开始索引超出会被修正为0，结束索引会被修正为-1
+
+### LSET 命令
+
+1. LSET list index new_value
+   对列表指定索引元素值更新
+
+### LINSERT 命令
+
+1. LINSERT list BEFORE/AFTER target_element new_element
+
+### LTRIM 裁剪
+
+1. LTRIM list start index 删除索引范围外所有元素
+
+### LREM 移除
+
+1. LREM list count element  返回被移除的元素数量
+   - 如果count等于0，那么命令将会移除list中所有值等于element的元素
+   - 如果count等于正数，那么命令会从左端开始扫描，移除列表中值为element的count个元素
+   - 如果count等于负数，那么命令会从右端开始扫描，移除列表中值为element的abs(count)个元素
+
+### BLPOP 阻塞式左端弹出
+
+1. BLPOP list1 [ list2 list3 ...] timeout
+   - 命令会按照传入的列表从左至右挨个检查是否为空，如果发现某个列表不为空，那么执行LPOP操作，返回值为两个元素的数组，第一个元素是被弹出的列表list名，第二个元素是被弹出的元素值；
+   - 如果当前传入的所有list为空，那么Redis将会阻塞等待直至timeout超时，返回空值，超时时间单位为秒，设置为0时表示会一直等待
+   - 如果当前有多个客户端因为某个列表空而阻塞，那么按照先阻塞先服务原则进行唤醒
+   - 这个命令只会当前Redis客户端
+
+### BRPOP 命令 与上同
+
+### BRPOPLPUSH 阻塞式弹出和推入操作 与上同
+
+1. 可用于实现带有阻塞式的消息队列
