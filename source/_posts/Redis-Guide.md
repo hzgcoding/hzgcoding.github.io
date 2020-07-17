@@ -11,9 +11,9 @@ categories: Redis
 
 ### SET 命令
 
-1.  SET KEY VALUE 设置
-2.  NX 不存在才设置  可用于实现分布式锁
-3.  XX 存在才设置
+1. SET KEY VALUE 设置
+2. NX 不存在才设置  可用于实现分布式锁
+3. XX 存在才设置
 
 ### GET 命令
 
@@ -132,7 +132,7 @@ categories: Redis
 3. 获取散列表中所有FIELD和VALUE
    格式为数组： FIELD1:VALUE1:FILED2:VALUE2......
 
-## 列表结构
+## List列表结构
 
 ### Redis List列表是一种线性的有序结构
 
@@ -211,3 +211,80 @@ categories: Redis
 ### BRPOPLPUSH 阻塞式弹出和推入操作 与上同
 
 1. 可用于实现带有阻塞式的消息队列
+
+## 无序集合Set
+
+### 数据结构
+
+说明无序集合，集合中元素不重复
+
+### SADD 命令
+
+SADD set element [ element ...]
+
+返回值为新增元素个数，会去重
+
+### SREM 命令
+
+SREM set element [element ...]
+移除一个或多个元素，返回真实移除元素的个数
+
+### SMOVE 命令
+
+`SMOVE source target element` 将指定元素从source移除，并且加入到目标集合，当source中不存在element的时候会返回失败
+
+### SMEMBERS 命令
+
+`SMEMBERS set` 获取集合所有元素
+
+### SCARD 命令
+
+1. `SCARD set` 获取集合元素个数
+
+### SISMEMBER 命令
+
+1. `SISMEMBER set element` 判断指定元素是否存在集合中
+
+### SRANDMEMBER 命令
+
+1. `SRANDMEMBER SET [count]` 随机获取集合汇总count个元素，count默认值为1
+
+2. count为正数时候，返回随机不重复的min(count, SCARD) 个元素，属于不放回随机抽取
+3. count为负数的时候，随机的机制发生变化，属于放回随机抽取，也就是说返回集合有可能出现重复的元素
+
+### SPOP 命令
+
+1. `SPOP set [count]` 随机的重集中移除count个元素，返回被移除的元素集合
+
+### SINTER/SINTERSTORE 命令
+
+1. `SINTER set [set]` 求多个集合的交集
+
+2. `SINTER dest_set set [set ]` 求多个集合的交集，并将结果存储到新的集合中，返回新集合的元素个数
+
+### SUNION/SUNIONSTORE 命令
+
+1. 并集, 含义同上
+
+### SDIFF/SDIFFSTORE 命令
+
+1. 差集，含义同上
+2. 集合操作都非常消耗性能，可能导致Redis主线程阻塞
+
+## 有序集合Sorted SET
+
+### 对应数据结构
+
+1. 同时具有有序和集合的性质
+2. 每个元素都由一个成员和一个与成员相关联的分值score组成
+3. 排行榜最佳实现
+
+`sorted set`
+|score   | member  |
+|:----:  |  :----: |
+| 1 | genge |
+| 3 | apple |
+| 7 | inuby |
+| 7 | oiuby |
+| 19| qwmok |
+
