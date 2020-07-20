@@ -288,3 +288,89 @@ SREM set element [element ...]
 | 7 | oiuby |
 | 19| qwmok |
 
+### ZADD 命令
+
+1. `ZADD sorted_set [CH] score element [score element]` 向有序集合中添加元素
+2. 默认返回新添加元素的个数，当命令带 CH 的时候返回修改元素的个数
+
+### ZREM 命令
+
+1. `ZREM sorted_set member [member]`  移除指定元素  返回真实被移除的元素个数
+
+### ZSCORE 命令
+
+1. `ZSCORE sorted_set member` 获取指定元素的分值
+
+### ZINCRBY 命令
+
+1. `ZINCRBY sorted_set increment_score memeber` 对指定元素的分值加减
+2. 当member不存在的时候，命令等同于ZADD
+
+### ZCARD 命令
+
+1. 获取有序集合元素个数
+
+### ZRANK/ZREVRANK 命令
+
+1. `ZRANK sorted_set member` 指定元素的的正排名 （从小到大）
+2. `ZREVRANK sorted_set member` 指定元素的的排名 （从大到小）
+
+### ZRANGE / ZREVRANGE 命令
+
+1. 获取指定范围内成员 `ZRANGE/ZREVRANGE sorted_set start end`
+2. start 和 end均可接受负值, 含义是排名
+3. `ZRANGE/ZREVRANGE sorted_set start end WITHSCORES` 会返回分值和元素值
+
+### ZRANGEBYSCORE/ZREVRANGEBYSCORE 命令
+
+1. `ZRANGEBYSCORE/ZREVRANGEBYSCORE sorted_set min max/max min` 获取指定范围分数内的成员
+2. `WITHSCORES` 可以附带返回分数值
+3. `LIMIT offset count` 可以限制返回元素的数量， offset为起止偏移量，count为最大返回数量
+4. `(min (max` 使用左括号的表示开区间，默认是闭区间
+5. `-inf +inf`来表示负无穷和正无穷
+
+### ZCOUNT 命令
+
+1. `ZCOUNT sorted_set min max` 获取指定分值范围内的成员数量
+2. 和上面的RAGNE命令相同，都支持开闭区间无穷等设置
+
+### ZREMRANGEBYRANK 命令
+
+1. `ZREMRANGEBYRANK sorted_set start end` 根据给定的排名区间来移除成员
+2. 参数支持负值，表示倒数排名
+
+### ZREMRANGEBYSCORE 命令
+
+1. `ZREMRANGEBYSCORE sorted_set start end` 根据给定的分数区间来移除成员
+2. 和上面的RAGNE命令相同，都支持开闭区间无穷等设置
+
+### ZINTERSTORE/ZUNIONSTORE 命令
+
+1. `ZINTERSTORE/ZUNIONSTORE destination numbers sorted_set [sorted_set ]` 求多个集合的交集和并集
+2. numbers为sorted_set 参数的个数
+3. 返回交集元素或者并集元素个数
+4. 集合元素的分值是由两个集合分值的和
+5. `[AGGREGATE SUM/MIN/MAX]` 可以通过设置聚合函数来控制分值(求和/最小值/最大值)
+6. `[WEIGHTS w1 w2 w3]` 可以为每个集合设置权重，这样计算方式将会是分值乘以权重再相加
+7. 除此之外，还可以接受集合（非有序）来执行命令，此时score默认都是1，还可以带WEIGHTS
+
+### ZEANGEBYLEX/ZREVRANGEBYLEX/ZLEXCOUNT/ZREMRANGEBYLEX 系列命令
+
+1. 以上所有命令格式雷同，都是处理当有序集合中分数全部相当的情况min和max分别指定是字典字母
+2. `ZEANGEBYLEX sorted_set min max`
+3. 比如`ZEANGEBYLEX sorted_set - +`返回所有成员，`[a (t` 返回字典大于等于a并且小于t的所有成员
+4. 逆序/成员个数/移除操作都是类似的
+
+### ZPOPMAX/ZPOPMIN 命令
+
+1. 弹出分值最高或者最低分值的元素
+2. 返回成员和分值
+3. `ZPOPMAX sorted_set [count]`可以通过 count 来指定最多移除的成员数量，默认为1
+4. Redis5.0  以上版本才支持
+
+### BZPOPMIN/BZPOPMAX 命令
+
+1. 阻塞式的最小或最大的弹出操作, 可以接受多个集合参数，进行遍历检测
+2. `BZPOPMIN/BZPOPMAX sorted_set [sorted_set ] timeout`
+3. timeout 为 0 表示无限阻塞等待
+
