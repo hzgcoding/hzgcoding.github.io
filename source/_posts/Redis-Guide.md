@@ -38,8 +38,6 @@ categories: Redis
 
 1. STRLEN KEY 获取值的字节长度
 
-    ![](https://i.loli.net/2020/07/14/Wwyzn7lEbvIJxpF.png)
-
 ### GETRANGE 命令
 
 1. GETRANGE KEY start end 
