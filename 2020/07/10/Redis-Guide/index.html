@@ -1,0 +1,267 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录点滴"><title>Redis Guide 使用手册 | Genge 随笔</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Redis Guide 使用手册</h1><a id="logo" href="/.">Genge 随笔</a><p class="description">好好学习 实现财富自由</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/timeline/"><i class="fa fa-history"> 历史</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Redis Guide 使用手册</h1><div class="post-meta">Jul 10, 2020<span> | </span><span class="category"><a href="/categories/Redis/">Redis</a></span></div><div class="post-content"><h1 id="Redis-数据结构与应用"><a href="#Redis-数据结构与应用" class="headerlink" title="Redis 数据结构与应用"></a>Redis 数据结构与应用</h1><h2 id="普通字符串"><a href="#普通字符串" class="headerlink" title="普通字符串"></a>普通字符串</h2><h3 id="SET-命令"><a href="#SET-命令" class="headerlink" title="SET 命令"></a>SET 命令</h3><ol>
+<li>SET KEY VALUE 设置</li>
+<li>NX 不存在才设置  可用于实现分布式锁</li>
+<li>XX 存在才设置</li>
+</ol>
+<h3 id="GET-命令"><a href="#GET-命令" class="headerlink" title="GET 命令"></a>GET 命令</h3><ol>
+<li>GET KEY 返回 VALUE 值  </li>
+<li>GETSET 返回旧 OLD_VALUE 值 , 并且设置新 NEW_VALUE</li>
+</ol>
+<h3 id="MSET-命令"><a href="#MSET-命令" class="headerlink" title="MSET 命令"></a>MSET 命令</h3><ol>
+<li>MSET KEY1 VALUE1 [ KEY2 VALUE2 …] 一次设置多个键值对</li>
+</ol>
+<h3 id="MGET-命令"><a href="#MGET-命令" class="headerlink" title="MGET 命令"></a>MGET 命令</h3><ol>
+<li>MGET KEY1 [ KEY2 …] 一次设置多个键值对<br>返回VALUE列表, 这在批量获取多个键值对的时候非常实用, 业务层不用做封装</li>
+</ol>
+<h3 id="MSETNX-命令"><a href="#MSETNX-命令" class="headerlink" title="MSETNX 命令"></a>MSETNX 命令</h3><ol>
+<li>MSETNX KEY VALUE [ KEY2 VALUE2 …]<br>设置多个键值对, 这是一个原子操作, 当且仅当所有KEY都不存在的时候才会成功</li>
+</ol>
+<h3 id="STRLEN-命令"><a href="#STRLEN-命令" class="headerlink" title="STRLEN 命令"></a>STRLEN 命令</h3><ol>
+<li>STRLEN KEY 获取值的字节长度</li>
+</ol>
+<h3 id="GETRANGE-命令"><a href="#GETRANGE-命令" class="headerlink" title="GETRANGE 命令"></a>GETRANGE 命令</h3><ol>
+<li>GETRANGE KEY start end<br>根据指定索引范围设置值，相当于取值的子串</li>
+</ol>
+<h3 id="SETRANGE-命令"><a href="#SETRANGE-命令" class="headerlink" title="SETRANGE 命令"></a>SETRANGE 命令</h3><ol>
+<li>SETRANGE KEY startIndex substitute<br>根据指定开始索引，开始替换新串substitute; 当startIndex大于值长度(len - 1), redis会自动扩展值长度，并且填充空字节(\x00)</li>
+</ol>
+<h3 id="APPEND-命令"><a href="#APPEND-命令" class="headerlink" title="APPEND 命令"></a>APPEND 命令</h3><ol>
+<li>APPEND KEY suffix 对值进行追加操作, 并返回新串长度<br>当KEY不存在, 那么APPEND命令等价于SET操作</li>
+</ol>
+<h3 id="INCRBY-DECRBY-命令"><a href="#INCRBY-DECRBY-命令" class="headerlink" title="INCRBY DECRBY 命令"></a>INCRBY DECRBY 命令</h3><ol>
+<li>INCRBY/DECRBY KEY incrment 当存储的值能够被解释为整数时， 可以使用这两个命令来对值进行加或减<br>当KEY不存在，那么会被初始化为0，然后再进行操作</li>
+</ol>
+<h3 id="INCR-DECR-命令"><a href="#INCR-DECR-命令" class="headerlink" title="INCR DECR 命令"></a>INCR DECR 命令</h3><ol>
+<li>INCR/DECR KEY incrment 当存储的值能够被解释为整数时， 可以使用这两个命令来对值进行加或减1<br>当KEY不存在，那么会被初始化为0，然后再进行操作</li>
+</ol>
+<h3 id="INCRBYFLOAT-命令"><a href="#INCRBYFLOAT-命令" class="headerlink" title="INCRBYFLOAT 命令"></a>INCRBYFLOAT 命令</h3><ol>
+<li>INCRBYFLOAT KEY incrment， 命令与INCRBY无差别，主要是针对的是浮点数<br>但是没有DECRBYFLOAT命令，可以通过设置incrment为负数来实现减法<br>INCRBYFLOAT 命令对值的格式更加宽松，那么值是整数的时候，命令与INCRBY等同，存储的值也会是整数<br>注意Redis在处理浮点数的时候，小数位长度是有限制，最长为17位，对于大部分应用是足够的</li>
+</ol>
+<h2 id="散列"><a href="#散列" class="headerlink" title="散列"></a>散列</h2><h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><table>
+<thead>
+<tr>
+<th align="center">KEY</th>
+<th align="center">FIELD</th>
+<th align="center">VALUE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">article</td>
+<td align="center">title</td>
+<td align="center">“Hello World”</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">content</td>
+<td align="center">“son of bitch”</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">author</td>
+<td align="center">genge</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">created_at</td>
+<td align="center">2010-10-10</td>
+</tr>
+</tbody></table>
+<h3 id="HSET-命令"><a href="#HSET-命令" class="headerlink" title="HSET 命令"></a>HSET 命令</h3><ol>
+<li>HSET HASHKEY FIELD VALUE<br>如果key或者field不存在, 那么会创建，返回值为1<br>如果field存在, 那么会更新，返回值为0</li>
+</ol>
+<h3 id="HSETNX-命令"><a href="#HSETNX-命令" class="headerlink" title="HSETNX 命令"></a>HSETNX 命令</h3><ol>
+<li>HSETNX HASH FIELD VALUE<br>只在字段不存在的时候设置值，返回值为1，设置失败返回0</li>
+</ol>
+<h3 id="HGET-命令"><a href="#HGET-命令" class="headerlink" title="HGET 命令"></a>HGET 命令</h3><ol>
+<li>HGET HASH FIELD VALUE<br>获取字段值</li>
+</ol>
+<h3 id="HINCRBY-or-HINCRFLOATBY"><a href="#HINCRBY-or-HINCRFLOATBY" class="headerlink" title="HINCRBY or HINCRFLOATBY"></a>HINCRBY or HINCRFLOATBY</h3><ol>
+<li>HINCRBY HASH FIELD INCRMENT 对数值进行加减</li>
+</ol>
+<h3 id="HSTRLEN-命令"><a href="#HSTRLEN-命令" class="headerlink" title="HSTRLEN 命令"></a>HSTRLEN 命令</h3><ol>
+<li>HSTRLEN HASH FIELD 获取字段值长度</li>
+</ol>
+<h3 id="HEXISTS-命令"><a href="#HEXISTS-命令" class="headerlink" title="HEXISTS 命令"></a>HEXISTS 命令</h3><ol>
+<li>检查字段值是否存在</li>
+</ol>
+<h3 id="HDEL-命令"><a href="#HDEL-命令" class="headerlink" title="HDEL 命令"></a>HDEL 命令</h3><ol>
+<li>HDEL HASH FILED 删除字段</li>
+</ol>
+<h3 id="HLEN-命令"><a href="#HLEN-命令" class="headerlink" title="HLEN 命令"></a>HLEN 命令</h3><ol>
+<li>HLEN HASH 获取散列表字段个数</li>
+</ol>
+<h3 id="HMSET-HMGET-系列命令"><a href="#HMSET-HMGET-系列命令" class="headerlink" title="HMSET/HMGET 系列命令"></a>HMSET/HMGET 系列命令</h3><ol>
+<li>效果同MSET/MGET</li>
+</ol>
+<h3 id="HKEYS-HVALS-HGETALL-命令"><a href="#HKEYS-HVALS-HGETALL-命令" class="headerlink" title="HKEYS/HVALS/HGETALL 命令"></a>HKEYS/HVALS/HGETALL 命令</h3><ol>
+<li>获取散列表中所有字段FIELD</li>
+<li>获取散列表中所有VALUE</li>
+<li>获取散列表中所有FIELD和VALUE<br>格式为数组： FIELD1:VALUE1:FILED2:VALUE2……</li>
+</ol>
+<h2 id="List列表结构"><a href="#List列表结构" class="headerlink" title="List列表结构"></a>List列表结构</h2><h3 id="Redis-List列表是一种线性的有序结构"><a href="#Redis-List列表是一种线性的有序结构" class="headerlink" title="Redis List列表是一种线性的有序结构"></a>Redis List列表是一种线性的有序结构</h3><h3 id="LPUSH-命令"><a href="#LPUSH-命令" class="headerlink" title="LPUSH 命令"></a>LPUSH 命令</h3><ol>
+<li>LPUSH KEY VALUE0 [ VALUE1 VALUE2 …]  返回推入会列表元素个数<br>向列表左端新增n个VALUE, ‘L’ 表示是left 而不是 list</li>
+</ol>
+<h3 id="RPUSH-命令"><a href="#RPUSH-命令" class="headerlink" title="RPUSH 命令"></a>RPUSH 命令</h3><ol>
+<li>RPUSH KEY VALUE0 [ VALUE1 VALUE2 …] 返回推入会列表元素个数<br>向列表右端新增n个VALUE, ‘R’ 表示是right</li>
+</ol>
+<h3 id="RPUSHX-LPUSHX-命令"><a href="#RPUSHX-LPUSHX-命令" class="headerlink" title="RPUSHX/LPUSHX 命令"></a>RPUSHX/LPUSHX 命令</h3><ol>
+<li>与上两个命令同，但是在列表KEY不存在的时候的结果不一样，这两个命令在列表KEY不存在的时候会推入失败， 返回0</li>
+</ol>
+<h3 id="LPOP-RPOP"><a href="#LPOP-RPOP" class="headerlink" title="LPOP/RPOP"></a>LPOP/RPOP</h3><ol>
+<li>LPOP/RPOP LISTKEY 弹出最左边/右边的元素， 返回POP后的元素</li>
+</ol>
+<h3 id="RPOPLPUSH-命令"><a href="#RPOPLPUSH-命令" class="headerlink" title="RPOPLPUSH 命令"></a>RPOPLPUSH 命令</h3><ol>
+<li>RPOPLPUSH source target 返回被弹出的元素值<br>将源source列表最右端元素弹出，插入到目标target列表最左端<br>其中source和target可以相同，即将列表首尾对调<br>当source 为空时，执行会失败，返回空</li>
+</ol>
+<h3 id="LLEN-命令"><a href="#LLEN-命令" class="headerlink" title="LLEN 命令"></a>LLEN 命令</h3><ol>
+<li>获取列表长度</li>
+</ol>
+<h3 id="LINDEX-命令"><a href="#LINDEX-命令" class="headerlink" title="LINDEX 命令"></a>LINDEX 命令</h3><ol>
+<li>LINDEX list index 获取列表指定索引元素<br>index为正数： 左端为0， 范围为 0 – N-1<br>index为负数： 右端为-1， 范围为 -N – -1</li>
+</ol>
+<h3 id="LRANGE-命令"><a href="#LRANGE-命令" class="headerlink" title="LRANGE 命令"></a>LRANGE 命令</h3><ol>
+<li>获取指定索引范围内的所有元素<br>LRANGE list start end<br>LRANGE list 0 -1 获取全部元素<br>当start和end都超出范围时，将会返回空列表；当只有一个超出时，Redis会对超出的索引进行修正，开始索引超出会被修正为0，结束索引会被修正为-1</li>
+</ol>
+<h3 id="LSET-命令"><a href="#LSET-命令" class="headerlink" title="LSET 命令"></a>LSET 命令</h3><ol>
+<li>LSET list index new_value<br>对列表指定索引元素值更新</li>
+</ol>
+<h3 id="LINSERT-命令"><a href="#LINSERT-命令" class="headerlink" title="LINSERT 命令"></a>LINSERT 命令</h3><ol>
+<li>LINSERT list BEFORE/AFTER target_element new_element</li>
+</ol>
+<h3 id="LTRIM-裁剪"><a href="#LTRIM-裁剪" class="headerlink" title="LTRIM 裁剪"></a>LTRIM 裁剪</h3><ol>
+<li>LTRIM list start index 删除索引范围外所有元素</li>
+</ol>
+<h3 id="LREM-移除"><a href="#LREM-移除" class="headerlink" title="LREM 移除"></a>LREM 移除</h3><ol>
+<li>LREM list count element  返回被移除的元素数量<ul>
+<li>如果count等于0，那么命令将会移除list中所有值等于element的元素</li>
+<li>如果count等于正数，那么命令会从左端开始扫描，移除列表中值为element的count个元素</li>
+<li>如果count等于负数，那么命令会从右端开始扫描，移除列表中值为element的abs(count)个元素</li>
+</ul>
+</li>
+</ol>
+<h3 id="BLPOP-阻塞式左端弹出"><a href="#BLPOP-阻塞式左端弹出" class="headerlink" title="BLPOP 阻塞式左端弹出"></a>BLPOP 阻塞式左端弹出</h3><ol>
+<li>BLPOP list1 [ list2 list3 …] timeout<ul>
+<li>命令会按照传入的列表从左至右挨个检查是否为空，如果发现某个列表不为空，那么执行LPOP操作，返回值为两个元素的数组，第一个元素是被弹出的列表list名，第二个元素是被弹出的元素值；</li>
+<li>如果当前传入的所有list为空，那么Redis将会阻塞等待直至timeout超时，返回空值，超时时间单位为秒，设置为0时表示会一直等待</li>
+<li>如果当前有多个客户端因为某个列表空而阻塞，那么按照先阻塞先服务原则进行唤醒</li>
+<li>这个命令只会当前Redis客户端</li>
+</ul>
+</li>
+</ol>
+<h3 id="BRPOP-命令-与上同"><a href="#BRPOP-命令-与上同" class="headerlink" title="BRPOP 命令 与上同"></a>BRPOP 命令 与上同</h3><h3 id="BRPOPLPUSH-阻塞式弹出和推入操作-与上同"><a href="#BRPOPLPUSH-阻塞式弹出和推入操作-与上同" class="headerlink" title="BRPOPLPUSH 阻塞式弹出和推入操作 与上同"></a>BRPOPLPUSH 阻塞式弹出和推入操作 与上同</h3><ol>
+<li>可用于实现带有阻塞式的消息队列</li>
+</ol>
+<h2 id="无序集合Set"><a href="#无序集合Set" class="headerlink" title="无序集合Set"></a>无序集合Set</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>说明无序集合，集合中元素不重复</p>
+<h3 id="SADD-命令"><a href="#SADD-命令" class="headerlink" title="SADD 命令"></a>SADD 命令</h3><p>SADD set element [ element …]</p>
+<p>返回值为新增元素个数，会去重</p>
+<h3 id="SREM-命令"><a href="#SREM-命令" class="headerlink" title="SREM 命令"></a>SREM 命令</h3><p>SREM set element [element …]<br>移除一个或多个元素，返回真实移除元素的个数</p>
+<h3 id="SMOVE-命令"><a href="#SMOVE-命令" class="headerlink" title="SMOVE 命令"></a>SMOVE 命令</h3><p><code>SMOVE source target element</code> 将指定元素从source移除，并且加入到目标集合，当source中不存在element的时候会返回失败</p>
+<h3 id="SMEMBERS-命令"><a href="#SMEMBERS-命令" class="headerlink" title="SMEMBERS 命令"></a>SMEMBERS 命令</h3><p><code>SMEMBERS set</code> 获取集合所有元素</p>
+<h3 id="SCARD-命令"><a href="#SCARD-命令" class="headerlink" title="SCARD 命令"></a>SCARD 命令</h3><ol>
+<li><code>SCARD set</code> 获取集合元素个数</li>
+</ol>
+<h3 id="SISMEMBER-命令"><a href="#SISMEMBER-命令" class="headerlink" title="SISMEMBER 命令"></a>SISMEMBER 命令</h3><ol>
+<li><code>SISMEMBER set element</code> 判断指定元素是否存在集合中</li>
+</ol>
+<h3 id="SRANDMEMBER-命令"><a href="#SRANDMEMBER-命令" class="headerlink" title="SRANDMEMBER 命令"></a>SRANDMEMBER 命令</h3><ol>
+<li><p><code>SRANDMEMBER SET [count]</code> 随机获取集合汇总count个元素，count默认值为1</p>
+</li>
+<li><p>count为正数时候，返回随机不重复的min(count, SCARD) 个元素，属于不放回随机抽取</p>
+</li>
+<li><p>count为负数的时候，随机的机制发生变化，属于放回随机抽取，也就是说返回集合有可能出现重复的元素</p>
+</li>
+</ol>
+<h3 id="SPOP-命令"><a href="#SPOP-命令" class="headerlink" title="SPOP 命令"></a>SPOP 命令</h3><ol>
+<li><code>SPOP set [count]</code> 随机的重集中移除count个元素，返回被移除的元素集合</li>
+</ol>
+<h3 id="SINTER-SINTERSTORE-命令"><a href="#SINTER-SINTERSTORE-命令" class="headerlink" title="SINTER/SINTERSTORE 命令"></a>SINTER/SINTERSTORE 命令</h3><ol>
+<li><p><code>SINTER set [set]</code> 求多个集合的交集</p>
+</li>
+<li><p><code>SINTER dest_set set [set ]</code> 求多个集合的交集，并将结果存储到新的集合中，返回新集合的元素个数</p>
+</li>
+</ol>
+<h3 id="SUNION-SUNIONSTORE-命令"><a href="#SUNION-SUNIONSTORE-命令" class="headerlink" title="SUNION/SUNIONSTORE 命令"></a>SUNION/SUNIONSTORE 命令</h3><ol>
+<li>并集, 含义同上</li>
+</ol>
+<h3 id="SDIFF-SDIFFSTORE-命令"><a href="#SDIFF-SDIFFSTORE-命令" class="headerlink" title="SDIFF/SDIFFSTORE 命令"></a>SDIFF/SDIFFSTORE 命令</h3><ol>
+<li>差集，含义同上</li>
+<li>集合操作都非常消耗性能，可能导致Redis主线程阻塞</li>
+</ol>
+<h2 id="有序集合Sorted-SET"><a href="#有序集合Sorted-SET" class="headerlink" title="有序集合Sorted SET"></a>有序集合Sorted SET</h2><h3 id="对应数据结构"><a href="#对应数据结构" class="headerlink" title="对应数据结构"></a>对应数据结构</h3><ol>
+<li>同时具有有序和集合的性质</li>
+<li>每个元素都由一个成员和一个与成员相关联的分值score组成</li>
+<li>排行榜最佳实现</li>
+</ol>
+<p><code>sorted set</code><br>|score   | member  |<br>|:—-:  |  :—-: |<br>| 1 | genge |<br>| 3 | apple |<br>| 7 | inuby |<br>| 7 | oiuby |<br>| 19| qwmok |</p>
+<h3 id="ZADD-命令"><a href="#ZADD-命令" class="headerlink" title="ZADD 命令"></a>ZADD 命令</h3><ol>
+<li><code>ZADD sorted_set [CH] score element [score element]</code> 向有序集合中添加元素</li>
+<li>默认返回新添加元素的个数，当命令带 CH 的时候返回修改元素的个数</li>
+</ol>
+<h3 id="ZREM-命令"><a href="#ZREM-命令" class="headerlink" title="ZREM 命令"></a>ZREM 命令</h3><ol>
+<li><code>ZREM sorted_set member [member]</code>  移除指定元素  返回真实被移除的元素个数</li>
+</ol>
+<h3 id="ZSCORE-命令"><a href="#ZSCORE-命令" class="headerlink" title="ZSCORE 命令"></a>ZSCORE 命令</h3><ol>
+<li><code>ZSCORE sorted_set member</code> 获取指定元素的分值</li>
+</ol>
+<h3 id="ZINCRBY-命令"><a href="#ZINCRBY-命令" class="headerlink" title="ZINCRBY 命令"></a>ZINCRBY 命令</h3><ol>
+<li><code>ZINCRBY sorted_set increment_score memeber</code> 对指定元素的分值加减</li>
+<li>当member不存在的时候，命令等同于ZADD</li>
+</ol>
+<h3 id="ZCARD-命令"><a href="#ZCARD-命令" class="headerlink" title="ZCARD 命令"></a>ZCARD 命令</h3><ol>
+<li>获取有序集合元素个数</li>
+</ol>
+<h3 id="ZRANK-ZREVRANK-命令"><a href="#ZRANK-ZREVRANK-命令" class="headerlink" title="ZRANK/ZREVRANK 命令"></a>ZRANK/ZREVRANK 命令</h3><ol>
+<li><code>ZRANK sorted_set member</code> 指定元素的的正排名 （从小到大）</li>
+<li><code>ZREVRANK sorted_set member</code> 指定元素的的排名 （从大到小）</li>
+</ol>
+<h3 id="ZRANGE-ZREVRANGE-命令"><a href="#ZRANGE-ZREVRANGE-命令" class="headerlink" title="ZRANGE / ZREVRANGE 命令"></a>ZRANGE / ZREVRANGE 命令</h3><ol>
+<li>获取指定范围内成员 <code>ZRANGE/ZREVRANGE sorted_set start end</code></li>
+<li>start 和 end均可接受负值, 含义是排名</li>
+<li><code>ZRANGE/ZREVRANGE sorted_set start end WITHSCORES</code> 会返回分值和元素值</li>
+</ol>
+<h3 id="ZRANGEBYSCORE-ZREVRANGEBYSCORE-命令"><a href="#ZRANGEBYSCORE-ZREVRANGEBYSCORE-命令" class="headerlink" title="ZRANGEBYSCORE/ZREVRANGEBYSCORE 命令"></a>ZRANGEBYSCORE/ZREVRANGEBYSCORE 命令</h3><ol>
+<li><code>ZRANGEBYSCORE/ZREVRANGEBYSCORE sorted_set min max/max min</code> 获取指定范围分数内的成员</li>
+<li><code>WITHSCORES</code> 可以附带返回分数值</li>
+<li><code>LIMIT offset count</code> 可以限制返回元素的数量， offset为起止偏移量，count为最大返回数量</li>
+<li><code>(min (max</code> 使用左括号的表示开区间，默认是闭区间</li>
+<li><code>-inf +inf</code>来表示负无穷和正无穷</li>
+</ol>
+<h3 id="ZCOUNT-命令"><a href="#ZCOUNT-命令" class="headerlink" title="ZCOUNT 命令"></a>ZCOUNT 命令</h3><ol>
+<li><code>ZCOUNT sorted_set min max</code> 获取指定分值范围内的成员数量</li>
+<li>和上面的RAGNE命令相同，都支持开闭区间无穷等设置</li>
+</ol>
+<h3 id="ZREMRANGEBYRANK-命令"><a href="#ZREMRANGEBYRANK-命令" class="headerlink" title="ZREMRANGEBYRANK 命令"></a>ZREMRANGEBYRANK 命令</h3><ol>
+<li><code>ZREMRANGEBYRANK sorted_set start end</code> 根据给定的排名区间来移除成员</li>
+<li>参数支持负值，表示倒数排名</li>
+</ol>
+<h3 id="ZREMRANGEBYSCORE-命令"><a href="#ZREMRANGEBYSCORE-命令" class="headerlink" title="ZREMRANGEBYSCORE 命令"></a>ZREMRANGEBYSCORE 命令</h3><ol>
+<li><code>ZREMRANGEBYSCORE sorted_set start end</code> 根据给定的分数区间来移除成员</li>
+<li>和上面的RAGNE命令相同，都支持开闭区间无穷等设置</li>
+</ol>
+<h3 id="ZINTERSTORE-ZUNIONSTORE-命令"><a href="#ZINTERSTORE-ZUNIONSTORE-命令" class="headerlink" title="ZINTERSTORE/ZUNIONSTORE 命令"></a>ZINTERSTORE/ZUNIONSTORE 命令</h3><ol>
+<li><code>ZINTERSTORE/ZUNIONSTORE destination numbers sorted_set [sorted_set ]</code> 求多个集合的交集和并集</li>
+<li>numbers为sorted_set 参数的个数</li>
+<li>返回交集元素或者并集元素个数</li>
+<li>集合元素的分值是由两个集合分值的和</li>
+<li><code>[AGGREGATE SUM/MIN/MAX]</code> 可以通过设置聚合函数来控制分值(求和/最小值/最大值)</li>
+<li><code>[WEIGHTS w1 w2 w3]</code> 可以为每个集合设置权重，这样计算方式将会是分值乘以权重再相加</li>
+<li>除此之外，还可以接受集合（非有序）来执行命令，此时score默认都是1，还可以带WEIGHTS</li>
+</ol>
+<h3 id="ZEANGEBYLEX-ZREVRANGEBYLEX-ZLEXCOUNT-ZREMRANGEBYLEX-系列命令"><a href="#ZEANGEBYLEX-ZREVRANGEBYLEX-ZLEXCOUNT-ZREMRANGEBYLEX-系列命令" class="headerlink" title="ZEANGEBYLEX/ZREVRANGEBYLEX/ZLEXCOUNT/ZREMRANGEBYLEX 系列命令"></a>ZEANGEBYLEX/ZREVRANGEBYLEX/ZLEXCOUNT/ZREMRANGEBYLEX 系列命令</h3><ol>
+<li>以上所有命令格式雷同，都是处理当有序集合中分数全部相当的情况min和max分别指定是字典字母</li>
+<li><code>ZEANGEBYLEX sorted_set min max</code></li>
+<li>比如<code>ZEANGEBYLEX sorted_set - +</code>返回所有成员，<code>[a (t</code> 返回字典大于等于a并且小于t的所有成员</li>
+<li>逆序/成员个数/移除操作都是类似的</li>
+</ol>
+<h3 id="ZPOPMAX-ZPOPMIN-命令"><a href="#ZPOPMAX-ZPOPMIN-命令" class="headerlink" title="ZPOPMAX/ZPOPMIN 命令"></a>ZPOPMAX/ZPOPMIN 命令</h3><ol>
+<li>弹出分值最高或者最低分值的元素</li>
+<li>返回成员和分值</li>
+<li><code>ZPOPMAX sorted_set [count]</code>可以通过 count 来指定最多移除的成员数量，默认为1</li>
+<li>Redis5.0  以上版本才支持</li>
+</ol>
+<h3 id="BZPOPMIN-BZPOPMAX-命令"><a href="#BZPOPMIN-BZPOPMAX-命令" class="headerlink" title="BZPOPMIN/BZPOPMAX 命令"></a>BZPOPMIN/BZPOPMAX 命令</h3><ol>
+<li>阻塞式的最小或最大的弹出操作, 可以接受多个集合参数，进行遍历检测</li>
+<li><code>BZPOPMIN/BZPOPMAX sorted_set [sorted_set ] timeout</code></li>
+<li>timeout 为 0 表示无限阻塞等待</li>
+</ol>
+</div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Genge</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/07/10/Redis-Guide/">genge.cc/2020/07/10/Redis-Guide/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</li></ul></div><br><div class="tags"><a href="/tags/Redis/">Redis</a></div><div class="post-nav"><a class="next" href="/2020/02/12/%E6%89%B9%E9%87%8F%E6%8D%A2%E8%A1%8C%E7%AC%A6%E8%BD%AC%E6%8D%A2CRLF%E5%88%B0LF/">批量转换换行符CRLF到LF</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="genge.cc"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game/">Game</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shell/">Shell</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/emotion/">emotion</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BD%91%E7%BB%9C/">网络</a><span class="category-list-count">1</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 15px;">网络</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15px;">面试</a> <a href="/tags/timer/" style="font-size: 15px;">timer</a> <a href="/tags/uuid/" style="font-size: 15px;">uuid</a> <a href="/tags/rank/" style="font-size: 15px;">rank</a> <a href="/tags/ringbuff/" style="font-size: 15px;">ringbuff</a> <a href="/tags/flag/" style="font-size: 15px;">flag</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/07/10/Redis-Guide/">Redis Guide 使用手册</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/%E6%89%B9%E9%87%8F%E6%8D%A2%E8%A1%8C%E7%AC%A6%E8%BD%AC%E6%8D%A2CRLF%E5%88%B0LF/">批量转换换行符CRLF到LF</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/05/Flag/">Flag</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/Linux%20shell%E8%AF%AD%E8%A8%80%E2%80%94%E2%80%94dash%E5%92%8Cbash/">Linux shell语言——dash和bash</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/%E5%8D%95%E7%94%9F%E4%BA%A7%E8%80%85%E5%8D%95%E6%B6%88%E8%B4%B9%E8%80%85%E7%8E%AF%E5%BD%A2%E7%BC%93%E5%86%B2/">单生产者单消费者环形缓冲</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/%E5%90%84%E7%B1%BBAPP%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%AE%9E%E7%8E%B0/">各类APP排行榜实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E6%97%B6%E9%97%B4%E8%BD%AETimer%E5%AE%9A%E6%97%B6%E5%99%A8/">Timer 定时器技术分享</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/linux%20fork%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/">linux fork函数详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80ID%E7%94%9F%E6%88%90%E7%AE%97%E6%B3%95%E4%BC%98%E5%8C%96/">全局唯一ID生成算法优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/linux%20%E7%B3%BB%E7%BB%9F%E4%BF%A1%E5%8F%B7%E5%92%8C%E4%B8%AD%E6%96%AD%E5%B8%B8%E8%AF%86/">linux 系统信号和中断常识</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.younfor.com" title="字节跳动大神" target="_blank">字节跳动大神</a><ul></ul><a href="http://www.hl174.com/" title="百度大佬" target="_blank">百度大佬</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2020 <a href="/." rel="nofollow">Genge 随笔.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
