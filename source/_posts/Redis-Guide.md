@@ -84,7 +84,7 @@ categories: Redis
 
 ### HSET 命令
 
-1. HSET HASHKEY FIELD VALUE 
+1. HSET HASHKEY FIELD VALUE
    如果key或者field不存在, 那么会创建，返回值为1
    如果field存在, 那么会更新，返回值为0
 
@@ -371,4 +371,125 @@ SREM set element [element ...]
 1. 阻塞式的最小或最大的弹出操作, 可以接受多个集合参数，进行遍历检测
 2. `BZPOPMIN/BZPOPMAX sorted_set [sorted_set ] timeout`
 3. timeout 为 0 表示无限阻塞等待
+
+## HperLogLog
+
+### HperLogLog数据结构
+
+1. 神奇的HyperLogLog算法<http://www.rainybowe.com/blog/2017/07/13/%E7%A5%9E%E5%A5%87%E7%9A%84HyperLogLog%E7%AE%97%E6%B3%95/index.html>
+2. Sketch of the Day: HyperLogLog — Cornerstone of a Big Data Infrastructure <http://content.research.neustar.biz/blog/hll.html>
+3. 这是一个专门解决大数据计数器消耗太多内存问题的一个概率算法，只需要12k就可以统计2^64个元素
+4. 当然这不是精确统计，存在误差，数据量大的时候误差有的时候是允许的，可容允的
+
+### PFADD 命令
+
+1. `PFADD hperloglog element [element]` 新增元素
+2. 当新增元素是的统计基数值发生变化就返回1，否则反正0
+
+### PFCOUNT 命令
+
+1. `PFCOUNT hyperloglog [hyperloglog ...]` 计算集合的近视基数
+2. 当参数为多个时候，计算方式为：首先求多个集合的并集，然后对并集求近视基数
+
+### PFMERGE 命令
+
+1. `PFMERGE destination hyperloglog [hyperloglog ...]`  对多个hyperloglog集合求并集，然后将结果存在dest中
+
+2. PFCOUNT 其实是有调用PFMERGE命令的
+
+## 位图
+
+### 位图结构
+
+1. Redis位图bitmap是由多个二进制位组成的数组，数组中每一位都有与之对应的偏移量(索引)
+
+2. BITMAP 图
+
+|index|0|1|2|3|
+|-|-|-|-|-|
+|位|1|0|0|1｜
+
+### SETBIT 命令
+
+1. `SETBIT bitmap offset value` 设置指定偏移位的值
+2. 返回指定偏移量旧值，默认为0
+3. bitmap默认按照字节扩展
+4. offset只能为正值
+
+### GETBIT 命令
+
+1. `GETBIT bitmap offset`获取指定位置的值
+
+### BITCOUNT 命令
+
+1. `BITCOUNT bitmap` 统计位图中1的个数
+2. `BITCOUNT bitmap start end`  返回指定字节范围内1的个数，注意start和end为字节偏移量，并不是位offset， 可以使用负数作为参数
+
+### BITPOS 命令
+
+1. `BITPOS bitmap value` 查询bitmap中第一个被设置为value值的位置
+2. `BITPOS bitmap value [start end]`  在指定范围内查找，但是返回的offset是基于整个bigmap的偏移
+3. start和end可以为负值
+
+### BITOP 命令
+
+1. `BITOP OP result_key bitmap [bitmap ...]` 对多个bitmap数组执行op操作，将结果存储在result中
+2. op可以是 AND / OR /XOR / NOT
+
+### BITFIELD 命令
+
+1. `BITFIELD bitmap SET type offset value` 根据位偏移来设置bitmap中值value，其中type是指定value的类型，比如i8：8位有符号，u16：16位无符号等
+2. offset 可以换成 #index， 这样可以以字节位来索引具体位置，然后设置值
+3. 可以同时执行多个set命令
+4. `BITFIELD bitmap GET type offset/#index` 获取对应的值，同样的也可以同时执行多个GET
+5. `BITFIELD bitmap INCRYBY type offset/#index increment` 对指定范围值加减操作
+6. `BITFIELD bitmap [OVERFLOW WRAP/SAT/FAIL] INCRYBY type offset/#index increment` 可以用来处理加减法结果溢出的情况，分别为环绕/饱和运算/失败
+
+### BITMAP STRING
+
+1. 可以把二进制数组当作是字符串来操作
+2. GET 命令来获取二进制数组值，返回值为二进制字符串
+3. STRLEN 可以得到二进制字符串的长度
+4. GETRANGE 获取指定范围的二进制字符串
+
+## GEO位置服务
+
+### GEOADD 命令
+
+1. `GEOADD location_set longitude latitude name [longitude latitude name]` 添加一个或者多个位置坐标（经纬度）
+2. 当执行的是添加的，那么返回添加的位置个数；如果是更新那么返回0
+
+### GEOPOS 命令
+
+1. `GEOPOS location_set name [name ...]`  获取指定位置的经纬度
+2. 返回值是数组，其中数组元素为二元数组，第一项为经度，第二项为纬度
+
+### GEODIST 命令
+
+1. `GEODIST location_set name1 name2` 计算俩个位置的直线距离
+2. 默认单位为米，可以通过`[unit]` 来指定单位m/km/mi英里/ft英寸
+
+### GEORADIUS 命令
+
+1. `GEORADIUS location_set longitude latitude radius unit`  获取指定位置为中心点，radius半径内所有的地点
+2. `WITHDIST` 加上这个后缀参数，可以返回地点和地点与中心位置的直线距离
+3. `WITHCOORD`  返回地点和地点坐标
+4. `[ASD|DESC]` 对返回的结果排序
+5. `[COUNT n]`  限制返回地点的数量
+6. 可以同时指定多个可选参数
+
+### GEORADIUSBYMEMBER 命令
+
+1. `longitude latitude` 参数换成 `name`地名
+
+### GEOHASH 命令
+
+1. 获取指定位置的GEOhash值，GEOhash值是经纬度转换而来，并且可以通过GEohash来计算得到经纬度
+2. 在上面的两个命令中都可以指定`WITHHASH`  来返回GEOHASH 而非 经纬度
+
+### GEO数据内部存储结构
+
+1. 为有序集合，因此可以使用ZSORTED来操作数据，其中score为Geohash值
+
+## Stream流
 
