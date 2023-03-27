@@ -14,7 +14,7 @@
 ## Theme主题
 
 ```
-https://github.com/tufu9441/maupassant-hexo
+git clone https://github.com/renbaoshuo/hexo-theme-pure.git themes/pure
 
 ```
 
