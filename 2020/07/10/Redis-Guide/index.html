@@ -1,4 +1,105 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录点滴"><title>Redis Guide 使用手册 | Genge 随笔</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Redis Guide 使用手册</h1><a id="logo" href="/.">Genge 随笔</a><p class="description">好好学习 实现财富自由</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/timeline/"><i class="fa fa-history"> 历史</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Redis Guide 使用手册</h1><div class="post-meta">Jul 10, 2020<span> | </span><span class="category"><a href="/categories/Redis/">Redis</a></span></div><div class="post-content"><h1 id="Redis-数据结构与应用"><a href="#Redis-数据结构与应用" class="headerlink" title="Redis 数据结构与应用"></a>Redis 数据结构与应用</h1><h2 id="普通字符串"><a href="#普通字符串" class="headerlink" title="普通字符串"></a>普通字符串</h2><h3 id="SET-命令"><a href="#SET-命令" class="headerlink" title="SET 命令"></a>SET 命令</h3><ol>
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Title -->
+<title>Redis Guide 使用手册 - Genge 随笔</title>
+
+<!-- Icon -->
+<link rel="icon" href="https://d33wubrfki0l68.cloudfront.net/6657ba50e702d84afb32fe846bed54fba1a77add/827ae/logo.svg">
+
+<!-- Fonts -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@0;1&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" as="style" onload="this.onload=null, this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@0;1&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"></noscript>
+
+
+
+<!-- Style -->
+
+<link rel="stylesheet" href="/styles/main.css">
+
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-theme-pure@1.0.1/dist/main.css"> -->
+
+
+
+
+
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+
+    <meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Genge 随笔" type="application/atom+xml">
+</head>
+    <body>
+        <div class="main gt-bg-theme-color-first">
+            <div class="main-content">
+                <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="https://d33wubrfki0l68.cloudfront.net/6657ba50e702d84afb32fe846bed54fba1a77add/827ae/logo.svg" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Genge 随笔
+        </div>
+    </a>
+    <button aria-label="Navbar Toggler" class="navbar-toggler" type="button" id="changeNavbar">
+        <i class="gt-c-content-color-first" style="font-size: 18px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" height="18px" fill="currentColor">
+                <path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z" />
+            </svg>
+        </i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center; ">
+            
+                <div class="nav-item">
+                    <a href="/" class="menu gt-a-link" target="_self">首页</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/archives/" class="menu gt-a-link" target="_self">归档</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/tags/" class="menu gt-a-link" target="_self">标签</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/friends/" class="menu gt-a-link" target="_self">友链</a>
+                </div>
+            
+        </div>
+    </div>
+</nav>
+
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function() {
+        let element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else { 
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+                <div class="post-container">
+    <div class="post-detail gt-bg-theme-color-second gt-c-content-color-first">
+        <article class="gt-post-content">
+            <h1 class="post-title">Redis Guide 使用手册</h1>
+            <div class="post-info">
+                <time class="post-time gt-c-content-color-first">
+                    · 2020-07-10 ·</time>
+                
+                    
+                        <a href="/tags/Redis/" class="post-tag">
+                            #Redis</a>
+                    
+                
+            </div>
+            <hr>
+            <div class="post-content gt-c-content-color-first">
+                <h1 id="Redis-数据结构与应用"><a href="#Redis-数据结构与应用" class="headerlink" title="Redis 数据结构与应用"></a>Redis 数据结构与应用</h1><h2 id="普通字符串"><a href="#普通字符串" class="headerlink" title="普通字符串"></a>普通字符串</h2><h3 id="SET-命令"><a href="#SET-命令" class="headerlink" title="SET 命令"></a>SET 命令</h3><ol>
 <li>SET KEY VALUE 设置</li>
 <li>NX 不存在才设置  可用于实现分布式锁</li>
 <li>XX 存在才设置</li>
@@ -14,7 +115,7 @@
 <li>MGET KEY1 [ KEY2 …] 一次设置多个键值对<br>返回VALUE列表, 这在批量获取多个键值对的时候非常实用, 业务层不用做封装</li>
 </ol>
 <h3 id="MSETNX-命令"><a href="#MSETNX-命令" class="headerlink" title="MSETNX 命令"></a>MSETNX 命令</h3><ol>
-<li>MSETNX KEY VALUE [ KEY2 VALUE2 …]<br>设置多个键值对, 这是一个原子操作, 当且仅当所有KEY都不存在的时候才会成功</li>
+<li>MSETNX KEY VALUE [ KEY2 VALUE2 …]<br>   设置多个键值对, 这是一个原子操作, 当且仅当所有KEY都不存在的时候才会成功</li>
 </ol>
 <h3 id="STRLEN-命令"><a href="#STRLEN-命令" class="headerlink" title="STRLEN 命令"></a>STRLEN 命令</h3><ol>
 <li>STRLEN KEY 获取值的字节长度</li>
@@ -29,10 +130,10 @@
 <li>APPEND KEY suffix 对值进行追加操作, 并返回新串长度<br>当KEY不存在, 那么APPEND命令等价于SET操作</li>
 </ol>
 <h3 id="INCRBY-DECRBY-命令"><a href="#INCRBY-DECRBY-命令" class="headerlink" title="INCRBY DECRBY 命令"></a>INCRBY DECRBY 命令</h3><ol>
-<li>INCRBY/DECRBY KEY incrment 当存储的值能够被解释为整数时， 可以使用这两个命令来对值进行加或减<br>当KEY不存在，那么会被初始化为0，然后再进行操作</li>
+<li>INCRBY&#x2F;DECRBY KEY incrment 当存储的值能够被解释为整数时， 可以使用这两个命令来对值进行加或减<br>当KEY不存在，那么会被初始化为0，然后再进行操作</li>
 </ol>
 <h3 id="INCR-DECR-命令"><a href="#INCR-DECR-命令" class="headerlink" title="INCR DECR 命令"></a>INCR DECR 命令</h3><ol>
-<li>INCR/DECR KEY incrment 当存储的值能够被解释为整数时， 可以使用这两个命令来对值进行加或减1<br>当KEY不存在，那么会被初始化为0，然后再进行操作</li>
+<li>INCR&#x2F;DECR KEY incrment 当存储的值能够被解释为整数时， 可以使用这两个命令来对值进行加或减1<br>当KEY不存在，那么会被初始化为0，然后再进行操作</li>
 </ol>
 <h3 id="INCRBYFLOAT-命令"><a href="#INCRBYFLOAT-命令" class="headerlink" title="INCRBYFLOAT 命令"></a>INCRBYFLOAT 命令</h3><ol>
 <li>INCRBYFLOAT KEY incrment， 命令与INCRBY无差别，主要是针对的是浮点数<br>但是没有DECRBYFLOAT命令，可以通过设置incrment为负数来实现减法<br>INCRBYFLOAT 命令对值的格式更加宽松，那么值是整数的时候，命令与INCRBY等同，存储的值也会是整数<br>注意Redis在处理浮点数的时候，小数位长度是有限制，最长为17位，对于大部分应用是足够的</li>
@@ -90,10 +191,10 @@
 <h3 id="HLEN-命令"><a href="#HLEN-命令" class="headerlink" title="HLEN 命令"></a>HLEN 命令</h3><ol>
 <li>HLEN HASH 获取散列表字段个数</li>
 </ol>
-<h3 id="HMSET-HMGET-系列命令"><a href="#HMSET-HMGET-系列命令" class="headerlink" title="HMSET/HMGET 系列命令"></a>HMSET/HMGET 系列命令</h3><ol>
-<li>效果同MSET/MGET</li>
+<h3 id="HMSET-x2F-HMGET-系列命令"><a href="#HMSET-x2F-HMGET-系列命令" class="headerlink" title="HMSET&#x2F;HMGET 系列命令"></a>HMSET&#x2F;HMGET 系列命令</h3><ol>
+<li>效果同MSET&#x2F;MGET</li>
 </ol>
-<h3 id="HKEYS-HVALS-HGETALL-命令"><a href="#HKEYS-HVALS-HGETALL-命令" class="headerlink" title="HKEYS/HVALS/HGETALL 命令"></a>HKEYS/HVALS/HGETALL 命令</h3><ol>
+<h3 id="HKEYS-x2F-HVALS-x2F-HGETALL-命令"><a href="#HKEYS-x2F-HVALS-x2F-HGETALL-命令" class="headerlink" title="HKEYS&#x2F;HVALS&#x2F;HGETALL 命令"></a>HKEYS&#x2F;HVALS&#x2F;HGETALL 命令</h3><ol>
 <li>获取散列表中所有字段FIELD</li>
 <li>获取散列表中所有VALUE</li>
 <li>获取散列表中所有FIELD和VALUE<br>格式为数组： FIELD1:VALUE1:FILED2:VALUE2……</li>
@@ -104,11 +205,11 @@
 <h3 id="RPUSH-命令"><a href="#RPUSH-命令" class="headerlink" title="RPUSH 命令"></a>RPUSH 命令</h3><ol>
 <li>RPUSH KEY VALUE0 [ VALUE1 VALUE2 …] 返回推入会列表元素个数<br>向列表右端新增n个VALUE, ‘R’ 表示是right</li>
 </ol>
-<h3 id="RPUSHX-LPUSHX-命令"><a href="#RPUSHX-LPUSHX-命令" class="headerlink" title="RPUSHX/LPUSHX 命令"></a>RPUSHX/LPUSHX 命令</h3><ol>
+<h3 id="RPUSHX-x2F-LPUSHX-命令"><a href="#RPUSHX-x2F-LPUSHX-命令" class="headerlink" title="RPUSHX&#x2F;LPUSHX 命令"></a>RPUSHX&#x2F;LPUSHX 命令</h3><ol>
 <li>与上两个命令同，但是在列表KEY不存在的时候的结果不一样，这两个命令在列表KEY不存在的时候会推入失败， 返回0</li>
 </ol>
-<h3 id="LPOP-RPOP"><a href="#LPOP-RPOP" class="headerlink" title="LPOP/RPOP"></a>LPOP/RPOP</h3><ol>
-<li>LPOP/RPOP LISTKEY 弹出最左边/右边的元素， 返回POP后的元素</li>
+<h3 id="LPOP-x2F-RPOP"><a href="#LPOP-x2F-RPOP" class="headerlink" title="LPOP&#x2F;RPOP"></a>LPOP&#x2F;RPOP</h3><ol>
+<li>LPOP&#x2F;RPOP LISTKEY 弹出最左边&#x2F;右边的元素， 返回POP后的元素</li>
 </ol>
 <h3 id="RPOPLPUSH-命令"><a href="#RPOPLPUSH-命令" class="headerlink" title="RPOPLPUSH 命令"></a>RPOPLPUSH 命令</h3><ol>
 <li>RPOPLPUSH source target 返回被弹出的元素值<br>将源source列表最右端元素弹出，插入到目标target列表最左端<br>其中source和target可以相同，即将列表首尾对调<br>当source 为空时，执行会失败，返回空</li>
@@ -126,7 +227,7 @@
 <li>LSET list index new_value<br>对列表指定索引元素值更新</li>
 </ol>
 <h3 id="LINSERT-命令"><a href="#LINSERT-命令" class="headerlink" title="LINSERT 命令"></a>LINSERT 命令</h3><ol>
-<li>LINSERT list BEFORE/AFTER target_element new_element</li>
+<li>LINSERT list BEFORE&#x2F;AFTER target_element new_element</li>
 </ol>
 <h3 id="LTRIM-裁剪"><a href="#LTRIM-裁剪" class="headerlink" title="LTRIM 裁剪"></a>LTRIM 裁剪</h3><ol>
 <li>LTRIM list start index 删除索引范围外所有元素</li>
@@ -174,16 +275,16 @@
 <h3 id="SPOP-命令"><a href="#SPOP-命令" class="headerlink" title="SPOP 命令"></a>SPOP 命令</h3><ol>
 <li><code>SPOP set [count]</code> 随机的重集中移除count个元素，返回被移除的元素集合</li>
 </ol>
-<h3 id="SINTER-SINTERSTORE-命令"><a href="#SINTER-SINTERSTORE-命令" class="headerlink" title="SINTER/SINTERSTORE 命令"></a>SINTER/SINTERSTORE 命令</h3><ol>
+<h3 id="SINTER-x2F-SINTERSTORE-命令"><a href="#SINTER-x2F-SINTERSTORE-命令" class="headerlink" title="SINTER&#x2F;SINTERSTORE 命令"></a>SINTER&#x2F;SINTERSTORE 命令</h3><ol>
 <li><p><code>SINTER set [set]</code> 求多个集合的交集</p>
 </li>
 <li><p><code>SINTER dest_set set [set ]</code> 求多个集合的交集，并将结果存储到新的集合中，返回新集合的元素个数</p>
 </li>
 </ol>
-<h3 id="SUNION-SUNIONSTORE-命令"><a href="#SUNION-SUNIONSTORE-命令" class="headerlink" title="SUNION/SUNIONSTORE 命令"></a>SUNION/SUNIONSTORE 命令</h3><ol>
+<h3 id="SUNION-x2F-SUNIONSTORE-命令"><a href="#SUNION-x2F-SUNIONSTORE-命令" class="headerlink" title="SUNION&#x2F;SUNIONSTORE 命令"></a>SUNION&#x2F;SUNIONSTORE 命令</h3><ol>
 <li>并集, 含义同上</li>
 </ol>
-<h3 id="SDIFF-SDIFFSTORE-命令"><a href="#SDIFF-SDIFFSTORE-命令" class="headerlink" title="SDIFF/SDIFFSTORE 命令"></a>SDIFF/SDIFFSTORE 命令</h3><ol>
+<h3 id="SDIFF-x2F-SDIFFSTORE-命令"><a href="#SDIFF-x2F-SDIFFSTORE-命令" class="headerlink" title="SDIFF&#x2F;SDIFFSTORE 命令"></a>SDIFF&#x2F;SDIFFSTORE 命令</h3><ol>
 <li>差集，含义同上</li>
 <li>集合操作都非常消耗性能，可能导致Redis主线程阻塞</li>
 </ol>
@@ -192,7 +293,35 @@
 <li>每个元素都由一个成员和一个与成员相关联的分值score组成</li>
 <li>排行榜最佳实现</li>
 </ol>
-<p><code>sorted set</code><br>|score   | member  |<br>|:—-:  |  :—-: |<br>| 1 | genge |<br>| 3 | apple |<br>| 7 | inuby |<br>| 7 | oiuby |<br>| 19| qwmok |</p>
+<p><code>sorted set</code></p>
+<table>
+<thead>
+<tr>
+<th align="center">score</th>
+<th align="center">member</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">genge</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">apple</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">inuby</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">oiuby</td>
+</tr>
+<tr>
+<td align="center">19</td>
+<td align="center">qwmok</td>
+</tr>
+</tbody></table>
 <h3 id="ZADD-命令"><a href="#ZADD-命令" class="headerlink" title="ZADD 命令"></a>ZADD 命令</h3><ol>
 <li><code>ZADD sorted_set [CH] score element [score element]</code> 向有序集合中添加元素</li>
 <li>默认返回新添加元素的个数，当命令带 CH 的时候返回修改元素的个数</li>
@@ -210,16 +339,16 @@
 <h3 id="ZCARD-命令"><a href="#ZCARD-命令" class="headerlink" title="ZCARD 命令"></a>ZCARD 命令</h3><ol>
 <li>获取有序集合元素个数</li>
 </ol>
-<h3 id="ZRANK-ZREVRANK-命令"><a href="#ZRANK-ZREVRANK-命令" class="headerlink" title="ZRANK/ZREVRANK 命令"></a>ZRANK/ZREVRANK 命令</h3><ol>
+<h3 id="ZRANK-x2F-ZREVRANK-命令"><a href="#ZRANK-x2F-ZREVRANK-命令" class="headerlink" title="ZRANK&#x2F;ZREVRANK 命令"></a>ZRANK&#x2F;ZREVRANK 命令</h3><ol>
 <li><code>ZRANK sorted_set member</code> 指定元素的的正排名 （从小到大）</li>
 <li><code>ZREVRANK sorted_set member</code> 指定元素的的排名 （从大到小）</li>
 </ol>
-<h3 id="ZRANGE-ZREVRANGE-命令"><a href="#ZRANGE-ZREVRANGE-命令" class="headerlink" title="ZRANGE / ZREVRANGE 命令"></a>ZRANGE / ZREVRANGE 命令</h3><ol>
+<h3 id="ZRANGE-x2F-ZREVRANGE-命令"><a href="#ZRANGE-x2F-ZREVRANGE-命令" class="headerlink" title="ZRANGE &#x2F; ZREVRANGE 命令"></a>ZRANGE &#x2F; ZREVRANGE 命令</h3><ol>
 <li>获取指定范围内成员 <code>ZRANGE/ZREVRANGE sorted_set start end</code></li>
 <li>start 和 end均可接受负值, 含义是排名</li>
 <li><code>ZRANGE/ZREVRANGE sorted_set start end WITHSCORES</code> 会返回分值和元素值</li>
 </ol>
-<h3 id="ZRANGEBYSCORE-ZREVRANGEBYSCORE-命令"><a href="#ZRANGEBYSCORE-ZREVRANGEBYSCORE-命令" class="headerlink" title="ZRANGEBYSCORE/ZREVRANGEBYSCORE 命令"></a>ZRANGEBYSCORE/ZREVRANGEBYSCORE 命令</h3><ol>
+<h3 id="ZRANGEBYSCORE-x2F-ZREVRANGEBYSCORE-命令"><a href="#ZRANGEBYSCORE-x2F-ZREVRANGEBYSCORE-命令" class="headerlink" title="ZRANGEBYSCORE&#x2F;ZREVRANGEBYSCORE 命令"></a>ZRANGEBYSCORE&#x2F;ZREVRANGEBYSCORE 命令</h3><ol>
 <li><code>ZRANGEBYSCORE/ZREVRANGEBYSCORE sorted_set min max/max min</code> 获取指定范围分数内的成员</li>
 <li><code>WITHSCORES</code> 可以附带返回分数值</li>
 <li><code>LIMIT offset count</code> 可以限制返回元素的数量， offset为起止偏移量，count为最大返回数量</li>
@@ -238,30 +367,180 @@
 <li><code>ZREMRANGEBYSCORE sorted_set start end</code> 根据给定的分数区间来移除成员</li>
 <li>和上面的RAGNE命令相同，都支持开闭区间无穷等设置</li>
 </ol>
-<h3 id="ZINTERSTORE-ZUNIONSTORE-命令"><a href="#ZINTERSTORE-ZUNIONSTORE-命令" class="headerlink" title="ZINTERSTORE/ZUNIONSTORE 命令"></a>ZINTERSTORE/ZUNIONSTORE 命令</h3><ol>
+<h3 id="ZINTERSTORE-x2F-ZUNIONSTORE-命令"><a href="#ZINTERSTORE-x2F-ZUNIONSTORE-命令" class="headerlink" title="ZINTERSTORE&#x2F;ZUNIONSTORE 命令"></a>ZINTERSTORE&#x2F;ZUNIONSTORE 命令</h3><ol>
 <li><code>ZINTERSTORE/ZUNIONSTORE destination numbers sorted_set [sorted_set ]</code> 求多个集合的交集和并集</li>
 <li>numbers为sorted_set 参数的个数</li>
 <li>返回交集元素或者并集元素个数</li>
 <li>集合元素的分值是由两个集合分值的和</li>
-<li><code>[AGGREGATE SUM/MIN/MAX]</code> 可以通过设置聚合函数来控制分值(求和/最小值/最大值)</li>
+<li><code>[AGGREGATE SUM/MIN/MAX]</code> 可以通过设置聚合函数来控制分值(求和&#x2F;最小值&#x2F;最大值)</li>
 <li><code>[WEIGHTS w1 w2 w3]</code> 可以为每个集合设置权重，这样计算方式将会是分值乘以权重再相加</li>
 <li>除此之外，还可以接受集合（非有序）来执行命令，此时score默认都是1，还可以带WEIGHTS</li>
 </ol>
-<h3 id="ZEANGEBYLEX-ZREVRANGEBYLEX-ZLEXCOUNT-ZREMRANGEBYLEX-系列命令"><a href="#ZEANGEBYLEX-ZREVRANGEBYLEX-ZLEXCOUNT-ZREMRANGEBYLEX-系列命令" class="headerlink" title="ZEANGEBYLEX/ZREVRANGEBYLEX/ZLEXCOUNT/ZREMRANGEBYLEX 系列命令"></a>ZEANGEBYLEX/ZREVRANGEBYLEX/ZLEXCOUNT/ZREMRANGEBYLEX 系列命令</h3><ol>
+<h3 id="ZEANGEBYLEX-x2F-ZREVRANGEBYLEX-x2F-ZLEXCOUNT-x2F-ZREMRANGEBYLEX-系列命令"><a href="#ZEANGEBYLEX-x2F-ZREVRANGEBYLEX-x2F-ZLEXCOUNT-x2F-ZREMRANGEBYLEX-系列命令" class="headerlink" title="ZEANGEBYLEX&#x2F;ZREVRANGEBYLEX&#x2F;ZLEXCOUNT&#x2F;ZREMRANGEBYLEX 系列命令"></a>ZEANGEBYLEX&#x2F;ZREVRANGEBYLEX&#x2F;ZLEXCOUNT&#x2F;ZREMRANGEBYLEX 系列命令</h3><ol>
 <li>以上所有命令格式雷同，都是处理当有序集合中分数全部相当的情况min和max分别指定是字典字母</li>
 <li><code>ZEANGEBYLEX sorted_set min max</code></li>
 <li>比如<code>ZEANGEBYLEX sorted_set - +</code>返回所有成员，<code>[a (t</code> 返回字典大于等于a并且小于t的所有成员</li>
-<li>逆序/成员个数/移除操作都是类似的</li>
+<li>逆序&#x2F;成员个数&#x2F;移除操作都是类似的</li>
 </ol>
-<h3 id="ZPOPMAX-ZPOPMIN-命令"><a href="#ZPOPMAX-ZPOPMIN-命令" class="headerlink" title="ZPOPMAX/ZPOPMIN 命令"></a>ZPOPMAX/ZPOPMIN 命令</h3><ol>
+<h3 id="ZPOPMAX-x2F-ZPOPMIN-命令"><a href="#ZPOPMAX-x2F-ZPOPMIN-命令" class="headerlink" title="ZPOPMAX&#x2F;ZPOPMIN 命令"></a>ZPOPMAX&#x2F;ZPOPMIN 命令</h3><ol>
 <li>弹出分值最高或者最低分值的元素</li>
 <li>返回成员和分值</li>
 <li><code>ZPOPMAX sorted_set [count]</code>可以通过 count 来指定最多移除的成员数量，默认为1</li>
 <li>Redis5.0  以上版本才支持</li>
 </ol>
-<h3 id="BZPOPMIN-BZPOPMAX-命令"><a href="#BZPOPMIN-BZPOPMAX-命令" class="headerlink" title="BZPOPMIN/BZPOPMAX 命令"></a>BZPOPMIN/BZPOPMAX 命令</h3><ol>
+<h3 id="BZPOPMIN-x2F-BZPOPMAX-命令"><a href="#BZPOPMIN-x2F-BZPOPMAX-命令" class="headerlink" title="BZPOPMIN&#x2F;BZPOPMAX 命令"></a>BZPOPMIN&#x2F;BZPOPMAX 命令</h3><ol>
 <li>阻塞式的最小或最大的弹出操作, 可以接受多个集合参数，进行遍历检测</li>
 <li><code>BZPOPMIN/BZPOPMAX sorted_set [sorted_set ] timeout</code></li>
 <li>timeout 为 0 表示无限阻塞等待</li>
 </ol>
-</div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Genge</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2020/07/10/Redis-Guide/">genge.cc/2020/07/10/Redis-Guide/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</li></ul></div><br><div class="tags"><a href="/tags/Redis/">Redis</a></div><div class="post-nav"><a class="next" href="/2020/02/12/%E6%89%B9%E9%87%8F%E6%8D%A2%E8%A1%8C%E7%AC%A6%E8%BD%AC%E6%8D%A2CRLF%E5%88%B0LF/">批量转换换行符CRLF到LF</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="genge.cc"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game/">Game</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shell/">Shell</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/emotion/">emotion</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BD%91%E7%BB%9C/">网络</a><span class="category-list-count">1</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 15px;">网络</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 15px;">面试</a> <a href="/tags/timer/" style="font-size: 15px;">timer</a> <a href="/tags/uuid/" style="font-size: 15px;">uuid</a> <a href="/tags/rank/" style="font-size: 15px;">rank</a> <a href="/tags/ringbuff/" style="font-size: 15px;">ringbuff</a> <a href="/tags/flag/" style="font-size: 15px;">flag</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/07/10/Redis-Guide/">Redis Guide 使用手册</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/%E6%89%B9%E9%87%8F%E6%8D%A2%E8%A1%8C%E7%AC%A6%E8%BD%AC%E6%8D%A2CRLF%E5%88%B0LF/">批量转换换行符CRLF到LF</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/05/Flag/">Flag</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/Linux%20shell%E8%AF%AD%E8%A8%80%E2%80%94%E2%80%94dash%E5%92%8Cbash/">Linux shell语言——dash和bash</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/%E5%8D%95%E7%94%9F%E4%BA%A7%E8%80%85%E5%8D%95%E6%B6%88%E8%B4%B9%E8%80%85%E7%8E%AF%E5%BD%A2%E7%BC%93%E5%86%B2/">单生产者单消费者环形缓冲</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/%E5%90%84%E7%B1%BBAPP%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%AE%9E%E7%8E%B0/">各类APP排行榜实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E6%97%B6%E9%97%B4%E8%BD%AETimer%E5%AE%9A%E6%97%B6%E5%99%A8/">Timer 定时器技术分享</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/linux%20fork%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/">linux fork函数详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80ID%E7%94%9F%E6%88%90%E7%AE%97%E6%B3%95%E4%BC%98%E5%8C%96/">全局唯一ID生成算法优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/23/linux%20%E7%B3%BB%E7%BB%9F%E4%BF%A1%E5%8F%B7%E5%92%8C%E4%B8%AD%E6%96%AD%E5%B8%B8%E8%AF%86/">linux 系统信号和中断常识</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.younfor.com" title="字节跳动大神" target="_blank">字节跳动大神</a><ul></ul><a href="http://www.hl174.com/" title="百度大佬" target="_blank">百度大佬</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2020 <a href="/." rel="nofollow">Genge 随笔.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
+<h2 id="HperLogLog"><a href="#HperLogLog" class="headerlink" title="HperLogLog"></a>HperLogLog</h2><h3 id="HperLogLog数据结构"><a href="#HperLogLog数据结构" class="headerlink" title="HperLogLog数据结构"></a>HperLogLog数据结构</h3><ol>
+<li>神奇的HyperLogLog算法<a target="_blank" rel="noopener" href="http://www.rainybowe.com/blog/2017/07/13/%E7%A5%9E%E5%A5%87%E7%9A%84HyperLogLog%E7%AE%97%E6%B3%95/index.html">http://www.rainybowe.com/blog/2017/07/13/%E7%A5%9E%E5%A5%87%E7%9A%84HyperLogLog%E7%AE%97%E6%B3%95/index.html</a></li>
+<li>Sketch of the Day: HyperLogLog — Cornerstone of a Big Data Infrastructure <a target="_blank" rel="noopener" href="http://content.research.neustar.biz/blog/hll.html">http://content.research.neustar.biz/blog/hll.html</a></li>
+<li>这是一个专门解决大数据计数器消耗太多内存问题的一个概率算法，只需要12k就可以统计2^64个元素</li>
+<li>当然这不是精确统计，存在误差，数据量大的时候误差有的时候是允许的，可容允的</li>
+</ol>
+<h3 id="PFADD-命令"><a href="#PFADD-命令" class="headerlink" title="PFADD 命令"></a>PFADD 命令</h3><ol>
+<li><code>PFADD hperloglog element [element]</code> 新增元素</li>
+<li>当新增元素是的统计基数值发生变化就返回1，否则反正0</li>
+</ol>
+<h3 id="PFCOUNT-命令"><a href="#PFCOUNT-命令" class="headerlink" title="PFCOUNT 命令"></a>PFCOUNT 命令</h3><ol>
+<li><code>PFCOUNT hyperloglog [hyperloglog ...]</code> 计算集合的近视基数</li>
+<li>当参数为多个时候，计算方式为：首先求多个集合的并集，然后对并集求近视基数</li>
+</ol>
+<h3 id="PFMERGE-命令"><a href="#PFMERGE-命令" class="headerlink" title="PFMERGE 命令"></a>PFMERGE 命令</h3><ol>
+<li><p><code>PFMERGE destination hyperloglog [hyperloglog ...]</code>  对多个hyperloglog集合求并集，然后将结果存在dest中</p>
+</li>
+<li><p>PFCOUNT 其实是有调用PFMERGE命令的</p>
+</li>
+</ol>
+<h2 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h2><h3 id="位图结构"><a href="#位图结构" class="headerlink" title="位图结构"></a>位图结构</h3><ol>
+<li><p>Redis位图bitmap是由多个二进制位组成的数组，数组中每一位都有与之对应的偏移量(索引)</p>
+</li>
+<li><p>BITMAP 图</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>index</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>位</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1｜</td>
+</tr>
+</tbody></table>
+<h3 id="SETBIT-命令"><a href="#SETBIT-命令" class="headerlink" title="SETBIT 命令"></a>SETBIT 命令</h3><ol>
+<li><code>SETBIT bitmap offset value</code> 设置指定偏移位的值</li>
+<li>返回指定偏移量旧值，默认为0</li>
+<li>bitmap默认按照字节扩展</li>
+<li>offset只能为正值</li>
+</ol>
+<h3 id="GETBIT-命令"><a href="#GETBIT-命令" class="headerlink" title="GETBIT 命令"></a>GETBIT 命令</h3><ol>
+<li><code>GETBIT bitmap offset</code>获取指定位置的值</li>
+</ol>
+<h3 id="BITCOUNT-命令"><a href="#BITCOUNT-命令" class="headerlink" title="BITCOUNT 命令"></a>BITCOUNT 命令</h3><ol>
+<li><code>BITCOUNT bitmap</code> 统计位图中1的个数</li>
+<li><code>BITCOUNT bitmap start end</code>  返回指定字节范围内1的个数，注意start和end为字节偏移量，并不是位offset， 可以使用负数作为参数</li>
+</ol>
+<h3 id="BITPOS-命令"><a href="#BITPOS-命令" class="headerlink" title="BITPOS 命令"></a>BITPOS 命令</h3><ol>
+<li><code>BITPOS bitmap value</code> 查询bitmap中第一个被设置为value值的位置</li>
+<li><code>BITPOS bitmap value [start end]</code>  在指定范围内查找，但是返回的offset是基于整个bigmap的偏移</li>
+<li>start和end可以为负值</li>
+</ol>
+<h3 id="BITOP-命令"><a href="#BITOP-命令" class="headerlink" title="BITOP 命令"></a>BITOP 命令</h3><ol>
+<li><code>BITOP OP result_key bitmap [bitmap ...]</code> 对多个bitmap数组执行op操作，将结果存储在result中</li>
+<li>op可以是 AND &#x2F; OR &#x2F;XOR &#x2F; NOT</li>
+</ol>
+<h3 id="BITFIELD-命令"><a href="#BITFIELD-命令" class="headerlink" title="BITFIELD 命令"></a>BITFIELD 命令</h3><ol>
+<li><code>BITFIELD bitmap SET type offset value</code> 根据位偏移来设置bitmap中值value，其中type是指定value的类型，比如i8：8位有符号，u16：16位无符号等</li>
+<li>offset 可以换成 #index， 这样可以以字节位来索引具体位置，然后设置值</li>
+<li>可以同时执行多个set命令</li>
+<li><code>BITFIELD bitmap GET type offset/#index</code> 获取对应的值，同样的也可以同时执行多个GET</li>
+<li><code>BITFIELD bitmap INCRYBY type offset/#index increment</code> 对指定范围值加减操作</li>
+<li><code>BITFIELD bitmap [OVERFLOW WRAP/SAT/FAIL] INCRYBY type offset/#index increment</code> 可以用来处理加减法结果溢出的情况，分别为环绕&#x2F;饱和运算&#x2F;失败</li>
+</ol>
+<h3 id="BITMAP-STRING"><a href="#BITMAP-STRING" class="headerlink" title="BITMAP STRING"></a>BITMAP STRING</h3><ol>
+<li>可以把二进制数组当作是字符串来操作</li>
+<li>GET 命令来获取二进制数组值，返回值为二进制字符串</li>
+<li>STRLEN 可以得到二进制字符串的长度</li>
+<li>GETRANGE 获取指定范围的二进制字符串</li>
+</ol>
+<h2 id="GEO位置服务"><a href="#GEO位置服务" class="headerlink" title="GEO位置服务"></a>GEO位置服务</h2><h3 id="GEOADD-命令"><a href="#GEOADD-命令" class="headerlink" title="GEOADD 命令"></a>GEOADD 命令</h3><ol>
+<li><code>GEOADD location_set longitude latitude name [longitude latitude name]</code> 添加一个或者多个位置坐标（经纬度）</li>
+<li>当执行的是添加的，那么返回添加的位置个数；如果是更新那么返回0</li>
+</ol>
+<h3 id="GEOPOS-命令"><a href="#GEOPOS-命令" class="headerlink" title="GEOPOS 命令"></a>GEOPOS 命令</h3><ol>
+<li><code>GEOPOS location_set name [name ...]</code>  获取指定位置的经纬度</li>
+<li>返回值是数组，其中数组元素为二元数组，第一项为经度，第二项为纬度</li>
+</ol>
+<h3 id="GEODIST-命令"><a href="#GEODIST-命令" class="headerlink" title="GEODIST 命令"></a>GEODIST 命令</h3><ol>
+<li><code>GEODIST location_set name1 name2</code> 计算俩个位置的直线距离</li>
+<li>默认单位为米，可以通过<code>[unit]</code> 来指定单位m&#x2F;km&#x2F;mi英里&#x2F;ft英寸</li>
+</ol>
+<h3 id="GEORADIUS-命令"><a href="#GEORADIUS-命令" class="headerlink" title="GEORADIUS 命令"></a>GEORADIUS 命令</h3><ol>
+<li><code>GEORADIUS location_set longitude latitude radius unit</code>  获取指定位置为中心点，radius半径内所有的地点</li>
+<li><code>WITHDIST</code> 加上这个后缀参数，可以返回地点和地点与中心位置的直线距离</li>
+<li><code>WITHCOORD</code>  返回地点和地点坐标</li>
+<li><code>[ASD|DESC]</code> 对返回的结果排序</li>
+<li><code>[COUNT n]</code>  限制返回地点的数量</li>
+<li>可以同时指定多个可选参数</li>
+</ol>
+<h3 id="GEORADIUSBYMEMBER-命令"><a href="#GEORADIUSBYMEMBER-命令" class="headerlink" title="GEORADIUSBYMEMBER 命令"></a>GEORADIUSBYMEMBER 命令</h3><ol>
+<li><code>longitude latitude</code> 参数换成 <code>name</code>地名</li>
+</ol>
+<h3 id="GEOHASH-命令"><a href="#GEOHASH-命令" class="headerlink" title="GEOHASH 命令"></a>GEOHASH 命令</h3><ol>
+<li>获取指定位置的GEOhash值，GEOhash值是经纬度转换而来，并且可以通过GEohash来计算得到经纬度</li>
+<li>在上面的两个命令中都可以指定<code>WITHHASH</code>  来返回GEOHASH 而非 经纬度</li>
+</ol>
+<h3 id="GEO数据内部存储结构"><a href="#GEO数据内部存储结构" class="headerlink" title="GEO数据内部存储结构"></a>GEO数据内部存储结构</h3><ol>
+<li>为有序集合，因此可以使用ZSORTED来操作数据，其中score为Geohash值</li>
+</ol>
+<h2 id="Stream流"><a href="#Stream流" class="headerlink" title="Stream流"></a>Stream流</h2>
+            </div>
+        </article>
+    </div>
+    <br>
+    
+        <div class="next-prev-post">
+            
+            
+                <div class="next-post">
+                    <div class="next gt-c-content-color-first">
+                        下一篇：<a href="/2020/02/12/%E6%89%B9%E9%87%8F%E6%8D%A2%E8%A1%8C%E7%AC%A6%E8%BD%AC%E6%8D%A2CRLF%E5%88%B0LF/" 
+                            class="post-title gt-a-link">批量转换换行符CRLF到LF</a>
+                    </div>
+                </div>
+            
+        </div>
+    
+    
+
+    
+
+    
+</div>
+
+                <div class="site-footer gt-c-content-color-first">
+    <div class="footer-main">
+        <!-- 建议保留版权信息或者添加主题信息到友链，感谢您的理解 -->
+        <!-- 文件位置：layout/_includes/footer.ejs -->
+        <span style="text-align: right; float: right;">Theme <a 
+            href="https://github.com/renbaoshuo/hexo-theme-pure" target="_blank">Pure</a> | Powered by <a 
+            href="https://hexo.io" target="_blank">Hexo</a></span>
+        <span style="text-align: left;">Footer HTML
+</span>
+    </div>
+</div>
+
+            </div>
+        </div>
+    </body>
+</html>
