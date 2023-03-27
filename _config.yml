@@ -9,13 +9,13 @@ description: "记录点滴"
 keywords: 菜鸡程序员
 author: Genge
 language: zh-CN
-timezone: ""
+timezone: "Asia/Shanghai"
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: genge.cc
+url: https://blog.genge.cc
 root: /
-permalink: :year/:month/:day/:title/
+permalink: /:year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
@@ -25,6 +25,7 @@ pretty_urls:
 source_dir: source
 public_dir: public
 tag_dir: tags
+friend_dir: friends
 archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
@@ -87,7 +88,7 @@ meta_generator: true
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 ## Use post's date for updated date unless set in front-matter
-use_date_for_updated: false
+updated_option: "date"
 
 # Pagination
 ## Set per_page to 0 to disable pagination
