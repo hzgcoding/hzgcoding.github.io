@@ -64,7 +64,19 @@
                 </div>
             
                 <div class="nav-item">
+                    <a href="/timeline/" class="menu gt-a-link" target="_self">时间线</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/about/" class="menu gt-a-link" target="_self">关于</a>
+                </div>
+            
+                <div class="nav-item">
                     <a href="/friends/" class="menu gt-a-link" target="_self">友链</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/atom.xml" class="menu gt-a-link" target="_self">rss</a>
                 </div>
             
         </div>
@@ -100,12 +112,294 @@
             <hr>
             <div class="post-content gt-c-content-color-first">
                 <p>实现方式非常巧妙，刚开始看的有点奇怪，当发现实现原理后惊讶了一番..</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**@brief 仿照linux kfifo写的ring buffer</span></span><br><span class="line"><span class="comment">* ring_buffer.h</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> KFIFO_HEADER_H </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KFIFO_HEADER_H</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;inttypes.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">//判断x是否是2的次方</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> is_power_of_2(x) ((x) != 0 &amp;&amp; (((x) &amp; ((x) - 1)) == 0))</span></span><br><span class="line"><span class="comment">//取a和b中最小值</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> min(a, b) (((a) &lt; (b)) ? (a) : (b))</span></span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ring_buffer</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">void</span>         *<span class="built_in">buffer</span>;     <span class="comment">//缓冲区</span></span><br><span class="line">    <span class="keyword">uint32_t</span>     <span class="built_in">size</span>;       <span class="comment">//大小</span></span><br><span class="line">    <span class="keyword">uint32_t</span>     in;         <span class="comment">//入口位置</span></span><br><span class="line">    <span class="keyword">uint32_t</span>       out;        <span class="comment">//出口位置</span></span><br><span class="line">    <span class="keyword">pthread_mutex_t</span> *f_lock;    <span class="comment">//互斥锁</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//初始化缓冲区</span></span><br><span class="line"><span class="function">struct ring_buffer* <span class="title">ring_buffer_init</span><span class="params">(<span class="keyword">void</span> *<span class="built_in">buffer</span>, <span class="keyword">uint32_t</span> <span class="built_in">size</span>, <span class="keyword">pthread_mutex_t</span> *f_lock)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    assert(<span class="built_in">buffer</span>);</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ring_buffer</span> *<span class="title">ring_buf</span> = <span class="title">NULL</span>;</span></span><br><span class="line">    <span class="keyword">if</span> (!is_power_of_2(<span class="built_in">size</span>))</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"size must be power of 2.\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> ring_buf;</span><br><span class="line">    &#125;</span><br><span class="line">    ring_buf = (struct ring_buffer *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct ring_buffer));</span><br><span class="line">    <span class="keyword">if</span> (!ring_buf)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"Failed to malloc memory,errno:%u,reason:%s"</span>,</span><br><span class="line">            errno, strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> ring_buf;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">memset</span>(ring_buf, <span class="number">0</span>, <span class="keyword">sizeof</span>(struct ring_buffer));</span><br><span class="line">    ring_buf-&gt;<span class="built_in">buffer</span> = <span class="built_in">buffer</span>;</span><br><span class="line">    ring_buf-&gt;<span class="built_in">size</span> = <span class="built_in">size</span>;</span><br><span class="line">    ring_buf-&gt;in = <span class="number">0</span>;</span><br><span class="line">    ring_buf-&gt;out = <span class="number">0</span>;</span><br><span class="line">        ring_buf-&gt;f_lock = f_lock;</span><br><span class="line">    <span class="keyword">return</span> ring_buf;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//释放缓冲区</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ring_buffer_free</span><span class="params">(struct ring_buffer *ring_buf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (ring_buf)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">if</span> (ring_buf-&gt;<span class="built_in">buffer</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">free</span>(ring_buf-&gt;<span class="built_in">buffer</span>);</span><br><span class="line">        ring_buf-&gt;<span class="built_in">buffer</span> = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(ring_buf);</span><br><span class="line">    ring_buf = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//缓冲区的长度</span></span><br><span class="line"><span class="keyword">uint32_t</span> __ring_buffer_len(<span class="keyword">const</span> struct ring_buffer *ring_buf)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> (ring_buf-&gt;in - ring_buf-&gt;out);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//从缓冲区中取数据</span></span><br><span class="line"><span class="keyword">uint32_t</span> __ring_buffer_get(struct ring_buffer *ring_buf, <span class="keyword">void</span> * <span class="built_in">buffer</span>, <span class="keyword">uint32_t</span> <span class="built_in">size</span>)</span><br><span class="line">&#123;</span><br><span class="line">    assert(ring_buf || <span class="built_in">buffer</span>);</span><br><span class="line">    <span class="keyword">uint32_t</span> len = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">size</span>  = <span class="built_in">min</span>(<span class="built_in">size</span>, ring_buf-&gt;in - ring_buf-&gt;out);        </span><br><span class="line">    <span class="comment">/* first get the data from fifo-&gt;out until the end of the buffer */</span></span><br><span class="line">    len = <span class="built_in">min</span>(<span class="built_in">size</span>, ring_buf-&gt;<span class="built_in">size</span> - (ring_buf-&gt;out &amp; (ring_buf-&gt;<span class="built_in">size</span> - <span class="number">1</span>)));</span><br><span class="line">    <span class="built_in">memcpy</span>(<span class="built_in">buffer</span>, ring_buf-&gt;<span class="built_in">buffer</span> + (ring_buf-&gt;out &amp; (ring_buf-&gt;<span class="built_in">size</span> - <span class="number">1</span>)), len);</span><br><span class="line">    <span class="comment">/* then get the rest (if any) from the beginning of the buffer */</span></span><br><span class="line">    <span class="built_in">memcpy</span>(<span class="built_in">buffer</span> + len, ring_buf-&gt;<span class="built_in">buffer</span>, <span class="built_in">size</span> - len);</span><br><span class="line">    ring_buf-&gt;out += <span class="built_in">size</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">size</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//向缓冲区中存放数据</span></span><br><span class="line"><span class="keyword">uint32_t</span> __ring_buffer_put(struct ring_buffer *ring_buf, <span class="keyword">void</span> *<span class="built_in">buffer</span>, <span class="keyword">uint32_t</span> <span class="built_in">size</span>)</span><br><span class="line">&#123;</span><br><span class="line">    assert(ring_buf || <span class="built_in">buffer</span>);</span><br><span class="line">    <span class="keyword">uint32_t</span> len = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">size</span> = <span class="built_in">min</span>(<span class="built_in">size</span>, ring_buf-&gt;<span class="built_in">size</span> - ring_buf-&gt;in + ring_buf-&gt;out);</span><br><span class="line">    <span class="comment">/* first put the data starting from fifo-&gt;in to buffer end */</span></span><br><span class="line">    len  = <span class="built_in">min</span>(<span class="built_in">size</span>, ring_buf-&gt;<span class="built_in">size</span> - (ring_buf-&gt;in &amp; (ring_buf-&gt;<span class="built_in">size</span> - <span class="number">1</span>)));</span><br><span class="line">    <span class="built_in">memcpy</span>(ring_buf-&gt;<span class="built_in">buffer</span> + (ring_buf-&gt;in &amp; (ring_buf-&gt;<span class="built_in">size</span> - <span class="number">1</span>)), <span class="built_in">buffer</span>, len);</span><br><span class="line">    <span class="comment">/* then put the rest (if any) at the beginning of the buffer */</span></span><br><span class="line">    <span class="built_in">memcpy</span>(ring_buf-&gt;<span class="built_in">buffer</span>, <span class="built_in">buffer</span> + len, <span class="built_in">size</span> - len);</span><br><span class="line">    ring_buf-&gt;in += <span class="built_in">size</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">size</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">uint32_t</span> <span class="title">ring_buffer_len</span><span class="params">(<span class="keyword">const</span> struct ring_buffer *ring_buf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> len = <span class="number">0</span>;</span><br><span class="line">    pthread_mutex_lock(ring_buf-&gt;f_lock);</span><br><span class="line">    len = __ring_buffer_len(ring_buf);</span><br><span class="line">    pthread_mutex_unlock(ring_buf-&gt;f_lock);</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">uint32_t</span> <span class="title">ring_buffer_get</span><span class="params">(struct ring_buffer *ring_buf, <span class="keyword">void</span> *<span class="built_in">buffer</span>, <span class="keyword">uint32_t</span> <span class="built_in">size</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> ret;</span><br><span class="line">    pthread_mutex_lock(ring_buf-&gt;f_lock);</span><br><span class="line">    ret = __ring_buffer_get(ring_buf, <span class="built_in">buffer</span>, <span class="built_in">size</span>);</span><br><span class="line">    <span class="comment">//buffer中没有数据</span></span><br><span class="line">    <span class="keyword">if</span> (ring_buf-&gt;in == ring_buf-&gt;out)</span><br><span class="line">    ring_buf-&gt;in = ring_buf-&gt;out = <span class="number">0</span>;</span><br><span class="line">    pthread_mutex_unlock(ring_buf-&gt;f_lock);</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">uint32_t</span> <span class="title">ring_buffer_put</span><span class="params">(struct ring_buffer *ring_buf, <span class="keyword">void</span> *<span class="built_in">buffer</span>, <span class="keyword">uint32_t</span> <span class="built_in">size</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> ret;</span><br><span class="line">    pthread_mutex_lock(ring_buf-&gt;f_lock);</span><br><span class="line">    ret = __ring_buffer_put(ring_buf, <span class="built_in">buffer</span>, <span class="built_in">size</span>);</span><br><span class="line">    pthread_mutex_unlock(ring_buf-&gt;f_lock);</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs c++"><span class="hljs-comment">/**@brief 仿照linux kfifo写的ring buffer</span>
+<span class="hljs-comment">* ring_buffer.h</span>
+<span class="hljs-comment"> * */</span>
+ 
+<span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> KFIFO_HEADER_H </span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> KFIFO_HEADER_H</span>
+ 
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;inttypes.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;errno.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;assert.h&gt;</span></span>
+ 
+<span class="hljs-comment">//判断x是否是2的次方</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> is_power_of_2(x) ((x) != 0 &amp;&amp; (((x) &amp; ((x) - 1)) == 0))</span>
+<span class="hljs-comment">//取a和b中最小值</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> min(a, b) (((a) &lt; (b)) ? (a) : (b))</span>
+ 
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">ring_buffer</span>
+&#123;
+    <span class="hljs-type">void</span>         *buffer;     <span class="hljs-comment">//缓冲区</span>
+    <span class="hljs-type">uint32_t</span>     size;       <span class="hljs-comment">//大小</span>
+    <span class="hljs-type">uint32_t</span>     in;         <span class="hljs-comment">//入口位置</span>
+    <span class="hljs-type">uint32_t</span>       out;        <span class="hljs-comment">//出口位置</span>
+    <span class="hljs-type">pthread_mutex_t</span> *f_lock;    <span class="hljs-comment">//互斥锁</span>
+&#125;;
+<span class="hljs-comment">//初始化缓冲区</span>
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">ring_buffer</span>* <span class="hljs-built_in">ring_buffer_init</span>(<span class="hljs-type">void</span> *buffer, <span class="hljs-type">uint32_t</span> size, <span class="hljs-type">pthread_mutex_t</span> *f_lock)
+&#123;
+    <span class="hljs-built_in">assert</span>(buffer);
+    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">ring_buffer</span> *ring_buf = <span class="hljs-literal">NULL</span>;
+    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">is_power_of_2</span>(size))
+    &#123;
+    <span class="hljs-built_in">fprintf</span>(stderr,<span class="hljs-string">&quot;size must be power of 2.\n&quot;</span>);
+        <span class="hljs-keyword">return</span> ring_buf;
+    &#125;
+    ring_buf = (<span class="hljs-keyword">struct</span> ring_buffer *)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(<span class="hljs-keyword">struct</span> ring_buffer));
+    <span class="hljs-keyword">if</span> (!ring_buf)
+    &#123;
+        <span class="hljs-built_in">fprintf</span>(stderr,<span class="hljs-string">&quot;Failed to malloc memory,errno:%u,reason:%s&quot;</span>,
+            errno, <span class="hljs-built_in">strerror</span>(errno));
+        <span class="hljs-keyword">return</span> ring_buf;
+    &#125;
+    <span class="hljs-built_in">memset</span>(ring_buf, <span class="hljs-number">0</span>, <span class="hljs-built_in">sizeof</span>(<span class="hljs-keyword">struct</span> ring_buffer));
+    ring_buf-&gt;buffer = buffer;
+    ring_buf-&gt;size = size;
+    ring_buf-&gt;in = <span class="hljs-number">0</span>;
+    ring_buf-&gt;out = <span class="hljs-number">0</span>;
+        ring_buf-&gt;f_lock = f_lock;
+    <span class="hljs-keyword">return</span> ring_buf;
+&#125;
+<span class="hljs-comment">//释放缓冲区</span>
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ring_buffer_free</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> ring_buffer *ring_buf)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">if</span> (ring_buf)
+    &#123;
+    <span class="hljs-keyword">if</span> (ring_buf-&gt;buffer)
+    &#123;
+        <span class="hljs-built_in">free</span>(ring_buf-&gt;buffer);
+        ring_buf-&gt;buffer = <span class="hljs-literal">NULL</span>;
+    &#125;
+    <span class="hljs-built_in">free</span>(ring_buf);
+    ring_buf = <span class="hljs-literal">NULL</span>;
+    &#125;
+&#125;
+ 
+<span class="hljs-comment">//缓冲区的长度</span>
+<span class="hljs-type">uint32_t</span> __ring_buffer_len(<span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> ring_buffer *ring_buf)
+&#123;
+    <span class="hljs-keyword">return</span> (ring_buf-&gt;in - ring_buf-&gt;out);
+&#125;
+ 
+<span class="hljs-comment">//从缓冲区中取数据</span>
+<span class="hljs-type">uint32_t</span> __ring_buffer_get(<span class="hljs-keyword">struct</span> ring_buffer *ring_buf, <span class="hljs-type">void</span> * buffer, <span class="hljs-type">uint32_t</span> size)
+&#123;
+    <span class="hljs-built_in">assert</span>(ring_buf || buffer);
+    <span class="hljs-type">uint32_t</span> len = <span class="hljs-number">0</span>;
+    size  = <span class="hljs-built_in">min</span>(size, ring_buf-&gt;in - ring_buf-&gt;out);        
+    <span class="hljs-comment">/* first get the data from fifo-&gt;out until the end of the buffer */</span>
+    len = <span class="hljs-built_in">min</span>(size, ring_buf-&gt;size - (ring_buf-&gt;out &amp; (ring_buf-&gt;size - <span class="hljs-number">1</span>)));
+    <span class="hljs-built_in">memcpy</span>(buffer, ring_buf-&gt;buffer + (ring_buf-&gt;out &amp; (ring_buf-&gt;size - <span class="hljs-number">1</span>)), len);
+    <span class="hljs-comment">/* then get the rest (if any) from the beginning of the buffer */</span>
+    <span class="hljs-built_in">memcpy</span>(buffer + len, ring_buf-&gt;buffer, size - len);
+    ring_buf-&gt;out += size;
+    <span class="hljs-keyword">return</span> size;
+&#125;
+<span class="hljs-comment">//向缓冲区中存放数据</span>
+<span class="hljs-type">uint32_t</span> __ring_buffer_put(<span class="hljs-keyword">struct</span> ring_buffer *ring_buf, <span class="hljs-type">void</span> *buffer, <span class="hljs-type">uint32_t</span> size)
+&#123;
+    <span class="hljs-built_in">assert</span>(ring_buf || buffer);
+    <span class="hljs-type">uint32_t</span> len = <span class="hljs-number">0</span>;
+    size = <span class="hljs-built_in">min</span>(size, ring_buf-&gt;size - ring_buf-&gt;in + ring_buf-&gt;out);
+    <span class="hljs-comment">/* first put the data starting from fifo-&gt;in to buffer end */</span>
+    len  = <span class="hljs-built_in">min</span>(size, ring_buf-&gt;size - (ring_buf-&gt;in &amp; (ring_buf-&gt;size - <span class="hljs-number">1</span>)));
+    <span class="hljs-built_in">memcpy</span>(ring_buf-&gt;buffer + (ring_buf-&gt;in &amp; (ring_buf-&gt;size - <span class="hljs-number">1</span>)), buffer, len);
+    <span class="hljs-comment">/* then put the rest (if any) at the beginning of the buffer */</span>
+    <span class="hljs-built_in">memcpy</span>(ring_buf-&gt;buffer, buffer + len, size - len);
+    ring_buf-&gt;in += size;
+    <span class="hljs-keyword">return</span> size;
+&#125;
+ 
+<span class="hljs-function"><span class="hljs-type">uint32_t</span> <span class="hljs-title">ring_buffer_len</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> ring_buffer *ring_buf)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-type">uint32_t</span> len = <span class="hljs-number">0</span>;
+    <span class="hljs-built_in">pthread_mutex_lock</span>(ring_buf-&gt;f_lock);
+    len = __ring_buffer_len(ring_buf);
+    <span class="hljs-built_in">pthread_mutex_unlock</span>(ring_buf-&gt;f_lock);
+    <span class="hljs-keyword">return</span> len;
+&#125;
+ 
+<span class="hljs-function"><span class="hljs-type">uint32_t</span> <span class="hljs-title">ring_buffer_get</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> ring_buffer *ring_buf, <span class="hljs-type">void</span> *buffer, <span class="hljs-type">uint32_t</span> size)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-type">uint32_t</span> ret;
+    <span class="hljs-built_in">pthread_mutex_lock</span>(ring_buf-&gt;f_lock);
+    ret = __ring_buffer_get(ring_buf, buffer, size);
+    <span class="hljs-comment">//buffer中没有数据</span>
+    <span class="hljs-keyword">if</span> (ring_buf-&gt;in == ring_buf-&gt;out)
+    ring_buf-&gt;in = ring_buf-&gt;out = <span class="hljs-number">0</span>;
+    <span class="hljs-built_in">pthread_mutex_unlock</span>(ring_buf-&gt;f_lock);
+    <span class="hljs-keyword">return</span> ret;
+&#125;
+ 
+<span class="hljs-function"><span class="hljs-type">uint32_t</span> <span class="hljs-title">ring_buffer_put</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> ring_buffer *ring_buf, <span class="hljs-type">void</span> *buffer, <span class="hljs-type">uint32_t</span> size)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-type">uint32_t</span> ret;
+    <span class="hljs-built_in">pthread_mutex_lock</span>(ring_buf-&gt;f_lock);
+    ret = __ring_buffer_put(ring_buf, buffer, size);
+    <span class="hljs-built_in">pthread_mutex_unlock</span>(ring_buf-&gt;f_lock);
+    <span class="hljs-keyword">return</span> ret;
+&#125;
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
+</code></pre>
 
 <p>使用栗子，采用多线程模拟生产者和消费者编写测试程序，如下所示：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**@brief ring buffer测试程序，创建两个线程，一个生产者，一个消费者。</span></span><br><span class="line"><span class="comment"> * 生产者每隔1秒向buffer中投入数据，消费者每隔2秒去取数据。</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"ring_buffer.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUFFER_SIZE  1024 * 1024</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">student_info</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">uint64_t</span> stu_id;</span><br><span class="line">    <span class="keyword">uint32_t</span> age;</span><br><span class="line">    <span class="keyword">uint32_t</span> score;</span><br><span class="line">&#125;student_info;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_student_info</span><span class="params">(<span class="keyword">const</span> student_info *stu_info)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    assert(stu_info);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"id:%lu\t"</span>,stu_info-&gt;stu_id);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"age:%u\t"</span>,stu_info-&gt;age);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"score:%u\n"</span>,stu_info-&gt;score);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function">student_info * <span class="title">get_student_info</span><span class="params">(<span class="keyword">time_t</span> timer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    student_info *stu_info = (student_info *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(student_info));</span><br><span class="line">    <span class="keyword">if</span> (!stu_info)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Failed to malloc memory.\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    srand(timer);</span><br><span class="line">    stu_info-&gt;stu_id = <span class="number">10000</span> + rand() % <span class="number">9999</span>;</span><br><span class="line">    stu_info-&gt;age = rand() % <span class="number">30</span>;</span><br><span class="line">    stu_info-&gt;score = rand() % <span class="number">101</span>;</span><br><span class="line">    print_student_info(stu_info);</span><br><span class="line">    <span class="keyword">return</span> stu_info;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> * <span class="title">consumer_proc</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ring_buffer</span> *<span class="title">ring_buf</span> = (<span class="title">struct</span> <span class="title">ring_buffer</span> *)<span class="title">arg</span>;</span></span><br><span class="line">    student_info stu_info; </span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    sleep(<span class="number">2</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"------------------------------------------\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"get a student info from ring buffer.\n"</span>);</span><br><span class="line">    ring_buffer_get(ring_buf, (<span class="keyword">void</span> *)&amp;stu_info, <span class="keyword">sizeof</span>(student_info));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"ring buffer length: %u\n"</span>, ring_buffer_len(ring_buf));</span><br><span class="line">    print_student_info(&amp;stu_info);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"------------------------------------------\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">void</span> *)ring_buf;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> * <span class="title">producer_proc</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">time_t</span> cur_time;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ring_buffer</span> *<span class="title">ring_buf</span> = (<span class="title">struct</span> <span class="title">ring_buffer</span> *)<span class="title">arg</span>;</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    time(&amp;cur_time);</span><br><span class="line">    srand(cur_time);</span><br><span class="line">    <span class="keyword">int</span> seed = rand() % <span class="number">11111</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"******************************************\n"</span>);</span><br><span class="line">    student_info *stu_info = get_student_info(cur_time + seed);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"put a student info to ring buffer.\n"</span>);</span><br><span class="line">    ring_buffer_put(ring_buf, (<span class="keyword">void</span> *)stu_info, <span class="keyword">sizeof</span>(student_info));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"ring buffer length: %u\n"</span>, ring_buffer_len(ring_buf));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"******************************************\n"</span>);</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">void</span> *)ring_buf;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">consumer_thread</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> err;</span><br><span class="line">    <span class="keyword">pthread_t</span> tid;</span><br><span class="line">    err = pthread_create(&amp;tid, <span class="literal">NULL</span>, consumer_proc, arg);</span><br><span class="line">    <span class="keyword">if</span> (err != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Failed to create consumer thread.errno:%u, reason:%s\n"</span>,</span><br><span class="line">        errno, strerror(errno));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> tid;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">producer_thread</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> err;</span><br><span class="line">    <span class="keyword">pthread_t</span> tid;</span><br><span class="line">    err = pthread_create(&amp;tid, <span class="literal">NULL</span>, producer_proc, arg);</span><br><span class="line">    <span class="keyword">if</span> (err != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Failed to create consumer thread.errno:%u, reason:%s\n"</span>,</span><br><span class="line">        errno, strerror(errno));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> tid;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> * <span class="built_in">buffer</span> = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">uint32_t</span> <span class="built_in">size</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ring_buffer</span> *<span class="title">ring_buf</span> = <span class="title">NULL</span>;</span></span><br><span class="line">    <span class="keyword">pthread_t</span> consume_pid, produce_pid;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">pthread_mutex_t</span> *f_lock = (<span class="keyword">pthread_mutex_t</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">pthread_mutex_t</span>));</span><br><span class="line">    <span class="keyword">if</span> (pthread_mutex_init(f_lock, <span class="literal">NULL</span>) != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Failed init mutex,errno:%u,reason:%s\n"</span>,</span><br><span class="line">        errno, strerror(errno));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">buffer</span> = (<span class="keyword">void</span> *)<span class="built_in">malloc</span>(BUFFER_SIZE);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">buffer</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Failed to malloc memory.\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">size</span> = BUFFER_SIZE;</span><br><span class="line">    ring_buf = ring_buffer_init(<span class="built_in">buffer</span>, <span class="built_in">size</span>, f_lock);</span><br><span class="line">    <span class="keyword">if</span> (!ring_buf)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Failed to init ring buffer.\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line">    student_info *stu_info = get_student_info(<span class="number">638946124</span>);</span><br><span class="line">    ring_buffer_put(ring_buf, (<span class="keyword">void</span> *)stu_info, <span class="keyword">sizeof</span>(student_info));</span><br><span class="line">    stu_info = get_student_info(<span class="number">976686464</span>);</span><br><span class="line">    ring_buffer_put(ring_buf, (<span class="keyword">void</span> *)stu_info, <span class="keyword">sizeof</span>(student_info));</span><br><span class="line">    ring_buffer_get(ring_buf, (<span class="keyword">void</span> *)stu_info, <span class="keyword">sizeof</span>(student_info));</span><br><span class="line">    print_student_info(stu_info);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"multi thread test.......\n"</span>);</span><br><span class="line">    produce_pid  = producer_thread((<span class="keyword">void</span>*)ring_buf);</span><br><span class="line">    consume_pid  = consumer_thread((<span class="keyword">void</span>*)ring_buf);</span><br><span class="line">    pthread_join(produce_pid, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(consume_pid, <span class="literal">NULL</span>);</span><br><span class="line">    ring_buffer_free(ring_buf);</span><br><span class="line">    <span class="built_in">free</span>(f_lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs c"><span class="hljs-comment">/**@brief ring buffer测试程序，创建两个线程，一个生产者，一个消费者。</span>
+<span class="hljs-comment"> * 生产者每隔1秒向buffer中投入数据，消费者每隔2秒去取数据。</span>
+<span class="hljs-comment"> * */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;ring_buffer.h&quot;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;time.h&gt;</span></span>
+ 
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> BUFFER_SIZE  1024 * 1024</span>
+ 
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">student_info</span></span>
+<span class="hljs-class">&#123;</span>
+    <span class="hljs-type">uint64_t</span> stu_id;
+    <span class="hljs-type">uint32_t</span> age;
+    <span class="hljs-type">uint32_t</span> score;
+&#125;student_info;
+ 
+ 
+<span class="hljs-type">void</span> <span class="hljs-title function_">print_student_info</span><span class="hljs-params">(<span class="hljs-type">const</span> student_info *stu_info)</span>
+&#123;
+    assert(stu_info);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;id:%lu\t&quot;</span>,stu_info-&gt;stu_id);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;age:%u\t&quot;</span>,stu_info-&gt;age);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;score:%u\n&quot;</span>,stu_info-&gt;score);
+&#125;
+ 
+student_info * <span class="hljs-title function_">get_student_info</span><span class="hljs-params">(<span class="hljs-type">time_t</span> timer)</span>
+&#123;
+    student_info *stu_info = (student_info *)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(student_info));
+    <span class="hljs-keyword">if</span> (!stu_info)
+    &#123;
+    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Failed to malloc memory.\n&quot;</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+    &#125;
+    srand(timer);
+    stu_info-&gt;stu_id = <span class="hljs-number">10000</span> + rand() % <span class="hljs-number">9999</span>;
+    stu_info-&gt;age = rand() % <span class="hljs-number">30</span>;
+    stu_info-&gt;score = rand() % <span class="hljs-number">101</span>;
+    print_student_info(stu_info);
+    <span class="hljs-keyword">return</span> stu_info;
+&#125;
+ 
+<span class="hljs-type">void</span> * <span class="hljs-title function_">consumer_proc</span><span class="hljs-params">(<span class="hljs-type">void</span> *arg)</span>
+&#123;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ring_buffer</span> *<span class="hljs-title">ring_buf</span> =</span> (<span class="hljs-keyword">struct</span> ring_buffer *)arg;
+    student_info stu_info; 
+    <span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>)
+    &#123;
+    sleep(<span class="hljs-number">2</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;------------------------------------------\n&quot;</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;get a student info from ring buffer.\n&quot;</span>);
+    ring_buffer_get(ring_buf, (<span class="hljs-type">void</span> *)&amp;stu_info, <span class="hljs-keyword">sizeof</span>(student_info));
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;ring buffer length: %u\n&quot;</span>, ring_buffer_len(ring_buf));
+    print_student_info(&amp;stu_info);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;------------------------------------------\n&quot;</span>);
+    &#125;
+    <span class="hljs-keyword">return</span> (<span class="hljs-type">void</span> *)ring_buf;
+&#125;
+ 
+<span class="hljs-type">void</span> * <span class="hljs-title function_">producer_proc</span><span class="hljs-params">(<span class="hljs-type">void</span> *arg)</span>
+&#123;
+    <span class="hljs-type">time_t</span> cur_time;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ring_buffer</span> *<span class="hljs-title">ring_buf</span> =</span> (<span class="hljs-keyword">struct</span> ring_buffer *)arg;
+    <span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>)
+    &#123;
+    time(&amp;cur_time);
+    srand(cur_time);
+    <span class="hljs-type">int</span> seed = rand() % <span class="hljs-number">11111</span>;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;******************************************\n&quot;</span>);
+    student_info *stu_info = get_student_info(cur_time + seed);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;put a student info to ring buffer.\n&quot;</span>);
+    ring_buffer_put(ring_buf, (<span class="hljs-type">void</span> *)stu_info, <span class="hljs-keyword">sizeof</span>(student_info));
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;ring buffer length: %u\n&quot;</span>, ring_buffer_len(ring_buf));
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;******************************************\n&quot;</span>);
+    sleep(<span class="hljs-number">1</span>);
+    &#125;
+    <span class="hljs-keyword">return</span> (<span class="hljs-type">void</span> *)ring_buf;
+&#125;
+ 
+<span class="hljs-type">int</span> <span class="hljs-title function_">consumer_thread</span><span class="hljs-params">(<span class="hljs-type">void</span> *arg)</span>
+&#123;
+    <span class="hljs-type">int</span> err;
+    <span class="hljs-type">pthread_t</span> tid;
+    err = pthread_create(&amp;tid, <span class="hljs-literal">NULL</span>, consumer_proc, arg);
+    <span class="hljs-keyword">if</span> (err != <span class="hljs-number">0</span>)
+    &#123;
+    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Failed to create consumer thread.errno:%u, reason:%s\n&quot;</span>,
+        errno, strerror(errno));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    &#125;
+    <span class="hljs-keyword">return</span> tid;
+&#125;
+<span class="hljs-type">int</span> <span class="hljs-title function_">producer_thread</span><span class="hljs-params">(<span class="hljs-type">void</span> *arg)</span>
+&#123;
+    <span class="hljs-type">int</span> err;
+    <span class="hljs-type">pthread_t</span> tid;
+    err = pthread_create(&amp;tid, <span class="hljs-literal">NULL</span>, producer_proc, arg);
+    <span class="hljs-keyword">if</span> (err != <span class="hljs-number">0</span>)
+    &#123;
+    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Failed to create consumer thread.errno:%u, reason:%s\n&quot;</span>,
+        errno, strerror(errno));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    &#125;
+    <span class="hljs-keyword">return</span> tid;
+&#125;
+ 
+ 
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span>
+&#123;
+    <span class="hljs-type">void</span> * buffer = <span class="hljs-literal">NULL</span>;
+    <span class="hljs-type">uint32_t</span> size = <span class="hljs-number">0</span>;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ring_buffer</span> *<span class="hljs-title">ring_buf</span> =</span> <span class="hljs-literal">NULL</span>;
+    <span class="hljs-type">pthread_t</span> consume_pid, produce_pid;
+ 
+    <span class="hljs-type">pthread_mutex_t</span> *f_lock = (<span class="hljs-type">pthread_mutex_t</span> *)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">pthread_mutex_t</span>));
+    <span class="hljs-keyword">if</span> (pthread_mutex_init(f_lock, <span class="hljs-literal">NULL</span>) != <span class="hljs-number">0</span>)
+    &#123;
+    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Failed init mutex,errno:%u,reason:%s\n&quot;</span>,
+        errno, strerror(errno));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    &#125;
+    buffer = (<span class="hljs-type">void</span> *)<span class="hljs-built_in">malloc</span>(BUFFER_SIZE);
+    <span class="hljs-keyword">if</span> (!buffer)
+    &#123;
+    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Failed to malloc memory.\n&quot;</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    &#125;
+    size = BUFFER_SIZE;
+    ring_buf = ring_buffer_init(buffer, size, f_lock);
+    <span class="hljs-keyword">if</span> (!ring_buf)
+    &#123;
+    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Failed to init ring buffer.\n&quot;</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    &#125;
+<span class="hljs-meta">#<span class="hljs-keyword">if</span> 0</span>
+    student_info *stu_info = get_student_info(<span class="hljs-number">638946124</span>);
+    ring_buffer_put(ring_buf, (<span class="hljs-type">void</span> *)stu_info, <span class="hljs-keyword">sizeof</span>(student_info));
+    stu_info = get_student_info(<span class="hljs-number">976686464</span>);
+    ring_buffer_put(ring_buf, (<span class="hljs-type">void</span> *)stu_info, <span class="hljs-keyword">sizeof</span>(student_info));
+    ring_buffer_get(ring_buf, (<span class="hljs-type">void</span> *)stu_info, <span class="hljs-keyword">sizeof</span>(student_info));
+    print_student_info(stu_info);
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;multi thread test.......\n&quot;</span>);
+    produce_pid  = producer_thread((<span class="hljs-type">void</span>*)ring_buf);
+    consume_pid  = consumer_thread((<span class="hljs-type">void</span>*)ring_buf);
+    pthread_join(produce_pid, <span class="hljs-literal">NULL</span>);
+    pthread_join(consume_pid, <span class="hljs-literal">NULL</span>);
+    ring_buffer_free(ring_buf);
+    <span class="hljs-built_in">free</span>(f_lock);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;
+</code></pre>
 
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a href="https://www.cnblogs.com/Anker/p/3481373.html" target="_blank" rel="noopener">linux内核数据结构之kfifo - Daleshi的技术随笔 - 博客园</a></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Anker/p/3481373.html">linux内核数据结构之kfifo - Daleshi的技术随笔 - 博客园</a></p>
 
             </div>
         </article>

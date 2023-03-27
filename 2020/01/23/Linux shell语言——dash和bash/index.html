@@ -64,7 +64,19 @@
                 </div>
             
                 <div class="nav-item">
+                    <a href="/timeline/" class="menu gt-a-link" target="_self">时间线</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/about/" class="menu gt-a-link" target="_self">关于</a>
+                </div>
+            
+                <div class="nav-item">
                     <a href="/friends/" class="menu gt-a-link" target="_self">友链</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/atom.xml" class="menu gt-a-link" target="_self">rss</a>
                 </div>
             
         </div>
@@ -101,18 +113,20 @@
             <div class="post-content gt-c-content-color-first">
                 <p>什么是bash ？</p>
 <p>Bash(GNU Bourne-Again Shell)是许多Linux平台的内定Shell，事实上，还有许多传统UNIX上用的Shell，像tcsh、csh、ash、bsh、ksh等等。</p>
-<p>GNU/Linux 操作系统中的 /bin/sh 本是 bash (Bourne-Again Shell) 的符号链接，但鉴于 bash 过于复杂，有人把 bash 从 NetBSD 移植到 Linux 并更名为 dash (Debian Almquist Shell)，并建议将 /bin/sh 指向它，以获得更快的脚本执行速度。Dash Shell 比 Bash Shell 小的多，符合POSIX标准。</p>
-<p>Debian和Ubuntu中，/bin/sh默认已经指向dash，这是一个不同于bash的shell，它主要是为了执行脚本而出现，而不是交互，它速度更快，但功能相比bash要少很多，语法严格遵守POSIX标准。</p>
+<p>GNU&#x2F;Linux 操作系统中的 &#x2F;bin&#x2F;sh 本是 bash (Bourne-Again Shell) 的符号链接，但鉴于 bash 过于复杂，有人把 bash 从 NetBSD 移植到 Linux 并更名为 dash (Debian Almquist Shell)，并建议将 &#x2F;bin&#x2F;sh 指向它，以获得更快的脚本执行速度。Dash Shell 比 Bash Shell 小的多，符合POSIX标准。</p>
+<p>Debian和Ubuntu中，&#x2F;bin&#x2F;sh默认已经指向dash，这是一个不同于bash的shell，它主要是为了执行脚本而出现，而不是交互，它速度更快，但功能相比bash要少很多，语法严格遵守POSIX标准。</p>
 <p>就是这个倒霉的dash解释器使得我按照bash语法写的shell 脚本不能运行。</p>
-<p>要知道自己的/bin/sh指向何种解释器，可以用 ls /bin/sh -al 命令查看：</p>
-<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls /bin/sh -al</span><br><span class="line">lrwxrwxrwx <span class="number">1</span> root root <span class="number">4</span> <span class="number">11</span>月 <span class="number">16</span> <span class="number">15</span>:<span class="number">33</span> /bin/sh -&gt; bash</span><br></pre></td></tr></table></figure>
+<p>要知道自己的&#x2F;bin&#x2F;sh指向何种解释器，可以用 ls &#x2F;bin&#x2F;sh -al 命令查看：</p>
+<pre><code class="hljs awk">$ ls <span class="hljs-regexp">/bin/</span>sh -al
+lrwxrwxrwx <span class="hljs-number">1</span> root root <span class="hljs-number">4</span> <span class="hljs-number">11</span>月 <span class="hljs-number">16</span> <span class="hljs-number">15</span>:<span class="hljs-number">33</span> <span class="hljs-regexp">/bin/</span>sh -&gt; bash</code></pre>
 
 <p>以上结果就表示当前系统用的是dash解释器。</p>
 <p>切换到bash的方式其实挺简单的，关键是一直没找出这个原因……</p>
 <p>修改默认的sh，可以采用命令<code>sudo dpkg-reconfigure dash</code></p>
 <p>会出现一个图片状的配置菜单，选no就可以了</p>
-<p>再次检查一下， ls /bin/sh -al 发现软链接指向/bin/bash</p>
-<pre><code>lrwxrwxrwx 1 root root 4 11月 16 15:33 /bin/sh -&gt; bash</code></pre><p>注：dash 和 bash 语法上的主要的区别有:</p>
+<p>再次检查一下， ls &#x2F;bin&#x2F;sh -al 发现软链接指向&#x2F;bin&#x2F;bash</p>
+<p>         lrwxrwxrwx 1 root root 4 11月 16 15:33 &#x2F;bin&#x2F;sh -&gt; bash</p>
+<p>注：dash 和 bash 语法上的主要的区别有:</p>
 <ol>
 <li>定义函数</li>
 </ol>
@@ -140,7 +154,7 @@
 </li>
 </ol>
 <p>bash: 当word为非数字时，&gt;&amp;word变成重定向标准错误和标准输出到文件word</p>
-<p>dash: &gt;&amp;word, word不支持非数字, 替代方法: &gt;word 2&gt;&1; 常见用法 &gt;/dev/null 2&gt;&amp;1</p>
+<p>dash: &gt;&amp;word, word不支持非数字, 替代方法: &gt;word 2&gt;&amp;1; 常见用法 &gt;&#x2F;dev&#x2F;null 2&gt;&amp;1</p>
 <ol start="6">
 <li>数组</li>
 </ol>
@@ -155,17 +169,17 @@
 <li>大小写转换</li>
 </ol>
 <p>bash: 支持${parameter^pattern},${parameter^^pattern},${parameter,pattern},${parameter,,pattern}</p>
-<p>dash: 不支持，替代方法:采用tr/sed/awk等外部命令转换</p>
+<p>dash: 不支持，替代方法:采用tr&#x2F;sed&#x2F;awk等外部命令转换</p>
 <ol start="9">
 <li>进程替换&lt;(command), &gt;(command)</li>
 </ol>
 <p>bash: 支持进程替换</p>
 <p>dash: 不支持, 替代方法, 通过临时文件中转</p>
 <ol start="10">
-<li>[ string1 = string2 ] 和 [ string1 == string2 ]</li>
+<li>[ string1 &#x3D; string2 ] 和 [ string1 &#x3D;&#x3D; string2 ]</li>
 </ol>
 <p>bash: 支持两者</p>
-<p>dash: 只支持=</p>
+<p>dash: 只支持&#x3D;</p>
 <ol start="11">
 <li>[[ 加强版test</li>
 </ol>
@@ -185,7 +199,7 @@
 <li>$((expression))</li>
 </ol>
 <p>bash: 支持id++,id–,++id,–id这样到表达式</p>
-<p>dash: 不支持++,–, 替代方法:id+=1,id-=1, id=id+1,id=id-1</p>
+<p>dash: 不支持++,–, 替代方法:id+&#x3D;1,id-&#x3D;1, id&#x3D;id+1,id&#x3D;id-1</p>
 
             </div>
         </article>

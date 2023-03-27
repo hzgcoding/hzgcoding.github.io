@@ -64,7 +64,19 @@
                 </div>
             
                 <div class="nav-item">
+                    <a href="/timeline/" class="menu gt-a-link" target="_self">时间线</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/about/" class="menu gt-a-link" target="_self">关于</a>
+                </div>
+            
+                <div class="nav-item">
                     <a href="/friends/" class="menu gt-a-link" target="_self">友链</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/atom.xml" class="menu gt-a-link" target="_self">rss</a>
                 </div>
             
         </div>
@@ -99,24 +111,25 @@
             </div>
             <hr>
             <div class="post-content gt-c-content-color-first">
-                <h2 id="关闭Git自动转换功能"><a href="#关闭Git自动转换功能" class="headerlink" title="关闭Git自动转换功能"></a>关闭Git自动转换功能</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git<span class="built_in"> config </span>--global core.autocrlf <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+                <h2 id="关闭Git自动转换功能"><a href="#关闭Git自动转换功能" class="headerlink" title="关闭Git自动转换功能"></a>关闭Git自动转换功能</h2><pre><code class="hljs angelscript">git config --global core.<span class="hljs-built_in">auto</span>crlf <span class="hljs-literal">false</span></code></pre>
 
 <h2 id="CRLF转换成LF"><a href="#CRLF转换成LF" class="headerlink" title="CRLF转换成LF"></a>CRLF转换成LF</h2><p><strong>vscode或者visual studio等一些代码编辑器仅仅支持单个文件的格式转换，以下三种方法均是支持批量转换的方法</strong></p>
 <h3 id="第一种方法-亲测"><a href="#第一种方法-亲测" class="headerlink" title="第一种方法 (亲测))"></a>第一种方法 (亲测))</h3><p>已经上传到<code>/y-server/doc/format/</code> 目录下 或者点击下面链接下载最新</p>
-<p><a href="https://waterlan.home.xs4all.nl/dos2unix/dos2unix-7.4.1-win64.zip" target="_blank" rel="noopener">下载dos2unix工具包</a></p>
-<p><a href="https://waterlan.home.xs4all.nl/dos2unix/zh_CN/man1/dos2unix.htm#9" target="_blank" rel="noopener">dos2unix文档说明</a></p>
+<p><a target="_blank" rel="noopener" href="https://waterlan.home.xs4all.nl/dos2unix/dos2unix-7.4.1-win64.zip">下载dos2unix工具包</a></p>
+<p><a target="_blank" rel="noopener" href="https://waterlan.home.xs4all.nl/dos2unix/zh_CN/man1/dos2unix.htm#9">dos2unix文档说明</a></p>
 <p>结合 find(1) 和 xargs(1) 使用 dos2unix 可以递归地转换目录树中的文本文件。例如，转换当前目录的目录树中所有的 .txt 文件：</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dos2unix &lt; <span class="keyword">a</span>.txt</span><br><span class="line">cat <span class="keyword">a</span>.txt | dos2unix</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs livecodeserver">dos2unix &lt; <span class="hljs-keyword">a</span>.txt
+cat <span class="hljs-keyword">a</span>.txt | dos2unix</code></pre>
 <p>若文件名中有空格或引号，则需要使用 find(1) 选项 -print0 及相应的 xargs(1) 选项 -0；其他情况下则可以省略它们。也可以结合 -exec 选项来使用 find(1)：</p>
-<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">find</span> . -<span class="built_in">name</span> <span class="string">'*.txt'</span> -<span class="built_in">exec</span> dos2unix &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs sqf"><span class="hljs-built_in">find</span> . -<span class="hljs-built_in">name</span> <span class="hljs-string">&#x27;*.txt&#x27;</span> -<span class="hljs-built_in">exec</span> dos2unix &#123;&#125; \;</code></pre>
 <p>在Windows命令提示符中，可以使用下列命令：</p>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> /R %G in (*.txt) <span class="keyword">do</span> dos2unix <span class="string">"%G"</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs perl"><span class="hljs-keyword">for</span> /R %G in (*.txt) <span class="hljs-keyword">do</span> dos2unix <span class="hljs-string">&quot;%G&quot;</span></code></pre>
 <p>PowerShell用户可以在Windows PowerShell中使用如下命令：</p>
-<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">get-childitem</span> -<span class="string">path </span>. -<span class="string">filter </span><span class="string">'*.txt'</span> -<span class="string">recurse </span>| <span class="string">foreach-object </span>&#123;<span class="string">dos2unix </span>$_.<span class="string">Fullname&#125;</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs dsconfig"><span class="hljs-built_in">get-childitem</span> -<span class="hljs-string">path</span> . -<span class="hljs-string">filter</span> <span class="hljs-string">&#x27;*.txt&#x27;</span> -<span class="hljs-string">recurse</span> | <span class="hljs-string">foreach-object</span> &#123;<span class="hljs-string">dos2unix</span> $<span class="hljs-string">_</span>.<span class="hljs-string">Fullname</span>&#125;</code></pre>
 
 <h3 id="第二种方法-没有尝试"><a href="#第二种方法-没有尝试" class="headerlink" title="第二种方法 (没有尝试)"></a>第二种方法 (没有尝试)</h3><p>采用EditPlus批量转换文件格式</p>
 <p><img src="https://img-blog.csdnimg.cn/20190414011144786.png" alt="1"><br><img src="https://img-blog.csdnimg.cn/20190414011207506.png" alt="2"><br><img src="https://img-blog.csdnimg.cn/20190414011249745.png" alt="2"></p>
-<h3 id="第三种方法-没有尝试"><a href="#第三种方法-没有尝试" class="headerlink" title="第三种方法 (没有尝试)"></a>第三种方法 (没有尝试)</h3><p><a href="https://rizon.top/tech/%E8%BD%AC%E6%8D%A2crlf%E5%88%B0lf/" target="_blank" rel="noopener">巧妙的借助git快速批量转换crlf到lf</a></p>
+<h3 id="第三种方法-没有尝试"><a href="#第三种方法-没有尝试" class="headerlink" title="第三种方法 (没有尝试)"></a>第三种方法 (没有尝试)</h3><p><a target="_blank" rel="noopener" href="https://rizon.top/tech/%E8%BD%AC%E6%8D%A2crlf%E5%88%B0lf/">巧妙的借助git快速批量转换crlf到lf</a></p>
 
             </div>
         </article>

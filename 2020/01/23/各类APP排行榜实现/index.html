@@ -64,7 +64,19 @@
                 </div>
             
                 <div class="nav-item">
+                    <a href="/timeline/" class="menu gt-a-link" target="_self">时间线</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/about/" class="menu gt-a-link" target="_self">关于</a>
+                </div>
+            
+                <div class="nav-item">
                     <a href="/friends/" class="menu gt-a-link" target="_self">友链</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/atom.xml" class="menu gt-a-link" target="_self">rss</a>
                 </div>
             
         </div>
@@ -105,9 +117,87 @@
 <li>用户积分变更后，排名及时更新</li>
 </ol>
 <h2 id="实现方案"><a href="#实现方案" class="headerlink" title="实现方案"></a>实现方案</h2><h3 id="方案一-利用MYSQL-排序"><a href="#方案一-利用MYSQL-排序" class="headerlink" title="方案一 利用MYSQL 排序"></a>方案一 利用MYSQL 排序</h3><p>利用MySQL来实现，存放一张用户积分表user_score<br>取前top N，自己的排名都可以通过简单的sql语句搞定。<br>算法简单，利用sql的功能，不需要其他复杂逻辑，对于数据量比较少、性能要求不高，可以使用。但是对于海量数据，性能是无法接受的。可能会导致全局锁表之类的问题。</p>
-<h3 id="方案二-内存数组排序"><a href="#方案二-内存数组排序" class="headerlink" title="方案二 内存数组排序"></a>方案二 内存数组排序</h3><p>在内存中预分配所要排名用户大小的数组，所有的积分排名变更基于此移动元素，成熟排序算法有最小/大堆、快速排序等，这种方案优点是当数据量小的时候，简单快捷，容易实现，不需要其他任何组件支持，但是当面对海量数据的时候数组空间占用可能不太现实</p>
-<h3 id="方案三-利用GCC库支持"><a href="#方案三-利用GCC库支持" class="headerlink" title="方案三 利用GCC库支持"></a>方案三 利用GCC库支持</h3><p>具体的，用GCC的pb_ds库中有assoc_container来进行实现。<br>参考<a href="https://opensource.apple.com/source/llvmgcc42/llvmgcc42-2336.9/libstdc++-v3/testsuite/ext/pb_ds/example/tree_order_statistics.cc" target="_blank" rel="noopener">tree_order_statistics.cc</a>：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cassert&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ext/pb_ds/assoc_container.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ext/pb_ds/tree_policy.hpp&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> pb_ds;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> pb_ds;</span><br><span class="line"></span><br><span class="line"><span class="comment">// A red-black tree table storing ints and their order</span></span><br><span class="line"><span class="comment">// statistics. Note that since the tree uses</span></span><br><span class="line"><span class="comment">// tree_order_statistics_node_update as its update policy, then it</span></span><br><span class="line"><span class="comment">// includes its methods by_order and order_of_key.</span></span><br><span class="line"><span class="keyword">typedef</span></span><br><span class="line">tree&lt;</span><br><span class="line">  <span class="keyword">int</span>,</span><br><span class="line">  null_mapped_type,</span><br><span class="line">  less&lt;<span class="keyword">int</span>&gt;,</span><br><span class="line">  rb_tree_tag,</span><br><span class="line">  <span class="comment">// This policy updates nodes' metadata for order statistics.</span></span><br><span class="line">  tree_order_statistics_node_update&gt;</span><br><span class="line"><span class="keyword">set_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// Insert some entries into s.</span></span><br><span class="line">  <span class="keyword">set_t</span> s;</span><br><span class="line">  s.insert(<span class="number">12</span>);</span><br><span class="line">  s.insert(<span class="number">505</span>);</span><br><span class="line">  s.insert(<span class="number">30</span>);</span><br><span class="line">  s.insert(<span class="number">1000</span>);</span><br><span class="line">  s.insert(<span class="number">10000</span>);</span><br><span class="line">  s.insert(<span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The order of the keys should be: 12, 30, 100, 505, 1000, 10000.</span></span><br><span class="line">  assert(*s.find_by_order(<span class="number">0</span>) == <span class="number">12</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">1</span>) == <span class="number">30</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">2</span>) == <span class="number">100</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">3</span>) == <span class="number">505</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">4</span>) == <span class="number">1000</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">5</span>) == <span class="number">10000</span>);</span><br><span class="line">  assert(s.find_by_order(<span class="number">6</span>) == s.end());</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The order of the keys should be: 12, 30, 100, 505, 1000, 10000.</span></span><br><span class="line">  assert(s.order_of_key(<span class="number">10</span>) == <span class="number">0</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">12</span>) == <span class="number">0</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">15</span>) == <span class="number">1</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">30</span>) == <span class="number">1</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">99</span>) == <span class="number">2</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">100</span>) == <span class="number">2</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">505</span>) == <span class="number">3</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">1000</span>) == <span class="number">4</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">10000</span>) == <span class="number">5</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">9999999</span>) == <span class="number">6</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Erase an entry.</span></span><br><span class="line">  s.erase(<span class="number">30</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The order of the keys should be: 12, 100, 505, 1000, 10000.</span></span><br><span class="line">  assert(*s.find_by_order(<span class="number">0</span>) == <span class="number">12</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">1</span>) == <span class="number">100</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">2</span>) == <span class="number">505</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">3</span>) == <span class="number">1000</span>);</span><br><span class="line">  assert(*s.find_by_order(<span class="number">4</span>) == <span class="number">10000</span>);</span><br><span class="line">  assert(s.find_by_order(<span class="number">5</span>) == s.end());</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The order of the keys should be: 12, 100, 505, 1000, 10000.</span></span><br><span class="line">  assert(s.order_of_key(<span class="number">10</span>) == <span class="number">0</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">12</span>) == <span class="number">0</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">100</span>) == <span class="number">1</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">505</span>) == <span class="number">2</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">707</span>) == <span class="number">3</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">1000</span>) == <span class="number">3</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">1001</span>) == <span class="number">4</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">10000</span>) == <span class="number">4</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">100000</span>) == <span class="number">5</span>);</span><br><span class="line">  assert(s.order_of_key(<span class="number">9999999</span>) == <span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="方案二-内存数组排序"><a href="#方案二-内存数组排序" class="headerlink" title="方案二 内存数组排序"></a>方案二 内存数组排序</h3><p>在内存中预分配所要排名用户大小的数组，所有的积分排名变更基于此移动元素，成熟排序算法有最小&#x2F;大堆、快速排序等，这种方案优点是当数据量小的时候，简单快捷，容易实现，不需要其他任何组件支持，但是当面对海量数据的时候数组空间占用可能不太现实</p>
+<h3 id="方案三-利用GCC库支持"><a href="#方案三-利用GCC库支持" class="headerlink" title="方案三 利用GCC库支持"></a>方案三 利用GCC库支持</h3><p>具体的，用GCC的pb_ds库中有assoc_container来进行实现。<br>参考<a target="_blank" rel="noopener" href="https://opensource.apple.com/source/llvmgcc42/llvmgcc42-2336.9/libstdc++-v3/testsuite/ext/pb_ds/example/tree_order_statistics.cc">tree_order_statistics.cc</a>：</p>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;cassert&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ext/pb_ds/assoc_container.hpp&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ext/pb_ds/tree_policy.hpp&gt;</span></span>
+
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> pb_ds;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> pb_ds;
+
+<span class="hljs-comment">// A red-black tree table storing ints and their order</span>
+<span class="hljs-comment">// statistics. Note that since the tree uses</span>
+<span class="hljs-comment">// tree_order_statistics_node_update as its update policy, then it</span>
+<span class="hljs-comment">// includes its methods by_order and order_of_key.</span>
+<span class="hljs-keyword">typedef</span>
+tree&lt;
+  <span class="hljs-type">int</span>,
+  null_mapped_type,
+  less&lt;<span class="hljs-type">int</span>&gt;,
+  rb_tree_tag,
+  <span class="hljs-comment">// This policy updates nodes&#x27; metadata for order statistics.</span>
+  tree_order_statistics_node_update&gt;
+<span class="hljs-type">set_t</span>;
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">// Insert some entries into s.</span>
+  <span class="hljs-type">set_t</span> s;
+  s.<span class="hljs-built_in">insert</span>(<span class="hljs-number">12</span>);
+  s.<span class="hljs-built_in">insert</span>(<span class="hljs-number">505</span>);
+  s.<span class="hljs-built_in">insert</span>(<span class="hljs-number">30</span>);
+  s.<span class="hljs-built_in">insert</span>(<span class="hljs-number">1000</span>);
+  s.<span class="hljs-built_in">insert</span>(<span class="hljs-number">10000</span>);
+  s.<span class="hljs-built_in">insert</span>(<span class="hljs-number">100</span>);
+
+  <span class="hljs-comment">// The order of the keys should be: 12, 30, 100, 505, 1000, 10000.</span>
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">0</span>) == <span class="hljs-number">12</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">1</span>) == <span class="hljs-number">30</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">2</span>) == <span class="hljs-number">100</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">3</span>) == <span class="hljs-number">505</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">4</span>) == <span class="hljs-number">1000</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">5</span>) == <span class="hljs-number">10000</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">6</span>) == s.<span class="hljs-built_in">end</span>());
+
+  <span class="hljs-comment">// The order of the keys should be: 12, 30, 100, 505, 1000, 10000.</span>
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">10</span>) == <span class="hljs-number">0</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">12</span>) == <span class="hljs-number">0</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">15</span>) == <span class="hljs-number">1</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">30</span>) == <span class="hljs-number">1</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">99</span>) == <span class="hljs-number">2</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">100</span>) == <span class="hljs-number">2</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">505</span>) == <span class="hljs-number">3</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">1000</span>) == <span class="hljs-number">4</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">10000</span>) == <span class="hljs-number">5</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">9999999</span>) == <span class="hljs-number">6</span>);
+
+  <span class="hljs-comment">// Erase an entry.</span>
+  s.<span class="hljs-built_in">erase</span>(<span class="hljs-number">30</span>);
+
+  <span class="hljs-comment">// The order of the keys should be: 12, 100, 505, 1000, 10000.</span>
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">0</span>) == <span class="hljs-number">12</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">1</span>) == <span class="hljs-number">100</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">2</span>) == <span class="hljs-number">505</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">3</span>) == <span class="hljs-number">1000</span>);
+  <span class="hljs-built_in">assert</span>(*s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">4</span>) == <span class="hljs-number">10000</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">find_by_order</span>(<span class="hljs-number">5</span>) == s.<span class="hljs-built_in">end</span>());
+
+  <span class="hljs-comment">// The order of the keys should be: 12, 100, 505, 1000, 10000.</span>
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">10</span>) == <span class="hljs-number">0</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">12</span>) == <span class="hljs-number">0</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">100</span>) == <span class="hljs-number">1</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">505</span>) == <span class="hljs-number">2</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">707</span>) == <span class="hljs-number">3</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">1000</span>) == <span class="hljs-number">3</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">1001</span>) == <span class="hljs-number">4</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">10000</span>) == <span class="hljs-number">4</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">100000</span>) == <span class="hljs-number">5</span>);
+  <span class="hljs-built_in">assert</span>(s.<span class="hljs-built_in">order_of_key</span>(<span class="hljs-number">9999999</span>) == <span class="hljs-number">5</span>);
+
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;</code></pre>
 <p>存取效率都可以达到O(log(n))，不足就是程序重启后数据会丢失。还是对所有的用户积分，没必要。<br>而且是有依赖，不方便扩展，实现不了复杂的需求，</p>
 <h3 id="方案四-实现排序树"><a href="#方案四-实现排序树" class="headerlink" title="方案四 实现排序树"></a>方案四 实现排序树</h3><p>大致实现思路如下：</p>
 <p>　　我们可以把[0, 1,000,000)作为一级区间；再把一级区间分为两个2级区间[0, 500,000), [500,000, 1,000,000)，然后把二级区间二分为4个3级区间[0, 250,000), [250,000, 500,000), [500,000, 750,000), [750,000, 1,000,000)，依此类推，最终我们会得到1,000,000个21级区间[0,1), [1,2) … [999,999, 1,000,000)。这实际上是把区间组织成了一种平衡二叉树结构，根结点代表一级区间，每个非叶子结点有两个子结点，左子结点代表低分区间，右子结点代表高分区间。树形分区结构需要在更新时保持一种不变量，非叶子结点的count值总是等于其左右子结点的count值之和。</p>
@@ -119,7 +209,7 @@
 <h3 id="方案五-实现跳表排序"><a href="#方案五-实现跳表排序" class="headerlink" title="方案五 实现跳表排序"></a>方案五 实现跳表排序</h3><p>skip list是链表的一种特殊形式，对链表的一种优化；保证INSERT和REMOVE操作是O(logn)，而通用链表的复杂度为O(n);<br>优点：实现较简单，效率基本上O(log(N))<br>缺点：当达到亿级别时的数据时，性能会急剧下降</p>
 <h3 id="方案六-利用redis特新实现"><a href="#方案六-利用redis特新实现" class="headerlink" title="方案六 利用redis特新实现"></a>方案六 利用redis特新实现</h3><p>其实redis底层还是使用跳表实现排序的，只是将接口都封装好了，使用接口也比较完善，稳定。</p>
 <p>redis的zset天生是用来做排行榜的、好友列表, 去重, 历史记录等业务需求。接口使用非常简单。接口非常丰富，基本上需要的实现都能满足，说明如下：</p>
-<p>ZAdd/ZRem是O(log(N))，ZRangeByScore/ZRemRangeByScore是O(log(N)+M)，N是Set大小，M是结果/操作元素的个数。</p>
+<p>ZAdd&#x2F;ZRem是O(log(N))，ZRangeByScore&#x2F;ZRemRangeByScore是O(log(N)+M)，N是Set大小，M是结果&#x2F;操作元素的个数。</p>
 <p>ZSET的实现用到了两个数据结构：hash table 和 skip list(跳跃表)，其中hash table是具体使用redis中的dict来实现的，主要是为了保证查询效率为O(1) ，而skip list(跳跃表)主要是保证元素有序并能够保证INSERT和REMOVE操作是O(logn)的复杂度。</p>
 <p>优点：基于redis开发，速度快；使用redis相关特性</p>
 <p>缺点：当达到亿级别时的数据时，性能会急剧下降</p>
@@ -128,7 +218,7 @@
 <ol>
 <li>当元素A需要参与排序的时候，与数组中最小的积分进行比较，如果能进100名，那么将第100剔除，将A加入，并记录最小元素，这样就完成了积分上涨的情况</li>
 <li>还有一种就是已经在前100名中元素的积分发生变化下降，那么需要在前100名后找出可以进排行榜的元素，这种情况比较麻烦，可以使用最大堆保存剩下所有用户的数据，当需要找出能替换进入排行榜的元素就非常快logn，选择特定数据结构非常重要</li>
-<li>既然大于N的用户不需要精确排名，那么怎么样估算大概排名呢？一般做法是按照数值区间建立所若干个桶，比如我们预计要排名的那一个数据的最大值能到1W。我建立0-10， 10-100，100-1000， 1000-2000， 2000-5000， 5000-10000 这样6个桶，每个桶里面记录分值在这个桶对应的区间内，有多少个玩家。 比如<br>0-10， 10人<br>10-100，20人<br>100-1000，30人<br>1000-2000， 40人<br>2000-5000， 50人<br>5000-10000， 60人<br>那么如果一个玩家 是 1234分，那么他的排名就超过了 （10 + 20 + 30）/ （10 + 20 + 30 + 40 + 50 + 60）这个百分比的玩家（所以桶分的越细，后面的排名越精确）<br>实质就是按照分区间记录区间内元素个数，从而估算大概排名，因此数值区间越小，估算约精确。</li>
+<li>既然大于N的用户不需要精确排名，那么怎么样估算大概排名呢？一般做法是按照数值区间建立所若干个桶，比如我们预计要排名的那一个数据的最大值能到1W。我建立0-10， 10-100，100-1000， 1000-2000， 2000-5000， 5000-10000 这样6个桶，每个桶里面记录分值在这个桶对应的区间内，有多少个玩家。 比如<br>0-10， 10人<br>10-100，20人<br>100-1000，30人<br>1000-2000， 40人<br>2000-5000， 50人<br>5000-10000， 60人<br>那么如果一个玩家 是 1234分，那么他的排名就超过了 （10 + 20 + 30）&#x2F; （10 + 20 + 30 + 40 + 50 + 60）这个百分比的玩家（所以桶分的越细，后面的排名越精确）<br>实质就是按照分区间记录区间内元素个数，从而估算大概排名，因此数值区间越小，估算约精确。</li>
 </ol>
 
             </div>
@@ -140,8 +230,8 @@
             
                 <div class="prev-post">
                     <div class="prev gt-c-content-color-first">
-                        上一篇：<a href="/2020/01/23/%E5%8D%95%E7%94%9F%E4%BA%A7%E8%80%85%E5%8D%95%E6%B6%88%E8%B4%B9%E8%80%85%E7%8E%AF%E5%BD%A2%E7%BC%93%E5%86%B2/" 
-                            class="post-title gt-a-link">单生产者单消费者环形缓冲</a>
+                        上一篇：<a href="/2020/01/23/linux%20fork%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/" 
+                            class="post-title gt-a-link">linux fork函数详解</a>
                     </div>
                 </div>
             

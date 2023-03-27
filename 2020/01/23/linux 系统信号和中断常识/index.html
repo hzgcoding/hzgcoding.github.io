@@ -64,7 +64,19 @@
                 </div>
             
                 <div class="nav-item">
+                    <a href="/timeline/" class="menu gt-a-link" target="_self">时间线</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/about/" class="menu gt-a-link" target="_self">关于</a>
+                </div>
+            
+                <div class="nav-item">
                     <a href="/friends/" class="menu gt-a-link" target="_self">友链</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/atom.xml" class="menu gt-a-link" target="_self">rss</a>
                 </div>
             
         </div>
@@ -139,7 +151,7 @@
 </blockquote>
 </li>
 </ol>
-<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>信号驱动的异步I/O是指一旦设备准备好，就主动通知应用程序，这种情况下应用程序就不需要查询设备状态。异步 I/O 和硬件上常提的中断的概念类似，信号是在软件层次上对中断机制的一种模拟。</p>
+<h3 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h3><p>信号驱动的异步I&#x2F;O是指一旦设备准备好，就主动通知应用程序，这种情况下应用程序就不需要查询设备状态。异步 I&#x2F;O 和硬件上常提的中断的概念类似，信号是在软件层次上对中断机制的一种模拟。</p>
 <ol>
 <li><p>信号通信机制<br>软中断信号（signal，又简称为信号）是进程间通信机制中唯一的异步通信机制，一个进程不必通过任何操作来等待信号的到达，事实上，进程也不知道信号到底什么时候到达。<br>进程之间可以互相通过系统调用kill发送软中断信号，内核也可以因为内部事件而给进程发送信号，通知进程发生了某个事件。信号机制除了基本通知功能外，还可以传递附加信息。</p>
 </li>
@@ -159,7 +171,15 @@
 </li>
 <li><p>多线程中信号造成死锁<br>如果一个线程持有锁，在操作临界区内容时，被信号中断了，转而去执行信号处理函数， 而信号处理函数再次对临界区加锁就会造成死锁。<br>解决的方法就是使用信号等待函数，线程阻塞等待信号处理函数直到处理完毕，也就是 所说的化异步为同步。</p>
 </li>
-<li><p>信号响应过程<br> 1) A进程调用信号发送函数，发送信号给B，这是软中断，所以A进程会进入内核态运行操作系统的信号调度代码<br> 2) 操作系统发现B进程正在运行，于是写入管理B进程的某个数据结构<br> 3) 操作系统返回给A，A继续执行<br> 4) B进程分配的处理器时间用完了，被时钟硬件中断<br> 5) 操作系统的时钟硬件中断处理函数准备挂起B进程，也就是把寄存器和函数堆栈保存起来，发现B进程收到了singal<br> 6) 操作系统在保存好B进程的stack和register后，新开stack(为了不干扰B进程真正的代码stack），激活B进程，B进程的信号处理函数。</p>
+<li><p>信号响应过程</p>
+<ol>
+<li>A进程调用信号发送函数，发送信号给B，这是软中断，所以A进程会进入内核态运行操作系统的信号调度代码</li>
+<li>操作系统发现B进程正在运行，于是写入管理B进程的某个数据结构</li>
+<li>操作系统返回给A，A继续执行</li>
+<li>B进程分配的处理器时间用完了，被时钟硬件中断</li>
+<li>操作系统的时钟硬件中断处理函数准备挂起B进程，也就是把寄存器和函数堆栈保存起来，发现B进程收到了singal</li>
+<li>操作系统在保存好B进程的stack和register后，新开stack(为了不干扰B进程真正的代码stack），激活B进程，B进程的信号处理函数。</li>
+</ol>
 </li>
 <li><p>信号生命周期（和响应过程类似）</p>
 <ul>
@@ -174,12 +194,17 @@
 </li>
 </ol>
 <h3 id="信号实现机制"><a href="#信号实现机制" class="headerlink" title="信号实现机制"></a>信号实现机制</h3><ol>
-<li>发送信号<br>内核给一个进程发送软中断信号的方法，是在进程所在的进程表项的信号域设置对应于该信号的位。如果信号发送给一个正在睡眠的进程，那么要看该进程进入睡眠的优先级，如果进程睡眠在可被中断的优先级上，则唤醒进程；否则仅设置进程表中信号域相应的位，而不唤醒进程。<br>进程的 PCB 中有关于本进程中未决信号的数据成员<code>struct sigpending pending</code>：<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigpending</span>&#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sigqueue</span> *<span class="title">head</span>, *<span class="title">tail</span>;</span></span><br><span class="line">	<span class="keyword">sigset_t</span> signal;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-</li>
+<li>发送信号<br>内核给一个进程发送软中断信号的方法，是在进程所在的进程表项的信号域设置对应于该信号的位。如果信号发送给一个正在睡眠的进程，那么要看该进程进入睡眠的优先级，如果进程睡眠在可被中断的优先级上，则唤醒进程；否则仅设置进程表中信号域相应的位，而不唤醒进程。<br>进程的 PCB 中有关于本进程中未决信号的数据成员<code> struct sigpending pending</code>：<pre><code class="hljs gauss"><span class="hljs-keyword">struct</span> <span class="hljs-type">sigpending</span>&#123;
+    <span class="hljs-keyword">struct</span> <span class="hljs-type">sigqueue</span> *head, *tail;
+    sigset_t signal;
+&#125;;
+</code></pre></li>
 </ol>
 <p>第三个成员是进程中所有未决信号集，第一、第二个成员分别指向一个sigqueue类型的结构链（称之为”未决信号信息链”）的首尾，信息链中的每个sigqueue结构刻画一个特定信号所携带的信息，并指向下一个sigqueue结构:</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigqueue</span>&#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sigqueue</span> *<span class="title">next</span>;</span></span><br><span class="line">	<span class="keyword">siginfo_t</span> info;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs gauss"><span class="hljs-keyword">struct</span> <span class="hljs-type">sigqueue</span>&#123;
+    <span class="hljs-keyword">struct</span> <span class="hljs-type">sigqueue</span> *next;
+    siginfo_t info;
+&#125;</code></pre>
 
 <p>信号在进程中注册指的就是信号值加入到进程的未决信号集sigset_t signal（每个信号占用一位）中，并且信号所携带的信息被保留到未决信号信息链的某个sigqueue结构中。只要信号在进程的未决信号集中，表明进程已经知道这些信号的存在，但还没来得及处理，或者该进程被信号阻塞。</p>
 <p>当一个可靠信号发送给一个进程时，不管该信号是否已经在进程中注册，都会被再注册一次，因此，信号不会丢失。这意味着同一个可靠信号可以在同一个进程的未决信号信息链中占有多个sigqueue结构（进程每收到一个可靠信号，都会为它分配一个结构来注册该信号信息，并把该结构添加在未决信号链尾）。</p>
@@ -188,7 +213,7 @@
 <ol start="2">
 <li>处理信号<br>内核处理一个进程收到的信号的时机是在一个进程从内核态返回用户态时。所以，当一个进程在内核态下运行时，软中断信号并不立即起作用，要等到将返回用户态时才处理。进程只有处理完信号才会返回用户态，进程在用户态下不会有未处理完的信号。<br>内核处理一个进程收到的软中断信号是在该进程的上下文中，因此，进程必须处于运行状态。当进程接收到一个它忽略的信号时，进程丢弃该信号，就像没有收到该信号似的继续运行。<br>如果进程收到一个要捕捉的信号，那么进程从内核态返回用户态时执行用户定义的函数。<strong>而且执行用户定义的函数的方法很巧妙，内核在用户栈上创建一个新的层，该层中将返回地址的值设置成用户定义的处理函数的地址，这样进程从内核返回弹出栈顶时就返回到用户定义的函数处，从函数返回再弹出栈顶时，才返回原先进入内核的地方。</strong>这样做的原因是用户定义的处理函数不能且不允许在内核态下执行（如果用户定义的函数在内核态下运行的话，用户就可以获得任何权限）。<br>对于非可靠信号来说，由于在未决信号信息链中最多只占用一个sigqueue结构，因此该结构被释放后，应该把信号在进程未决信号集中删除（信号注销完毕）；而对于实时信号来说，可能在未决信号信息链中占用多个sigqueue结构，因此应该针对占用sigqueue结构的数目区别对待：如果只占用一个sigqueue结构（进程只收到该信号一次），则执行完相应的处理函数后应该把信号在进程的未决信号集中删除（信号注销完毕）。否则待该信号的所有sigqueue处理完毕后再在进程的未决信号集中删除该信号。<br>当所有未被屏蔽的信号都处理完毕后，即可返回用户空间。对于被屏蔽的信号，当取消屏蔽后，在返回到用户空间时会再次执行上述检查处理的一套流程。</li>
 </ol>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p><a href="https://github.com/xuelangZF/CS_Offer/blob/master/Linux_OS/Signal.md" target="_blank" rel="noopener">CS_Offer/Signal.md at master · xuelangZF/CS_Offer · GitHub</a><br><a href="http://lzz5235.github.io/2015/06/04/signal.html" target="_blank" rel="noopener">信号处理的时机</a><br><a href="https://www.waitig.com/%E9%9D%A2%E8%AF%95%E4%B8%AD%E5%85%B3%E4%BA%8Elinux%E7%9A%84%E4%BF%A1%E5%8F%B7%E5%B8%B8%E9%97%AE%E7%9A%84%E9%97%AE%E9%A2%98.html" target="_blank" rel="noopener">面试中关于Linux的信号常问的问题 | 等英博客</a><br><a href="http://www.cnblogs.com/mickole/p/3189156.html" target="_blank" rel="noopener">linux系统编程之信号（一）：中断与信号 - mickole - 博客园</a><br><a href="https://blog.csdn.net/tennysonsky/article/details/46010303" target="_blank" rel="noopener">Linux系统编程——进程间通信：信号中断处理 - CSDN博客</a></p>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p><a target="_blank" rel="noopener" href="https://github.com/xuelangZF/CS_Offer/blob/master/Linux_OS/Signal.md">CS_Offer&#x2F;Signal.md at master · xuelangZF&#x2F;CS_Offer · GitHub</a><br><a target="_blank" rel="noopener" href="http://lzz5235.github.io/2015/06/04/signal.html">信号处理的时机</a><br><a target="_blank" rel="noopener" href="https://www.waitig.com/%E9%9D%A2%E8%AF%95%E4%B8%AD%E5%85%B3%E4%BA%8Elinux%E7%9A%84%E4%BF%A1%E5%8F%B7%E5%B8%B8%E9%97%AE%E7%9A%84%E9%97%AE%E9%A2%98.html">面试中关于Linux的信号常问的问题 | 等英博客</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/mickole/p/3189156.html">linux系统编程之信号（一）：中断与信号 - mickole - 博客园</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/tennysonsky/article/details/46010303">Linux系统编程——进程间通信：信号中断处理 - CSDN博客</a></p>
 
             </div>
         </article>

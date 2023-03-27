@@ -64,7 +64,19 @@
                 </div>
             
                 <div class="nav-item">
+                    <a href="/timeline/" class="menu gt-a-link" target="_self">时间线</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/about/" class="menu gt-a-link" target="_self">关于</a>
+                </div>
+            
+                <div class="nav-item">
                     <a href="/friends/" class="menu gt-a-link" target="_self">友链</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/atom.xml" class="menu gt-a-link" target="_self">rss</a>
                 </div>
             
         </div>
@@ -101,7 +113,7 @@
             <div class="post-content gt-c-content-color-first">
                 <p>由于工作环境、生产环境，我们使用的操作系统为为CentOS6.9，所需mysql版本为5.7，目前CentOS6.x系统默认mysql版本为5.1，这个版本是实在是太旧了。</p>
 <h3 id="彻底卸载系统已经安装的旧版本"><a href="#彻底卸载系统已经安装的旧版本" class="headerlink" title="彻底卸载系统已经安装的旧版本"></a>彻底卸载系统已经安装的旧版本</h3><ul>
-<li><p>检查系统已经安装的mysql<br><code>rpm -qa|grep -i mysql</code></p>
+<li><p>检查系统已经安装的mysql<br><code> rpm -qa|grep -i mysql</code></p>
 </li>
 <li><p>删除包<br><code>rpm -ev mysql_lib_xxxx</code></p>
 </li>
@@ -116,7 +128,10 @@
 <li><p>安装源<br><code>yum localinstall mysql-community-release-el6-5.noarch.rpm</code></p>
 </li>
 <li><p>查看可用源中包含哪些版本并开启指定版本</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum repolist all | grep mysql</span><br><span class="line">yum-<span class="built_in">config</span>-manager <span class="comment">--disable mysql56-community</span></span><br><span class="line">yum-<span class="built_in">config</span>-manager <span class="comment">--disable mysql55-community</span></span><br><span class="line">yum-<span class="built_in">config</span>-manager <span class="comment">--enable mysql57-community</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs lua">yum repolist all | grep mysql
+yum-<span class="hljs-built_in">config</span>-manager <span class="hljs-comment">--disable mysql56-community</span>
+yum-<span class="hljs-built_in">config</span>-manager <span class="hljs-comment">--disable mysql55-community</span>
+yum-<span class="hljs-built_in">config</span>-manager <span class="hljs-comment">--enable mysql57-community</span></code></pre>
 </li>
 <li><p>yum安装mysql<br><code>yum install mysql-community-server</code></p>
 </li>
@@ -125,20 +140,26 @@
 <li><p>设置开机自动启动</p>
 </li>
 </ul>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chkconfig <span class="comment">--list | grep mysqld</span></span><br><span class="line">chkconfig mysqld <span class="keyword">on</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs applescript">chkconfig <span class="hljs-comment">--list | grep mysqld</span>
+chkconfig mysqld <span class="hljs-keyword">on</span></code></pre>
 
 <ul>
 <li>安装设置命令<br><code>mysql_secure_installation</code></li>
 </ul>
 <h3 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h3><p>因为刚才启动的时候是系统默认配置的临时密码<br>使用如下命令可以查看，并且修改：</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo grep <span class="string">'temporary password'</span> /var/log/mysqld.log</span><br><span class="line">mysql -u root -p </span><br><span class="line">ALTER<span class="built_in"> USER </span><span class="string">'root'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'newPassword'</span>;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs pgsql">sudo grep <span class="hljs-string">&#x27;temporary password&#x27;</span> /var/<span class="hljs-keyword">log</span>/mysqld.<span class="hljs-keyword">log</span>
+mysql -u root -p 
+<span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">&#x27;root&#x27;</span>@<span class="hljs-string">&#x27;localhost&#x27;</span> IDENTIFIED <span class="hljs-keyword">BY</span> <span class="hljs-string">&#x27;newPassword&#x27;</span>;</code></pre>
 
 <h3 id="设置允许连接数据库"><a href="#设置允许连接数据库" class="headerlink" title="设置允许连接数据库"></a>设置允许连接数据库</h3><p>命令如下：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p </span><br><span class="line"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">privileges</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> root@<span class="string">"%"</span> <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">'passwordith grant option;  </span></span><br><span class="line"><span class="string">flush privileges;</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs pgsql">mysql -u root -p 
+<span class="hljs-keyword">grant</span> <span class="hljs-keyword">all</span> <span class="hljs-keyword">privileges</span> <span class="hljs-keyword">on</span> *.* <span class="hljs-keyword">to</span> root@&quot;%&quot; identified <span class="hljs-keyword">by</span> <span class="hljs-string">&#x27;passwordith grant option;  </span>
+<span class="hljs-string">flush privileges;</span></code></pre>
 
 <h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><ul>
-<li>比较奇怪，域名解析错误<br>在yum install 的时候，发现大量的[Errno 14] PYCURL ERROR 6 - “Couldn’t resolve host ‘mirrors.aliyun.com’”错误，开始以为自己源设置错误，后来才知道，机器卡死过一次，导致系统莫名其妙的错误，了解网络的很快就知道需要设置系统的DNS<br>在<code>/etc/resolv.conf</code>文件中加入如下内容：<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nameserver <span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span></span><br><span class="line"> nameserver <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span></span><br></pre></td></tr></table></figure>
-之前是啥也没有的，都是些没用的注释解释信息</li>
+<li>比较奇怪，域名解析错误<br> 在yum install 的时候，发现大量的[Errno 14] PYCURL ERROR 6 - “Couldn’t resolve host ‘mirrors.aliyun.com’”错误，开始以为自己源设置错误，后来才知道，机器卡死过一次，导致系统莫名其妙的错误，了解网络的很快就知道需要设置系统的DNS<br> 在<code>/etc/resolv.conf</code>文件中加入如下内容： <pre><code class="hljs nginx"><span class="hljs-attribute">nameserver</span> <span class="hljs-number">8.8.8.8</span>
+ nameserver <span class="hljs-number">114.114.114.114</span></code></pre>
+ 之前是啥也没有的，都是些没用的注释解释信息</li>
 </ul>
 
             </div>

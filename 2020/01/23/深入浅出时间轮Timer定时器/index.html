@@ -64,7 +64,19 @@
                 </div>
             
                 <div class="nav-item">
+                    <a href="/timeline/" class="menu gt-a-link" target="_self">时间线</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/about/" class="menu gt-a-link" target="_self">关于</a>
+                </div>
+            
+                <div class="nav-item">
                     <a href="/friends/" class="menu gt-a-link" target="_self">友链</a>
+                </div>
+            
+                <div class="nav-item">
+                    <a href="/atom.xml" class="menu gt-a-link" target="_self">rss</a>
                 </div>
             
         </div>
@@ -132,26 +144,457 @@
 <p><strong>说到底，定时器还是靠线程轮询实现的。</strong></p>
 </blockquote>
 <p>现在知道<code>Timer</code>是靠轮询来实现的，那么中间应该采用那种数据结构呢？采用不同的数据结构实现，其性能也大不一样！<br>现在主要有如下几种：<code>List</code>链表、<code>Heap</code>最小堆、时间轮、分级时间轮，其中时间轮的实质为Hash表。</p>
-<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><h3 id="双向有序链表"><a href="#双向有序链表" class="headerlink" title="双向有序链表"></a>双向有序链表</h3><p><code>AddTimer O(N)</code>很容易理解，按照 <code>expireTime</code> 查找合适的位置即可；<code>KillTimer O(1)</code> ，任务在 <code>Kill</code> 时，会持有自己节点的引用，所以不需要查找其在链表中所在的位置，即可实现当前节点的删除;<code>RunTimer O(1)</code>，由于整个双向链表是基于 expireTime 有序的，所以调度器只需要轮询第一个任务即可。</p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><h3 id="双向有序链表"><a href="#双向有序链表" class="headerlink" title="双向有序链表"></a>双向有序链表</h3><p><code>AddTimer O(N) </code>很容易理解，按照 <code>expireTime</code> 查找合适的位置即可；<code>KillTimer O(1)</code> ，任务在 <code>Kill</code> 时，会持有自己节点的引用，所以不需要查找其在链表中所在的位置，即可实现当前节点的删除;<code>RunTimer O(1)</code>，由于整个双向链表是基于 expireTime 有序的，所以调度器只需要轮询第一个任务即可。</p>
 <h3 id="最小堆"><a href="#最小堆" class="headerlink" title="最小堆"></a>最小堆</h3><p>最小堆指的是满足除了根节点以外的每个节点都不小于其父节点的堆。这样，堆中的最小值就存放在根节点中，并且在以某个结点为根的子树中，各节点的值都不小于该子树根节点的值。一个最小堆的例子如下图：<br><img src="https://www.ibm.com/developerworks/cn/linux/l-cn-timers/image002.jpg" alt="最小堆"></p>
 <p>明显的，最小堆添加新元素或者删除节点效率为<code>O(lgn)</code>, <code>root</code>节点<code>expireTime</code>最小，执行优先级最高，因此复杂度为O(1)</p>
 <p><strong>如果程序中的定时器数量比较少，基于最小堆的定时器一般可以满足需求，且实现简单。</strong></p>
 <h3 id="时间轮"><a href="#时间轮" class="headerlink" title="时间轮"></a>时间轮</h3><p>时间轮的实质为哈希环<code>HashTable</code>,每个定时器任务根据对其<code>expireTime</code>哈希，得到对应的位置<code>index</code>，复杂度为<code>O(1)</code><br><img src="http://kirito.iocoder.cn/201807171109599678a80c-075a-40ee-b25f-10fd82c1025c.png" alt="时间轮"></p>
-<p><strong>性能比较：</strong><br>| 实现方式 |    AddTimer    | KillTimer     | RunTimer|<br>|——– |————| ———–| ———–|<br>| 基于链表  |    O(1)    | O(n)    | O(n)|<br>|基于排序链表    |O(n)    |O(1)    |O(1)|<br>|基于最小堆     |    O(lgn)|    O(lgn)|    O(1)|<br>|基于时间轮    |O(1)    |O(1)    |O(1)|</p>
+<p><strong>性能比较：</strong></p>
+<table>
+<thead>
+<tr>
+<th>实现方式</th>
+<th>AddTimer</th>
+<th>KillTimer</th>
+<th>RunTimer</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基于链表</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>基于排序链表</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>基于最小堆</td>
+<td>O(lgn)</td>
+<td>O(lgn)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>基于时间轮</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+</tbody></table>
 <p><em>现在看起来我们选择时间轮来实现就行了，是否这样就完事了？</em></p>
 <h2 id="着重分析时间轮"><a href="#着重分析时间轮" class="headerlink" title="着重分析时间轮"></a>着重分析时间轮</h2><p>如果需要支持的定时器范围非常的大，上面的实现方式则不能满足这样的需求。因为这样将消耗非常可观的内存，假设需要表示的定时器范围为：0 – 2^3-1ticks，则简单时间轮需要 2^32 个元素空间，这对于内存空间的使用将非常的庞大。也许可以降低定时器的精度，使得每个 Tick 表示的时间更长一些，但这样的代价是定时器的精度将大打折扣。</p>
 <p>现在的问题是，度量定时器的粒度，只能使用唯一粒度吗？想想日常生活中常遇到的水表，如下图：<br><img src="https://www.ibm.com/developerworks/cn/linux/l-cn-timers/image004.jpg" alt="水表"></p>
-<p>钟表：<br><img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556440651&di=0c604969bfdf6b335dd78462f862743e&imgtype=jpg&er=1&src=http%3A%2F%2Famuseum.cdstm.cn%2FAMuseum%2Ftime%2F01gzsj%2Fimages%2F0102_b.jpg" alt="水表"></p>
+<p>钟表：<br><img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556440651&di=0c604969bfdf6b335dd78462f862743e&imgtype=jpg&er=1&src=http://amuseum.cdstm.cn/AMuseum/time/01gzsj/images/0102_b.jpg" alt="水表"></p>
 <p>分级时间轮同样如此，每级时间轮所代表的粒度精度都不一样，这样结合起来，既能够保证定时器的精度，也能以较小内存代价表示范围更大更多的定时器。</p>
 <p><strong>简单时间轮</strong>： 一个齿轮，每个齿轮保存一个超时的node链表。一个齿轮表示一个时间刻度，比如钟表里面一小格代表一秒，钟表的秒针每次跳一格。假设一个刻度代表10ms，则2^32 个格子可表示1.36年，2^16个格子可表示10.9分钟。当要表示的时间范围较大时，空间复杂度会大幅增加。</p>
-<p><strong>分级时间轮</strong>： 类似于水表，当小轮子里的指针转动满一圈后，上一级轮子的指针进一格。  采用五个轮子每个轮子为一个简单时间轮，大小分别为 2^8， 2^6， 2^6， 2^6， 2^6，所需空间：2^8 + 2^6 + 2^6 + 2^6 + 2^6 = 512， 可表示的范围为 0  –  2^8 * 2^6 * 2^6* 2^6* 2^6 = 2^32 。</p>
+<p><strong>分级时间轮</strong>： 类似于水表，当小轮子里的指针转动满一圈后，上一级轮子的指针进一格。  采用五个轮子每个轮子为一个简单时间轮，大小分别为 2^8， 2^6， 2^6， 2^6， 2^6，所需空间：2^8 + 2^6 + 2^6 + 2^6 + 2^6 &#x3D; 512， 可表示的范围为 0  –  2^8 * 2^6 * 2^6* 2^6* 2^6 &#x3D; 2^32 。</p>
 <p><strong>分级时间轮简洁图</strong>：<br><img src="http://kirito.iocoder.cn/7f03c027b1de345a0b1e57239d73de74.png" alt="分级时间轮"></p>
 <p><em>熟知的Linux系统内核，定时器实现方式就是分级时间轮</em><br><img src="https://images0.cnblogs.com/i/205989/201405/281755599318276.jpg" alt="Linux内核"></p>
 <h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><p>wheel_timer_mgr.h</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CWheelTimerModule</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ITimerMgr</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CWheelTimer</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="built_in">std</span>::<span class="built_in">list</span>&lt;CWheelTimer*&gt; TListTimer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> ETimerType </span><br><span class="line">&#123; </span><br><span class="line">	ETIMER_ONCE, </span><br><span class="line">	ETIMER_CIRCLE </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">///定时器最小精度 1/10秒 （100毫秒）</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span>  WHEEL_TIMER_MIN_PRECISION = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* @brief 基于分级的时间轮定时器, 精度约定为十分之一秒</span></span><br><span class="line"><span class="comment">* 注意，注册的Timer精度必须为约定的精度倍数</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CWheelTimer</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	CWheelTimer();</span><br><span class="line">	CWheelTimer(CWheelTimerModule&amp; oModule);</span><br><span class="line">	~CWheelTimer();</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* @brief 启动定时器</span></span><br><span class="line"><span class="comment">	* @param nInterval: 传入的是毫秒, 约定必须是十分之一秒（100ms）的倍数</span></span><br><span class="line"><span class="comment">	* @return </span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">(ITimerMgr* pITimer, <span class="keyword">unsigned</span> <span class="keyword">int</span> nId, <span class="keyword">unsigned</span> nInterval, <span class="keyword">int</span> nDelay, ETimerType eTimerType = ETIMER_CIRCLE)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* @brief 停止定时器</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">Stop</span><span class="params">()</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* @brief 定时器被触发</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">OnTrigger</span><span class="params">(<span class="keyword">const</span> UINT64 nNow)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">CWheelTimerModule</span>;</span></span><br><span class="line"></span><br><span class="line">	CWheelTimerModule&amp;		m_oModule;</span><br><span class="line">	ITimerMgr*				m_pTimerMgr = <span class="literal">nullptr</span>;</span><br><span class="line">	ETimerType				m_eTimerType;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span>			m_nTimerId = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span>			m_nInterval = <span class="number">-1</span>;    <span class="comment">//ms</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span>		m_llExpireTime = <span class="number">0</span>;  <span class="comment">//ms</span></span><br><span class="line">	<span class="keyword">int</span>						m_nVecIndex = <span class="number">0</span>;</span><br><span class="line">	TListTimer::iterator	m_listIter;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* @brief 定时器管理器接口， 派生类继承使用</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ITimerMgr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">virtual</span>		  ~ITimerMgr();</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span>  <span class="title">OnTimer</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> nId)</span> </span>= <span class="number">0</span>;</span><br><span class="line">	<span class="comment">//interval 时间精度 ms</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span>		  <span class="title">SetTimer</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> nId, <span class="keyword">int</span> nInterval, <span class="keyword">int</span> nDelay = <span class="number">0</span>, ETimerType eTimeType = ETIMER_CIRCLE)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span>		  <span class="title">KillTimer</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> nId)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">bool</span>		  <span class="title">IsTimerExist</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> nId)</span></span>;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">unordered_map</span>&lt;<span class="keyword">unsigned</span> <span class="keyword">int</span>, CWheelTimer*&gt; m_mapTimer;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* @brief 全局定时器管理模块， 负责管理所有的定时器</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CWheelTimerModule</span> :</span> <span class="keyword">public</span> Storm::TSingleton&lt;CWheelTimerModule&gt;</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">Storm</span>:</span>:TSingleton&lt;CWheelTimerModule&gt;;</span><br><span class="line">	CWheelTimerModule();</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">void</span>			<span class="title">AddTimer</span><span class="params">(CWheelTimer* pTimer)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span>			<span class="title">RemoveTimer</span><span class="params">(CWheelTimer* pTimer)</span></span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* @brief 驱动所有的定时器</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span>			<span class="title">Run</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> UINT64	<span class="title">GetCurMillisecs</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* @brief 修正精度 </span></span><br><span class="line"><span class="comment">	* @param nSrcTime </span></span><br><span class="line"><span class="comment">	* @return 传入的时间除以当前约定最小定时器精度</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="function"><span class="keyword">static</span> UINT64	<span class="title">HandlePrecision</span><span class="params">(<span class="keyword">const</span> UINT64 nSrcTime)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span>				_Cascade(<span class="keyword">int</span> nOffset, <span class="keyword">int</span> nIndex);</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;TListTimer&gt;		m_vecTimerList;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//notice: precision=100ms not 1ms</span></span><br><span class="line">	UINT64						m_llCheckTime;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* @brief 定时器工厂 </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CTimerFactory</span>:</span> <span class="keyword">public</span> Storm::TSingleton&lt;CTimerFactory&gt;, <span class="keyword">public</span> CNoncopy</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">Storm</span>:</span>:TSingleton&lt;CTimerFactory&gt;;</span><br><span class="line">	CTimerFactory();</span><br><span class="line">	<span class="keyword">virtual</span>			~CTimerFactory();</span><br><span class="line"><span class="keyword">public</span>: </span><br><span class="line">	<span class="function">CWheelTimer*	<span class="title">CreateCTimer</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span>			<span class="title">ReleaseCTimer</span><span class="params">(CWheelTimer* pTimer)</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line"></span><br><span class="line">	CSTObjectPool&lt;CWheelTimer&gt;    m_oCTimerPool;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CWheelTimerModule</span>;
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ITimerMgr</span>;
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CWheelTimer</span>;
+
+<span class="hljs-keyword">typedef</span> std::list&lt;CWheelTimer*&gt; TListTimer;
+
+<span class="hljs-keyword">enum</span> <span class="hljs-title class_">ETimerType</span> 
+&#123; 
+    ETIMER_ONCE, 
+    ETIMER_CIRCLE 
+&#125;;
+
+<span class="hljs-comment">///定时器最小精度 1/10秒 （100毫秒）</span>
+<span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span>  WHEEL_TIMER_MIN_PRECISION = <span class="hljs-number">100</span>;
+
+<span class="hljs-comment">/**</span>
+<span class="hljs-comment">* @brief 基于分级的时间轮定时器, 精度约定为十分之一秒</span>
+<span class="hljs-comment">* 注意，注册的Timer精度必须为约定的精度倍数</span>
+<span class="hljs-comment">*/</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CWheelTimer</span>
+&#123;
+<span class="hljs-keyword">public</span>:
+    <span class="hljs-built_in">CWheelTimer</span>();
+    <span class="hljs-built_in">CWheelTimer</span>(CWheelTimerModule&amp; oModule);
+    ~<span class="hljs-built_in">CWheelTimer</span>();
+
+    <span class="hljs-comment">/**</span>
+<span class="hljs-comment">    * @brief 启动定时器</span>
+<span class="hljs-comment">    * @param nInterval: 传入的是毫秒, 约定必须是十分之一秒（100ms）的倍数</span>
+<span class="hljs-comment">    * @return </span>
+<span class="hljs-comment">    */</span>
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Start</span><span class="hljs-params">(ITimerMgr* pITimer, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId, <span class="hljs-type">unsigned</span> nInterval, <span class="hljs-type">int</span> nDelay, ETimerType eTimerType = ETIMER_CIRCLE)</span></span>;
+
+    <span class="hljs-comment">/**</span>
+<span class="hljs-comment">    * @brief 停止定时器</span>
+<span class="hljs-comment">    */</span>
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Stop</span><span class="hljs-params">()</span></span>;
+<span class="hljs-keyword">private</span>:
+    <span class="hljs-comment">/**</span>
+<span class="hljs-comment">    * @brief 定时器被触发</span>
+<span class="hljs-comment">    */</span>
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">OnTrigger</span><span class="hljs-params">(<span class="hljs-type">const</span> UINT64 nNow)</span></span>;
+
+<span class="hljs-keyword">private</span>:
+    <span class="hljs-keyword">friend</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CWheelTimerModule</span>;
+
+    CWheelTimerModule&amp;		m_oModule;
+    ITimerMgr*				m_pTimerMgr = <span class="hljs-literal">nullptr</span>;
+    ETimerType				m_eTimerType;
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>			m_nTimerId = <span class="hljs-number">0</span>;
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>			m_nInterval = <span class="hljs-number">-1</span>;    <span class="hljs-comment">//ms</span>
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span>		m_llExpireTime = <span class="hljs-number">0</span>;  <span class="hljs-comment">//ms</span>
+    <span class="hljs-type">int</span>						m_nVecIndex = <span class="hljs-number">0</span>;
+    TListTimer::iterator	m_listIter;
+&#125;;
+
+<span class="hljs-comment">/**</span>
+<span class="hljs-comment">* @brief 定时器管理器接口， 派生类继承使用</span>
+<span class="hljs-comment">*/</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ITimerMgr</span>
+&#123;
+<span class="hljs-keyword">public</span>:
+    <span class="hljs-keyword">virtual</span>		  ~<span class="hljs-built_in">ITimerMgr</span>();
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span>  <span class="hljs-title">OnTimer</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId)</span> </span>= <span class="hljs-number">0</span>;
+    <span class="hljs-comment">//interval 时间精度 ms</span>
+    <span class="hljs-function"><span class="hljs-type">void</span>		  <span class="hljs-title">SetTimer</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId, <span class="hljs-type">int</span> nInterval, <span class="hljs-type">int</span> nDelay = <span class="hljs-number">0</span>, ETimerType eTimeType = ETIMER_CIRCLE)</span></span>;
+    <span class="hljs-function"><span class="hljs-type">void</span>		  <span class="hljs-title">KillTimer</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId)</span></span>;
+    <span class="hljs-function"><span class="hljs-type">bool</span>		  <span class="hljs-title">IsTimerExist</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId)</span></span>;;
+
+<span class="hljs-keyword">protected</span>:
+    std::unordered_map&lt;<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>, CWheelTimer*&gt; m_mapTimer;
+&#125;;
+
+<span class="hljs-comment">/**</span>
+<span class="hljs-comment">* @brief 全局定时器管理模块， 负责管理所有的定时器</span>
+<span class="hljs-comment">*/</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CWheelTimerModule</span> : <span class="hljs-keyword">public</span> Storm::TSingleton&lt;CWheelTimerModule&gt;
+&#123;
+    <span class="hljs-keyword">friend</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Storm</span>::TSingleton&lt;CWheelTimerModule&gt;;
+    <span class="hljs-built_in">CWheelTimerModule</span>();
+<span class="hljs-keyword">public</span>:
+    <span class="hljs-function"><span class="hljs-type">void</span>			<span class="hljs-title">AddTimer</span><span class="hljs-params">(CWheelTimer* pTimer)</span></span>;
+    <span class="hljs-function"><span class="hljs-type">void</span>			<span class="hljs-title">RemoveTimer</span><span class="hljs-params">(CWheelTimer* pTimer)</span></span>;
+    <span class="hljs-comment">/**</span>
+<span class="hljs-comment">    * @brief 驱动所有的定时器</span>
+<span class="hljs-comment">    */</span>
+    <span class="hljs-function"><span class="hljs-type">void</span>			<span class="hljs-title">Run</span><span class="hljs-params">()</span></span>;
+
+    <span class="hljs-function"><span class="hljs-type">static</span> UINT64	<span class="hljs-title">GetCurMillisecs</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-comment">/**</span>
+<span class="hljs-comment">    * @brief 修正精度 </span>
+<span class="hljs-comment">    * @param nSrcTime </span>
+<span class="hljs-comment">    * @return 传入的时间除以当前约定最小定时器精度</span>
+<span class="hljs-comment">    */</span>
+    <span class="hljs-function"><span class="hljs-type">static</span> UINT64	<span class="hljs-title">HandlePrecision</span><span class="hljs-params">(<span class="hljs-type">const</span> UINT64 nSrcTime)</span></span>;
+
+<span class="hljs-keyword">private</span>:
+    <span class="hljs-type">int</span>				_Cascade(<span class="hljs-type">int</span> nOffset, <span class="hljs-type">int</span> nIndex);
+
+<span class="hljs-keyword">private</span>:
+    std::vector&lt;TListTimer&gt;		m_vecTimerList;
+
+    <span class="hljs-comment">//notice: precision=100ms not 1ms</span>
+    UINT64						m_llCheckTime;
+&#125;;
+
+<span class="hljs-comment">/**</span>
+<span class="hljs-comment">* @brief 定时器工厂 </span>
+<span class="hljs-comment">*/</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CTimerFactory</span>: <span class="hljs-keyword">public</span> Storm::TSingleton&lt;CTimerFactory&gt;, <span class="hljs-keyword">public</span> CNoncopy
+&#123;
+    <span class="hljs-keyword">friend</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Storm</span>::TSingleton&lt;CTimerFactory&gt;;
+    <span class="hljs-built_in">CTimerFactory</span>();
+    <span class="hljs-keyword">virtual</span>			~<span class="hljs-built_in">CTimerFactory</span>();
+<span class="hljs-keyword">public</span>: 
+    <span class="hljs-function">CWheelTimer*	<span class="hljs-title">CreateCTimer</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-function"><span class="hljs-type">void</span>			<span class="hljs-title">ReleaseCTimer</span><span class="hljs-params">(CWheelTimer* pTimer)</span></span>;
+<span class="hljs-keyword">private</span>:
+
+    CSTObjectPool&lt;CWheelTimer&gt;    m_oCTimerPool;
+&#125;</code></pre>
 
 <p>wheel_timer_mgr.cpp</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0 </span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> TVN_BITS 6</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> TVR_BITS 8</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> TVN_SIZE (1 &lt;&lt; TVN_BITS)</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> TVR_SIZE (1 &lt;&lt; TVR_BITS)</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> TVN_MASK (TVN_SIZE - 1)</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> TVR_MASK (TVR_SIZE - 1)</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> OFFSET(N) (TVR_SIZE + (N) *TVN_SIZE)</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">define</span> INDEX(V, N) ((V &gt;&gt; (TVR_BITS + (N) *TVN_BITS)) &amp; TVN_MASK)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span> </span></span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> TVN_BITS = <span class="number">6</span>;</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> TVR_BITS = <span class="number">8</span>;</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> TVN_SIZE = (<span class="number">1</span> &lt;&lt; TVN_BITS);</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> TVR_SIZE = (<span class="number">1</span> &lt;&lt; TVR_BITS);</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> TVN_MASK = (TVN_SIZE - <span class="number">1</span>);</span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> TVR_MASK = (TVR_SIZE - <span class="number">1</span>);</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">OFFSET</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123; <span class="keyword">return</span> (TVR_SIZE + (N)*TVN_SIZE); &#125;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">INDEX</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> V, <span class="keyword">int</span> N)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> ((V &gt;&gt; (TVR_BITS + (N)*TVN_BITS)) &amp; TVN_MASK);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">CWheelTimer::CWheelTimer()</span><br><span class="line">	:m_oModule(CWheelTimerModule::GetInstance())</span><br><span class="line">	, m_nVecIndex(<span class="number">-1</span>)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CWheelTimer::CWheelTimer(CWheelTimerModule&amp; oModule)</span><br><span class="line">	: m_oModule(oModule)</span><br><span class="line">	, m_nVecIndex(<span class="number">-1</span>)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CWheelTimer::~CWheelTimer()</span><br><span class="line">&#123;</span><br><span class="line">	Stop();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CWheelTimer::Start</span><span class="params">(ITimerMgr* pTimerMgr, <span class="keyword">unsigned</span> <span class="keyword">int</span> nId, <span class="keyword">unsigned</span> nInterval, <span class="keyword">int</span> nDelay, ETimerType eTimerType)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Stop();</span><br><span class="line"></span><br><span class="line">	<span class="comment">//时间都修正为最小精度</span></span><br><span class="line">	<span class="keyword">if</span> (nInterval &lt; WHEEL_TIMER_MIN_PRECISION)</span><br><span class="line">	&#123;</span><br><span class="line">		nInterval = WHEEL_TIMER_MIN_PRECISION;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	m_nInterval = CWheelTimerModule::HandlePrecision(nInterval);</span><br><span class="line">	m_eTimerType = eTimerType;</span><br><span class="line">	m_pTimerMgr = pTimerMgr;</span><br><span class="line">	m_nTimerId = nId;</span><br><span class="line">	m_llExpireTime = CWheelTimerModule::HandlePrecision(nDelay + CWheelTimerModule::GetCurMillisecs());</span><br><span class="line">	m_oModule.AddTimer(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CWheelTimer::Stop</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (m_nVecIndex != <span class="number">-1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		m_oModule.RemoveTimer(<span class="keyword">this</span>);</span><br><span class="line">		m_nVecIndex = <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CWheelTimer::OnTrigger</span><span class="params">(<span class="keyword">const</span> UINT64 nNow)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (m_eTimerType == ETIMER_CIRCLE)</span><br><span class="line">	&#123;</span><br><span class="line">		m_llExpireTime = m_nInterval + nNow;</span><br><span class="line">		m_oModule.AddTimer(<span class="keyword">this</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		m_nVecIndex = <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (m_pTimerMgr != <span class="literal">nullptr</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		m_pTimerMgr-&gt;OnTimer(m_nTimerId);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//--------------------------------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">CWheelTimerModule::CWheelTimerModule()</span><br><span class="line">&#123;</span><br><span class="line">	m_vecTimerList.resize(TVR_SIZE + <span class="number">4</span> * TVN_SIZE);</span><br><span class="line">	m_llCheckTime = HandlePrecision(GetCurMillisecs());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CWheelTimerModule::AddTimer</span><span class="params">(CWheelTimer* pTimer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	UINT64 llExpireTime = pTimer-&gt;m_llExpireTime;</span><br><span class="line">	INT64 llTimeDiff = pTimer-&gt;m_llExpireTime - m_llCheckTime;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (llTimeDiff &lt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		pTimer-&gt;m_nVecIndex = m_llCheckTime &amp; TVR_MASK;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (llTimeDiff &lt; TVR_SIZE)</span><br><span class="line">	&#123;</span><br><span class="line">		pTimer-&gt;m_nVecIndex = llExpireTime &amp; TVR_MASK;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (llTimeDiff &lt; <span class="number">1</span> &lt;&lt; (TVR_BITS + TVN_BITS))</span><br><span class="line">	&#123;</span><br><span class="line">		pTimer-&gt;m_nVecIndex = OFFSET(<span class="number">0</span>) + INDEX(llExpireTime, <span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (llTimeDiff &lt; <span class="number">1</span> &lt;&lt; (TVR_BITS + <span class="number">2</span> * TVN_BITS))</span><br><span class="line">	&#123;</span><br><span class="line">		pTimer-&gt;m_nVecIndex = OFFSET(<span class="number">1</span>) + INDEX(llExpireTime, <span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (llTimeDiff &lt; <span class="number">1</span> &lt;&lt; (TVR_BITS + <span class="number">3</span> * TVN_BITS))</span><br><span class="line">	&#123;</span><br><span class="line">		pTimer-&gt;m_nVecIndex = OFFSET(<span class="number">2</span>) + INDEX(llExpireTime, <span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (llTimeDiff &gt; <span class="number">0xffffffff</span>UL)</span><br><span class="line">		&#123;</span><br><span class="line">			llTimeDiff = <span class="number">0xffffffff</span>UL;</span><br><span class="line">			llExpireTime = llTimeDiff + m_llCheckTime;</span><br><span class="line">		&#125;</span><br><span class="line">		pTimer-&gt;m_nVecIndex = OFFSET(<span class="number">3</span>) + INDEX(llExpireTime, <span class="number">3</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	TListTimer&amp; listTimer = m_vecTimerList[pTimer-&gt;m_nVecIndex];</span><br><span class="line">	listTimer.push_back(pTimer);</span><br><span class="line">	pTimer-&gt;m_listIter = listTimer.end();</span><br><span class="line">	--pTimer-&gt;m_listIter;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CWheelTimerModule::RemoveTimer</span><span class="params">(CWheelTimer* pTimer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TListTimer&amp; listTimer = m_vecTimerList[pTimer-&gt;m_nVecIndex];</span><br><span class="line">	listTimer.erase(pTimer-&gt;m_listIter);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CWheelTimerModule::Run</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	UINT64 nNow = HandlePrecision(GetCurMillisecs());</span><br><span class="line">	<span class="keyword">while</span> (m_llCheckTime &lt;= nNow)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//for every tick</span></span><br><span class="line">		<span class="keyword">int</span> index = m_llCheckTime &amp; TVR_MASK;</span><br><span class="line">		<span class="keyword">if</span> (!index &amp;&amp;</span><br><span class="line">			!_Cascade(OFFSET(<span class="number">0</span>), INDEX(m_llCheckTime, <span class="number">0</span>)) &amp;&amp;</span><br><span class="line">			!_Cascade(OFFSET(<span class="number">1</span>), INDEX(m_llCheckTime, <span class="number">1</span>)) &amp;&amp;</span><br><span class="line">			!_Cascade(OFFSET(<span class="number">2</span>), INDEX(m_llCheckTime, <span class="number">2</span>)))</span><br><span class="line">		&#123;</span><br><span class="line">			_Cascade(OFFSET(<span class="number">3</span>), INDEX(m_llCheckTime, <span class="number">3</span>));</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line">		++m_llCheckTime;</span><br><span class="line"></span><br><span class="line">		TListTimer&amp; listTimer = m_vecTimerList[index];</span><br><span class="line">		TListTimer listTmp;</span><br><span class="line">		listTmp.splice(listTmp.end(), listTimer);</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">auto</span> itr = listTmp.begin(); itr != listTmp.end(); ++itr)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">auto</span>* pTimer = *itr;</span><br><span class="line">			<span class="keyword">if</span> (pTimer != <span class="literal">nullptr</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				pTimer-&gt;OnTrigger(nNow);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> CWheelTimerModule::_Cascade(<span class="keyword">int</span> nOffset, <span class="keyword">int</span> nIndex)</span><br><span class="line">&#123;</span><br><span class="line">	TListTimer&amp; listTimer = m_vecTimerList[nOffset + nIndex];</span><br><span class="line">	TListTimer listTemp;</span><br><span class="line">	listTemp.splice(listTemp.end(), listTimer);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> itr = listTemp.begin(); itr != listTemp.end(); ++itr)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">auto</span>* pTimer = *itr;</span><br><span class="line">		<span class="keyword">if</span> (pTimer != <span class="literal">nullptr</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			AddTimer(pTimer);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> nIndex;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">UINT64 <span class="title">CWheelTimerModule::HandlePrecision</span><span class="params">(<span class="keyword">const</span> UINT64 nSrcTime)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> nSrcTime / WHEEL_TIMER_MIN_PRECISION;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">UINT64 <span class="title">CWheelTimerModule::GetCurMillisecs</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">auto</span> llCurTime = CSysTime::Instance()-&gt;GetNowMliTime();</span><br><span class="line">	<span class="keyword">return</span> llCurTime;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ITimerMgr::~ITimerMgr()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">auto</span> it : m_mapTimer)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (it.second != <span class="literal">nullptr</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			it.second-&gt;Stop();</span><br><span class="line">			CTimerFactory::Instance()-&gt;ReleaseCTimer(it.second);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	m_mapTimer.clear();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ITimerMgr::SetTimer</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> nId, <span class="keyword">int</span> nInterval, <span class="keyword">int</span> nDelay ,ETimerType eTimeType)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (IsTimerExist(nId))</span><br><span class="line">	&#123;</span><br><span class="line">		EXLOG_DEBUG &lt;&lt; <span class="string">"[RyzTimer]Timer Has Existed, Not Repeat Add, nId:"</span> &lt;&lt; nId;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	CWheelTimer* pTimer = CTimerFactory::Instance()-&gt;CreateCTimer();</span><br><span class="line">	<span class="keyword">if</span> (<span class="literal">nullptr</span> == pTimer)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	m_mapTimer[nId] = pTimer;</span><br><span class="line">	pTimer-&gt;Start(<span class="keyword">this</span>, nId, nInterval, nDelay, eTimeType);</span><br><span class="line">	EXLOG_DEBUG &lt;&lt; <span class="string">"[RyzTimer]Add Timer nId:"</span> &lt;&lt; nId &lt;&lt; <span class="string">",nInterval:"</span> &lt;&lt; nInterval &lt;&lt; <span class="string">",nDelay:"</span> &lt;&lt; nDelay &lt;&lt; <span class="string">",eTimeType:"</span> &lt;&lt; eTimeType;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ITimerMgr::KillTimer</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> nId)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">auto</span> it = m_mapTimer.find(nId);</span><br><span class="line">	<span class="keyword">if</span> (it != m_mapTimer.end())</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">// 释放后 在TimerManager中 不会再执行 不需要做其他的操作</span></span><br><span class="line">		it-&gt;second-&gt;Stop();</span><br><span class="line">		CTimerFactory::Instance()-&gt;ReleaseCTimer(it-&gt;second);</span><br><span class="line">		m_mapTimer.erase(it);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">ITimerMgr::IsTimerExist</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> nId)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">return</span> m_mapTimer.find(nId) != m_mapTimer.end(); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CTimerFactory::CTimerFactory()</span><br><span class="line">&#123;</span><br><span class="line">	m_oCTimerPool.Init(<span class="number">32</span>, <span class="number">8</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CTimerFactory::~CTimerFactory()</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">CWheelTimer * <span class="title">CTimerFactory::CreateCTimer</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	CWheelTimer* pTimer = m_oCTimerPool.FetchObj();</span><br><span class="line">	<span class="keyword">return</span> pTimer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CTimerFactory::ReleaseCTimer</span><span class="params">(CWheelTimer* pTimer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="literal">nullptr</span> != pTimer)</span><br><span class="line">	&#123;</span><br><span class="line">		m_oCTimerPool.ReleaseObj(pTimer);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">if</span> 0 </span>
+    <span class="hljs-meta">#<span class="hljs-keyword">define</span> TVN_BITS 6</span>
+    <span class="hljs-meta">#<span class="hljs-keyword">define</span> TVR_BITS 8</span>
+    <span class="hljs-meta">#<span class="hljs-keyword">define</span> TVN_SIZE (1 &lt;&lt; TVN_BITS)</span>
+    <span class="hljs-meta">#<span class="hljs-keyword">define</span> TVR_SIZE (1 &lt;&lt; TVR_BITS)</span>
+    <span class="hljs-meta">#<span class="hljs-keyword">define</span> TVN_MASK (TVN_SIZE - 1)</span>
+    <span class="hljs-meta">#<span class="hljs-keyword">define</span> TVR_MASK (TVR_SIZE - 1)</span>
+    <span class="hljs-meta">#<span class="hljs-keyword">define</span> OFFSET(N) (TVR_SIZE + (N) *TVN_SIZE)</span>
+    <span class="hljs-meta">#<span class="hljs-keyword">define</span> INDEX(V, N) ((V &gt;&gt; (TVR_BITS + (N) *TVN_BITS)) &amp; TVN_MASK)</span>
+<span class="hljs-meta">#<span class="hljs-keyword">else</span> </span>
+    <span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span> TVN_BITS = <span class="hljs-number">6</span>;
+    <span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span> TVR_BITS = <span class="hljs-number">8</span>;
+    <span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span> TVN_SIZE = (<span class="hljs-number">1</span> &lt;&lt; TVN_BITS);
+    <span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span> TVR_SIZE = (<span class="hljs-number">1</span> &lt;&lt; TVR_BITS);
+    <span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span> TVN_MASK = (TVN_SIZE - <span class="hljs-number">1</span>);
+    <span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span> TVR_MASK = (TVR_SIZE - <span class="hljs-number">1</span>);
+    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">OFFSET</span><span class="hljs-params">(<span class="hljs-type">int</span> N)</span> </span>&#123; <span class="hljs-keyword">return</span> (TVR_SIZE + (N)*TVN_SIZE); &#125;
+    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">INDEX</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> V, <span class="hljs-type">int</span> N)</span></span>
+<span class="hljs-function">    </span>&#123;
+        <span class="hljs-keyword">return</span> ((V &gt;&gt; (TVR_BITS + (N)*TVN_BITS)) &amp; TVN_MASK);
+    &#125;
+
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
+
+
+
+CWheelTimer::<span class="hljs-built_in">CWheelTimer</span>()
+    :<span class="hljs-built_in">m_oModule</span>(CWheelTimerModule::<span class="hljs-built_in">GetInstance</span>())
+    , <span class="hljs-built_in">m_nVecIndex</span>(<span class="hljs-number">-1</span>)
+&#123;
+&#125;
+
+CWheelTimer::<span class="hljs-built_in">CWheelTimer</span>(CWheelTimerModule&amp; oModule)
+    : <span class="hljs-built_in">m_oModule</span>(oModule)
+    , <span class="hljs-built_in">m_nVecIndex</span>(<span class="hljs-number">-1</span>)
+&#123;
+&#125;
+
+CWheelTimer::~<span class="hljs-built_in">CWheelTimer</span>()
+&#123;
+    <span class="hljs-built_in">Stop</span>();
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">CWheelTimer::Start</span><span class="hljs-params">(ITimerMgr* pTimerMgr, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId, <span class="hljs-type">unsigned</span> nInterval, <span class="hljs-type">int</span> nDelay, ETimerType eTimerType)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-built_in">Stop</span>();
+
+    <span class="hljs-comment">//时间都修正为最小精度</span>
+    <span class="hljs-keyword">if</span> (nInterval &lt; WHEEL_TIMER_MIN_PRECISION)
+    &#123;
+        nInterval = WHEEL_TIMER_MIN_PRECISION;
+    &#125;
+
+    m_nInterval = CWheelTimerModule::<span class="hljs-built_in">HandlePrecision</span>(nInterval);
+    m_eTimerType = eTimerType;
+    m_pTimerMgr = pTimerMgr;
+    m_nTimerId = nId;
+    m_llExpireTime = CWheelTimerModule::<span class="hljs-built_in">HandlePrecision</span>(nDelay + CWheelTimerModule::<span class="hljs-built_in">GetCurMillisecs</span>());
+    m_oModule.<span class="hljs-built_in">AddTimer</span>(<span class="hljs-keyword">this</span>);
+&#125;
+
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">CWheelTimer::Stop</span><span class="hljs-params">()</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">if</span> (m_nVecIndex != <span class="hljs-number">-1</span>)
+    &#123;
+        m_oModule.<span class="hljs-built_in">RemoveTimer</span>(<span class="hljs-keyword">this</span>);
+        m_nVecIndex = <span class="hljs-number">-1</span>;
+    &#125;
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">CWheelTimer::OnTrigger</span><span class="hljs-params">(<span class="hljs-type">const</span> UINT64 nNow)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">if</span> (m_eTimerType == ETIMER_CIRCLE)
+    &#123;
+        m_llExpireTime = m_nInterval + nNow;
+        m_oModule.<span class="hljs-built_in">AddTimer</span>(<span class="hljs-keyword">this</span>);
+    &#125;
+    <span class="hljs-keyword">else</span>
+    &#123;
+        m_nVecIndex = <span class="hljs-number">-1</span>;
+    &#125;
+
+    <span class="hljs-keyword">if</span> (m_pTimerMgr != <span class="hljs-literal">nullptr</span>)
+    &#123;
+        m_pTimerMgr-&gt;<span class="hljs-built_in">OnTimer</span>(m_nTimerId);
+    &#125;
+&#125;
+
+<span class="hljs-comment">//--------------------------------------------------------------------------------------------------------</span>
+
+CWheelTimerModule::<span class="hljs-built_in">CWheelTimerModule</span>()
+&#123;
+    m_vecTimerList.<span class="hljs-built_in">resize</span>(TVR_SIZE + <span class="hljs-number">4</span> * TVN_SIZE);
+    m_llCheckTime = <span class="hljs-built_in">HandlePrecision</span>(<span class="hljs-built_in">GetCurMillisecs</span>());
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">CWheelTimerModule::AddTimer</span><span class="hljs-params">(CWheelTimer* pTimer)</span></span>
+<span class="hljs-function"></span>&#123;
+    UINT64 llExpireTime = pTimer-&gt;m_llExpireTime;
+    INT64 llTimeDiff = pTimer-&gt;m_llExpireTime - m_llCheckTime;
+
+    <span class="hljs-keyword">if</span> (llTimeDiff &lt; <span class="hljs-number">0</span>)
+    &#123;
+        pTimer-&gt;m_nVecIndex = m_llCheckTime &amp; TVR_MASK;
+    &#125;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (llTimeDiff &lt; TVR_SIZE)
+    &#123;
+        pTimer-&gt;m_nVecIndex = llExpireTime &amp; TVR_MASK;
+    &#125;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (llTimeDiff &lt; <span class="hljs-number">1</span> &lt;&lt; (TVR_BITS + TVN_BITS))
+    &#123;
+        pTimer-&gt;m_nVecIndex = <span class="hljs-built_in">OFFSET</span>(<span class="hljs-number">0</span>) + <span class="hljs-built_in">INDEX</span>(llExpireTime, <span class="hljs-number">0</span>);
+    &#125;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (llTimeDiff &lt; <span class="hljs-number">1</span> &lt;&lt; (TVR_BITS + <span class="hljs-number">2</span> * TVN_BITS))
+    &#123;
+        pTimer-&gt;m_nVecIndex = <span class="hljs-built_in">OFFSET</span>(<span class="hljs-number">1</span>) + <span class="hljs-built_in">INDEX</span>(llExpireTime, <span class="hljs-number">1</span>);
+    &#125;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (llTimeDiff &lt; <span class="hljs-number">1</span> &lt;&lt; (TVR_BITS + <span class="hljs-number">3</span> * TVN_BITS))
+    &#123;
+        pTimer-&gt;m_nVecIndex = <span class="hljs-built_in">OFFSET</span>(<span class="hljs-number">2</span>) + <span class="hljs-built_in">INDEX</span>(llExpireTime, <span class="hljs-number">2</span>);
+    &#125;
+    <span class="hljs-keyword">else</span>
+    &#123;
+        <span class="hljs-keyword">if</span> (llTimeDiff &gt; <span class="hljs-number">0xffffffff</span>UL)
+        &#123;
+            llTimeDiff = <span class="hljs-number">0xffffffff</span>UL;
+            llExpireTime = llTimeDiff + m_llCheckTime;
+        &#125;
+        pTimer-&gt;m_nVecIndex = <span class="hljs-built_in">OFFSET</span>(<span class="hljs-number">3</span>) + <span class="hljs-built_in">INDEX</span>(llExpireTime, <span class="hljs-number">3</span>);
+    &#125;
+
+    TListTimer&amp; listTimer = m_vecTimerList[pTimer-&gt;m_nVecIndex];
+    listTimer.<span class="hljs-built_in">push_back</span>(pTimer);
+    pTimer-&gt;m_listIter = listTimer.<span class="hljs-built_in">end</span>();
+    --pTimer-&gt;m_listIter;
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">CWheelTimerModule::RemoveTimer</span><span class="hljs-params">(CWheelTimer* pTimer)</span></span>
+<span class="hljs-function"></span>&#123;
+    TListTimer&amp; listTimer = m_vecTimerList[pTimer-&gt;m_nVecIndex];
+    listTimer.<span class="hljs-built_in">erase</span>(pTimer-&gt;m_listIter);
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">CWheelTimerModule::Run</span><span class="hljs-params">()</span></span>
+<span class="hljs-function"></span>&#123;
+    UINT64 nNow = <span class="hljs-built_in">HandlePrecision</span>(<span class="hljs-built_in">GetCurMillisecs</span>());
+    <span class="hljs-keyword">while</span> (m_llCheckTime &lt;= nNow)
+    &#123;
+        <span class="hljs-comment">//for every tick</span>
+        <span class="hljs-type">int</span> index = m_llCheckTime &amp; TVR_MASK;
+        <span class="hljs-keyword">if</span> (!index &amp;&amp;
+            !_Cascade(<span class="hljs-built_in">OFFSET</span>(<span class="hljs-number">0</span>), <span class="hljs-built_in">INDEX</span>(m_llCheckTime, <span class="hljs-number">0</span>)) &amp;&amp;
+            !_Cascade(<span class="hljs-built_in">OFFSET</span>(<span class="hljs-number">1</span>), <span class="hljs-built_in">INDEX</span>(m_llCheckTime, <span class="hljs-number">1</span>)) &amp;&amp;
+            !_Cascade(<span class="hljs-built_in">OFFSET</span>(<span class="hljs-number">2</span>), <span class="hljs-built_in">INDEX</span>(m_llCheckTime, <span class="hljs-number">2</span>)))
+        &#123;
+            _Cascade(<span class="hljs-built_in">OFFSET</span>(<span class="hljs-number">3</span>), <span class="hljs-built_in">INDEX</span>(m_llCheckTime, <span class="hljs-number">3</span>));
+        &#125;
+
+        
+        ++m_llCheckTime;
+
+        TListTimer&amp; listTimer = m_vecTimerList[index];
+        TListTimer listTmp;
+        listTmp.<span class="hljs-built_in">splice</span>(listTmp.<span class="hljs-built_in">end</span>(), listTimer);
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> itr = listTmp.<span class="hljs-built_in">begin</span>(); itr != listTmp.<span class="hljs-built_in">end</span>(); ++itr)
+        &#123;
+            <span class="hljs-keyword">auto</span>* pTimer = *itr;
+            <span class="hljs-keyword">if</span> (pTimer != <span class="hljs-literal">nullptr</span>)
+            &#123;
+                pTimer-&gt;<span class="hljs-built_in">OnTrigger</span>(nNow);
+            &#125;
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-type">int</span> CWheelTimerModule::_Cascade(<span class="hljs-type">int</span> nOffset, <span class="hljs-type">int</span> nIndex)
+&#123;
+    TListTimer&amp; listTimer = m_vecTimerList[nOffset + nIndex];
+    TListTimer listTemp;
+    listTemp.<span class="hljs-built_in">splice</span>(listTemp.<span class="hljs-built_in">end</span>(), listTimer);
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> itr = listTemp.<span class="hljs-built_in">begin</span>(); itr != listTemp.<span class="hljs-built_in">end</span>(); ++itr)
+    &#123;
+        <span class="hljs-keyword">auto</span>* pTimer = *itr;
+        <span class="hljs-keyword">if</span> (pTimer != <span class="hljs-literal">nullptr</span>)
+        &#123;
+            <span class="hljs-built_in">AddTimer</span>(pTimer);
+        &#125;
+    &#125;
+
+    <span class="hljs-keyword">return</span> nIndex;
+&#125;
+
+<span class="hljs-function">UINT64 <span class="hljs-title">CWheelTimerModule::HandlePrecision</span><span class="hljs-params">(<span class="hljs-type">const</span> UINT64 nSrcTime)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">return</span> nSrcTime / WHEEL_TIMER_MIN_PRECISION;
+&#125;
+
+<span class="hljs-function">UINT64 <span class="hljs-title">CWheelTimerModule::GetCurMillisecs</span><span class="hljs-params">()</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">auto</span> llCurTime = CSysTime::<span class="hljs-built_in">Instance</span>()-&gt;<span class="hljs-built_in">GetNowMliTime</span>();
+    <span class="hljs-keyword">return</span> llCurTime;
+&#125;
+
+ITimerMgr::~<span class="hljs-built_in">ITimerMgr</span>()
+&#123;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> it : m_mapTimer)
+    &#123;
+        <span class="hljs-keyword">if</span> (it.second != <span class="hljs-literal">nullptr</span>)
+        &#123;
+            it.second-&gt;<span class="hljs-built_in">Stop</span>();
+            CTimerFactory::<span class="hljs-built_in">Instance</span>()-&gt;<span class="hljs-built_in">ReleaseCTimer</span>(it.second);
+        &#125;
+    &#125;
+    m_mapTimer.<span class="hljs-built_in">clear</span>();
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ITimerMgr::SetTimer</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId, <span class="hljs-type">int</span> nInterval, <span class="hljs-type">int</span> nDelay ,ETimerType eTimeType)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">IsTimerExist</span>(nId))
+    &#123;
+        EXLOG_DEBUG &lt;&lt; <span class="hljs-string">&quot;[RyzTimer]Timer Has Existed, Not Repeat Add, nId:&quot;</span> &lt;&lt; nId;
+        <span class="hljs-keyword">return</span>;
+    &#125;
+
+    CWheelTimer* pTimer = CTimerFactory::<span class="hljs-built_in">Instance</span>()-&gt;<span class="hljs-built_in">CreateCTimer</span>();
+    <span class="hljs-keyword">if</span> (<span class="hljs-literal">nullptr</span> == pTimer)
+    &#123;
+        <span class="hljs-keyword">return</span>;
+    &#125;
+
+    m_mapTimer[nId] = pTimer;
+    pTimer-&gt;<span class="hljs-built_in">Start</span>(<span class="hljs-keyword">this</span>, nId, nInterval, nDelay, eTimeType);
+    EXLOG_DEBUG &lt;&lt; <span class="hljs-string">&quot;[RyzTimer]Add Timer nId:&quot;</span> &lt;&lt; nId &lt;&lt; <span class="hljs-string">&quot;,nInterval:&quot;</span> &lt;&lt; nInterval &lt;&lt; <span class="hljs-string">&quot;,nDelay:&quot;</span> &lt;&lt; nDelay &lt;&lt; <span class="hljs-string">&quot;,eTimeType:&quot;</span> &lt;&lt; eTimeType;
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ITimerMgr::KillTimer</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">auto</span> it = m_mapTimer.<span class="hljs-built_in">find</span>(nId);
+    <span class="hljs-keyword">if</span> (it != m_mapTimer.<span class="hljs-built_in">end</span>())
+    &#123;
+        <span class="hljs-comment">// 释放后 在TimerManager中 不会再执行 不需要做其他的操作</span>
+        it-&gt;second-&gt;<span class="hljs-built_in">Stop</span>();
+        CTimerFactory::<span class="hljs-built_in">Instance</span>()-&gt;<span class="hljs-built_in">ReleaseCTimer</span>(it-&gt;second);
+        m_mapTimer.<span class="hljs-built_in">erase</span>(it);
+    &#125;
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">ITimerMgr::IsTimerExist</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> nId)</span> </span>
+<span class="hljs-function"></span>&#123; 
+    <span class="hljs-keyword">return</span> m_mapTimer.<span class="hljs-built_in">find</span>(nId) != m_mapTimer.<span class="hljs-built_in">end</span>(); 
+&#125;
+
+CTimerFactory::<span class="hljs-built_in">CTimerFactory</span>()
+&#123;
+    m_oCTimerPool.<span class="hljs-built_in">Init</span>(<span class="hljs-number">32</span>, <span class="hljs-number">8</span>);
+&#125;
+
+CTimerFactory::~<span class="hljs-built_in">CTimerFactory</span>()
+&#123;
+&#125;
+
+<span class="hljs-function">CWheelTimer * <span class="hljs-title">CTimerFactory::CreateCTimer</span><span class="hljs-params">()</span></span>
+<span class="hljs-function"></span>&#123;
+    CWheelTimer* pTimer = m_oCTimerPool.<span class="hljs-built_in">FetchObj</span>();
+    <span class="hljs-keyword">return</span> pTimer;
+&#125;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">CTimerFactory::ReleaseCTimer</span><span class="hljs-params">(CWheelTimer* pTimer)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">if</span> (<span class="hljs-literal">nullptr</span> != pTimer)
+    &#123;
+        m_oCTimerPool.<span class="hljs-built_in">ReleaseObj</span>(pTimer);
+    &#125;
+&#125;
+
+</code></pre>
             </div>
         </article>
     </div>
@@ -169,8 +612,8 @@
             
                 <div class="next-post">
                     <div class="next gt-c-content-color-first">
-                        下一篇：<a href="/2020/01/23/linux%20fork%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/" 
-                            class="post-title gt-a-link">linux fork函数详解</a>
+                        下一篇：<a href="/2020/01/23/%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80ID%E7%94%9F%E6%88%90%E7%AE%97%E6%B3%95%E4%BC%98%E5%8C%96/" 
+                            class="post-title gt-a-link">全局唯一ID生成算法优化</a>
                     </div>
                 </div>
             
