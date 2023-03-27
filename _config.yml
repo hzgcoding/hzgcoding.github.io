@@ -4,12 +4,12 @@
 
 # Site
 title: Genge 随笔
-subtitle: '好好学习 实现财富自由'
-description: '记录点滴'
+subtitle: "好好学习 实现财富自由"
+description: "记录点滴"
 keywords: 菜鸡程序员
 author: Genge
 language: zh-CN
-timezone: ''
+timezone: ""
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -39,7 +39,7 @@ titlecase: false # Transform title into titlecase
 external_link:
   enable: true # Open external links in new tab
   field: site # Apply to the whole site
-  exclude: ''
+  exclude: ""
 filename_case: 0
 render_drafts: false
 post_asset_folder: false
@@ -47,11 +47,11 @@ relative_link: false
 future: true
 highlight:
   enable: true
-  line_number: true
   auto_detect: true
-  tab_replace: ''
-  wrap: true
-  hljs: false
+  line_number: false # This value must be `false`
+  wrap: false # This value must be `false`
+  tab_replace: "    " # 4 spaces
+  hljs: true # This value must be `true`
 
 #RSS订阅
 plugin:
@@ -67,7 +67,7 @@ limit: 20
 # per_page: Posts displayed per page. (0 = disable pagination)
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
-  path: ''
+  path: ""
   per_page: 10
   order_by: -date
 
@@ -103,7 +103,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: maupassant
+theme: pure
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
