@@ -32,8 +32,9 @@ gitalk:
   enable: true
   clientId: "387beb7791af325600a4"
   clientSecret: "b2b890ffae6bd3526351c3ed79ba4f8ab9cbd4f6"
-  repository: "git@github.com:hzgcoding/BlogComment.git"
+  repository: "BlogComment"
   owner: "hzgcoding"
+  admin: "hzgcoding"
 valine:
   enable: false
   appId: "Your appID here"
