@@ -29,7 +29,7 @@ disqus:
   apikey: "Your api key here"
   admin: "Your disqus username here"
 gitalk:
-  enable: true
+  enable: false
   clientId: "387beb7791af325600a4"
   clientSecret: "b2b890ffae6bd3526351c3ed79ba4f8ab9cbd4f6"
   repository: "BlogComment"
